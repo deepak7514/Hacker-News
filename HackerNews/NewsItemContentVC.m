@@ -80,7 +80,7 @@
                                                                     NSError *e = nil;
                                                                     NSString *htmlBody = nil;
                                                                     NSDictionary *propertyLists = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:localfile] options:0 error:NULL];
-                                                                    NSString *urlEncoded = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,(CFStringRef)[propertyLists valueForKey:HN_NEWSITEM_URL], NULL, (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",kCFStringEncodingUTF8));
+                                                                    NSString *urlEncoded = [[propertyLists valueForKey:HN_NEWSITEM_URL] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
                                                                     NSData *jsonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://readability.com/api/content/v1/parser?url=%@&token=b3e1c93a93f080bc01eb0480fffd6bdd3cb8a7fa",urlEncoded]] options:0 error:&e];
                                                                     if(e)
                                                                     {
