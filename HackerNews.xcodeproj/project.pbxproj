@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0C1D74154F00D5A172 /* User+Create.m */; };
+		F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */; };
 		F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8BD1D71C43D00CB0FA8 /* main.m */; };
 		F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */; };
 		F9B4E8C41D71C43D00CB0FA8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C31D71C43D00CB0FA8 /* ViewController.m */; };
@@ -14,9 +16,21 @@
 		F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C81D71C43D00CB0FA8 /* HackerNews.xcdatamodeld */; };
 		F9B4E8CC1D71C43D00CB0FA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F9B4E8CB1D71C43D00CB0FA8 /* Assets.xcassets */; };
 		F9B4E8CF1D71C43D00CB0FA8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F9B4E8CD1D71C43D00CB0FA8 /* LaunchScreen.storyboard */; };
+		F9B4E8DE1D71C6CA00CB0FA8 /* User+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8D71D71C6CA00CB0FA8 /* User+CoreDataProperties.m */; };
+		F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8D91D71C6CA00CB0FA8 /* User.m */; };
+		F9B4E8E01D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8DB1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m */; };
+		F9B4E8E11D71C6CA00CB0FA8 /* NewsItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8DD1D71C6CA00CB0FA8 /* NewsItem.m */; };
+		F9B4E8E61D71C74300CB0FA8 /* HNFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8E51D71C74300CB0FA8 /* HNFetcher.m */; };
+		F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8F01D71C82200CB0FA8 /* NewsItemContentVC.m */; };
+		F9B4E8F61D71C82200CB0FA8 /* NewsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8F21D71C82200CB0FA8 /* NewsTVC.m */; };
+		F9B4E8F71D71C82200CB0FA8 /* NewsItemTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8F41D71C82200CB0FA8 /* NewsItemTVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F93B0D0B1D74154F00D5A172 /* User+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+Create.h"; sourceTree = "<group>"; };
+		F93B0D0C1D74154F00D5A172 /* User+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Create.m"; sourceTree = "<group>"; };
+		F93B0D0E1D74156600D5A172 /* NewsItem+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NewsItem+Create.h"; sourceTree = "<group>"; };
+		F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NewsItem+Create.m"; sourceTree = "<group>"; };
 		F9B4E8B91D71C43D00CB0FA8 /* HackerNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HackerNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9B4E8BD1D71C43D00CB0FA8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -28,6 +42,22 @@
 		F9B4E8CB1D71C43D00CB0FA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F9B4E8CE1D71C43D00CB0FA8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F9B4E8D01D71C43D00CB0FA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F9B4E8D61D71C6CA00CB0FA8 /* User+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+CoreDataProperties.h"; sourceTree = "<group>"; };
+		F9B4E8D71D71C6CA00CB0FA8 /* User+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+CoreDataProperties.m"; sourceTree = "<group>"; };
+		F9B4E8D81D71C6CA00CB0FA8 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		F9B4E8D91D71C6CA00CB0FA8 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		F9B4E8DA1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NewsItem+CoreDataProperties.h"; sourceTree = "<group>"; };
+		F9B4E8DB1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NewsItem+CoreDataProperties.m"; sourceTree = "<group>"; };
+		F9B4E8DC1D71C6CA00CB0FA8 /* NewsItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsItem.h; sourceTree = "<group>"; };
+		F9B4E8DD1D71C6CA00CB0FA8 /* NewsItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsItem.m; sourceTree = "<group>"; };
+		F9B4E8E41D71C74300CB0FA8 /* HNFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNFetcher.h; sourceTree = "<group>"; };
+		F9B4E8E51D71C74300CB0FA8 /* HNFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNFetcher.m; sourceTree = "<group>"; };
+		F9B4E8EF1D71C82200CB0FA8 /* NewsItemContentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsItemContentVC.h; sourceTree = "<group>"; };
+		F9B4E8F01D71C82200CB0FA8 /* NewsItemContentVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsItemContentVC.m; sourceTree = "<group>"; };
+		F9B4E8F11D71C82200CB0FA8 /* NewsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsTVC.h; sourceTree = "<group>"; };
+		F9B4E8F21D71C82200CB0FA8 /* NewsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsTVC.m; sourceTree = "<group>"; };
+		F9B4E8F31D71C82200CB0FA8 /* NewsItemTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsItemTVC.h; sourceTree = "<group>"; };
+		F9B4E8F41D71C82200CB0FA8 /* NewsItemTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsItemTVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +71,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F93B0D0A1D740C0C00D5A172 /* View Controller */ = {
+			isa = PBXGroup;
+			children = (
+				F9B4E8EF1D71C82200CB0FA8 /* NewsItemContentVC.h */,
+				F9B4E8F01D71C82200CB0FA8 /* NewsItemContentVC.m */,
+				F9B4E8F11D71C82200CB0FA8 /* NewsTVC.h */,
+				F9B4E8F21D71C82200CB0FA8 /* NewsTVC.m */,
+				F9B4E8F31D71C82200CB0FA8 /* NewsItemTVC.h */,
+				F9B4E8F41D71C82200CB0FA8 /* NewsItemTVC.m */,
+				F9B4E8C21D71C43D00CB0FA8 /* ViewController.h */,
+				F9B4E8C31D71C43D00CB0FA8 /* ViewController.m */,
+			);
+			name = "View Controller";
+			sourceTree = "<group>";
+		};
 		F9B4E8B01D71C43D00CB0FA8 = {
 			isa = PBXGroup;
 			children = (
@@ -60,15 +105,15 @@
 		F9B4E8BB1D71C43D00CB0FA8 /* HackerNews */ = {
 			isa = PBXGroup;
 			children = (
+				F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */,
 				F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */,
 				F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */,
-				F9B4E8C21D71C43D00CB0FA8 /* ViewController.h */,
-				F9B4E8C31D71C43D00CB0FA8 /* ViewController.m */,
-				F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */,
+				F9B4E8E31D71C74300CB0FA8 /* HN Fetcher */,
+				F9B4E8E21D71C6DC00CB0FA8 /* Core Data Model */,
+				F93B0D0A1D740C0C00D5A172 /* View Controller */,
 				F9B4E8CB1D71C43D00CB0FA8 /* Assets.xcassets */,
 				F9B4E8CD1D71C43D00CB0FA8 /* LaunchScreen.storyboard */,
 				F9B4E8D01D71C43D00CB0FA8 /* Info.plist */,
-				F9B4E8C81D71C43D00CB0FA8 /* HackerNews.xcdatamodeld */,
 				F9B4E8BC1D71C43D00CB0FA8 /* Supporting Files */,
 			);
 			path = HackerNews;
@@ -80,6 +125,35 @@
 				F9B4E8BD1D71C43D00CB0FA8 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F9B4E8E21D71C6DC00CB0FA8 /* Core Data Model */ = {
+			isa = PBXGroup;
+			children = (
+				F9B4E8D61D71C6CA00CB0FA8 /* User+CoreDataProperties.h */,
+				F9B4E8D71D71C6CA00CB0FA8 /* User+CoreDataProperties.m */,
+				F9B4E8D81D71C6CA00CB0FA8 /* User.h */,
+				F9B4E8D91D71C6CA00CB0FA8 /* User.m */,
+				F93B0D0B1D74154F00D5A172 /* User+Create.h */,
+				F93B0D0C1D74154F00D5A172 /* User+Create.m */,
+				F9B4E8DA1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.h */,
+				F9B4E8DB1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m */,
+				F93B0D0E1D74156600D5A172 /* NewsItem+Create.h */,
+				F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */,
+				F9B4E8DC1D71C6CA00CB0FA8 /* NewsItem.h */,
+				F9B4E8DD1D71C6CA00CB0FA8 /* NewsItem.m */,
+				F9B4E8C81D71C43D00CB0FA8 /* HackerNews.xcdatamodeld */,
+			);
+			name = "Core Data Model";
+			sourceTree = "<group>";
+		};
+		F9B4E8E31D71C74300CB0FA8 /* HN Fetcher */ = {
+			isa = PBXGroup;
+			children = (
+				F9B4E8E41D71C74300CB0FA8 /* HNFetcher.h */,
+				F9B4E8E51D71C74300CB0FA8 /* HNFetcher.m */,
+			);
+			path = "HN Fetcher";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,9 +226,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9B4E8DE1D71C6CA00CB0FA8 /* User+CoreDataProperties.m in Sources */,
+				F9B4E8E11D71C6CA00CB0FA8 /* NewsItem.m in Sources */,
+				F9B4E8E01D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m in Sources */,
+				F9B4E8E61D71C74300CB0FA8 /* HNFetcher.m in Sources */,
+				F9B4E8F61D71C82200CB0FA8 /* NewsTVC.m in Sources */,
+				F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */,
+				F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */,
 				F9B4E8C41D71C43D00CB0FA8 /* ViewController.m in Sources */,
+				F9B4E8F71D71C82200CB0FA8 /* NewsItemTVC.m in Sources */,
+				F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */,
 				F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */,
 				F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */,
+				F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */,
 				F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,6 +388,7 @@
 				F9B4E8D51D71C43D00CB0FA8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
