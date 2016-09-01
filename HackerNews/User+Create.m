@@ -30,16 +30,16 @@
         user = [NSEntityDescription insertNewObjectForEntityForName:@"User"
                                                  inManagedObjectContext:context];
         
-        //NSDictionary *userDictionary = [self fetchUserInfoWithUserId:userId];
+        NSDictionary *userDictionary = [self fetchUserInfoWithUserId:userId];
         
         NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
         f.numberStyle = NSNumberFormatterDecimalStyle;
         
         user.unique = [f numberFromString:userId];
-//        user.about = [userDictionary valueForKey:HN_USER_ABOUT];
-//        user.created = [f numberFromString:[userDictionary valueForKey:HN_USER_CREATED]];
-//        user.delay = [f numberFromString:[userDictionary valueForKey:HN_USER_DELAY] ];
-//        user.karma = [f numberFromString:[userDictionary valueForKey:HN_USER_KARMA] ];
+        user.about = [userDictionary valueForKey:HN_USER_ABOUT];
+        user.created = [f numberFromString:[userDictionary valueForKey:HN_USER_CREATED]];
+        user.delay = [f numberFromString:[userDictionary valueForKey:HN_USER_DELAY] ];
+        user.karma = [f numberFromString:[userDictionary valueForKey:HN_USER_KARMA] ];
     }
     
     return user;
@@ -49,12 +49,17 @@
 {
     NSError *error = nil;
     // fetch the JSON data from HackerNews
-    NSData *jsonResults = [NSData dataWithContentsOfURL:[HNFetcher URLforUser:userId]];
+    NSData *jsonResults = [NSData dataWithContentsOfURL:[HNFetcher URLforUser:userId] options:0 error:&error];
+    if(error)
+    {
+        NSLog(@"Error in Fetching User Details with userName:%@ - %@", userId, error);
+        return nil;
+    }
     // convert it to a Property List (NSArray and NSDictionary)
     NSDictionary *propertyListResults = [NSJSONSerialization JSONObjectWithData:jsonResults options:0 error:&error];
     if(propertyListResults == nil)
     {
-        NSLog(@"Error in Fetching User Details with userName:%@ - %@", userId, error);
+        NSLog(@"Error in Parsing User Details with userName:%@ - %@", userId, error);
         return nil;
     }
     return propertyListResults;

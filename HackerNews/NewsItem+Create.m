@@ -38,27 +38,21 @@
         
         newsItem.unique = [f numberFromString:newsItemId];
         newsItem.title = [newsItemDictionary valueForKey:HN_NEWSITEM_TITLE];
-        newsItem.dead = [newsItemDictionary valueForKey:HN_NEWSITEM_DEAD];
-        newsItem.deleted = [newsItemDictionary valueForKey:HN_NEWSITEM_DELETED];
-        newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
-        newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
+        newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+        newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+        newsItem.descendants = [f numberFromString:[newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS]];
+        newsItem.score = [f numberFromString:[newsItemDictionary valueForKey:HN_NEWSITEM_SCORE]];
         newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
-        newsItem.time = [newsItemDictionary valueForKey:HN_NEWSITEM_TIME];
+        newsItem.time = [f numberFromString:[newsItemDictionary valueForKey:HN_NEWSITEM_TIME]];
         newsItem.type = [newsItemDictionary valueForKey:HN_NEWSITEM_TYPE];
         newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
         
         newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
         
-        NSMutableSet *kids = [[NSMutableSet alloc] init];
         NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
         for (NSString *kid in kidsForNewsItem) {
-            [kids addObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
+            [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
         }
-        newsItem.kids = kids;
-        
-        NSString *parentId = [newsItemDictionary valueForKey:HN_NEWSITEM_PARENT];
-        if(parentId)
-        newsItem.parent = [self newsItemWithNewsItemId:parentId inManagedObjectContext:context];
     }
     
     return newsItem;
@@ -76,12 +70,17 @@
 {
     NSError *error = nil;
     // fetch the JSON data from HackerNews
-    NSData *jsonResults = [NSData dataWithContentsOfURL:[HNFetcher URLforItem:newsItemId]];
+    NSData *jsonResults = [NSData dataWithContentsOfURL:[HNFetcher URLforItem:newsItemId] options:0 error:&error];
+    if(error)
+    {
+        NSLog(@"Error in Fetching NewsItem Details with userName:%@ - %@", newsItemId, error);
+        return nil;
+    }
     // convert it to a Property List (NSArray and NSDictionary)
     NSDictionary *propertyListResults = [NSJSONSerialization JSONObjectWithData:jsonResults options:0 error:&error];
     if(propertyListResults == nil)
     {
-        NSLog(@"Error in Fetching User Details with userName:%@ - %@", newsItemId, error);
+        NSLog(@"Error in Parsing NewsItem Details with userName:%@ - %@", newsItemId, error);
         return nil;
     }
     return propertyListResults;
