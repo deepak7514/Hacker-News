@@ -14,6 +14,7 @@
 + (User *)userWithUserId:(NSString *)userId
     inManagedObjectContext:(NSManagedObjectContext *)context
 {
+    NSLog(@"User - %@", userId);
     User *user = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"User"];
@@ -32,14 +33,11 @@
         
         NSDictionary *userDictionary = [self fetchUserInfoWithUserId:userId];
         
-        NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-        f.numberStyle = NSNumberFormatterDecimalStyle;
-        
-        user.unique = [f numberFromString:userId];
+        user.unique = [userDictionary valueForKey:HN_USER_ID];
         user.about = [userDictionary valueForKey:HN_USER_ABOUT];
-        user.created = [f numberFromString:[userDictionary valueForKey:HN_USER_CREATED]];
-        user.delay = [f numberFromString:[userDictionary valueForKey:HN_USER_DELAY] ];
-        user.karma = [f numberFromString:[userDictionary valueForKey:HN_USER_KARMA] ];
+        user.created = [userDictionary valueForKey:HN_USER_CREATED];
+        user.delay = [userDictionary valueForKey:HN_USER_DELAY];
+        user.karma = [userDictionary valueForKey:HN_USER_KARMA];
     }
     
     return user;

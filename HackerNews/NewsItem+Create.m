@@ -15,6 +15,7 @@
 + (NewsItem *)newsItemWithNewsItemId:(NSString *)newsItemId
         inManagedObjectContext:(NSManagedObjectContext *)context
 {
+    NSLog(@"NewsItem - %@", newsItemId);
     NewsItem *newsItem = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
@@ -33,26 +34,23 @@
         
         NSDictionary *newsItemDictionary = [self fetchNewsItemInfoWithNewsItemId:newsItemId];
         
-        NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-        f.numberStyle = NSNumberFormatterDecimalStyle;
-        
-        newsItem.unique = [f numberFromString:newsItemId];
+        newsItem.unique = [newsItemDictionary valueForKey:HN_NEWSITEM_ID];
         newsItem.title = [newsItemDictionary valueForKey:HN_NEWSITEM_TITLE];
         newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
         newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-        newsItem.descendants = [f numberFromString:[newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS]];
-        newsItem.score = [f numberFromString:[newsItemDictionary valueForKey:HN_NEWSITEM_SCORE]];
+        newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
+        newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
         newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
-        newsItem.time = [f numberFromString:[newsItemDictionary valueForKey:HN_NEWSITEM_TIME]];
+        newsItem.time = [newsItemDictionary valueForKey:HN_NEWSITEM_TIME];
         newsItem.type = [newsItemDictionary valueForKey:HN_NEWSITEM_TYPE];
         newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
         
         newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
         
-        NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
-        for (NSString *kid in kidsForNewsItem) {
-            [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
-        }
+//        NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
+//        for (NSString *kid in kidsForNewsItem) {
+//            [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
+//        }
     }
     
     return newsItem;

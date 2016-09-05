@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F939C08F1D7D367000AF23DE /* CommentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F939C08E1D7D367000AF23DE /* CommentVC.m */; };
 		F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0C1D74154F00D5A172 /* User+Create.m */; };
 		F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */; };
+		F988FA181D78168300702D65 /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F988FA171D78168300702D65 /* CoreDataTableViewController.m */; };
 		F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8BD1D71C43D00CB0FA8 /* main.m */; };
 		F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */; };
 		F9B4E8C41D71C43D00CB0FA8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C31D71C43D00CB0FA8 /* ViewController.m */; };
@@ -27,10 +29,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F939C08D1D7D367000AF23DE /* CommentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentVC.h; sourceTree = "<group>"; };
+		F939C08E1D7D367000AF23DE /* CommentVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentVC.m; sourceTree = "<group>"; };
 		F93B0D0B1D74154F00D5A172 /* User+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+Create.h"; sourceTree = "<group>"; };
 		F93B0D0C1D74154F00D5A172 /* User+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Create.m"; sourceTree = "<group>"; };
 		F93B0D0E1D74156600D5A172 /* NewsItem+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NewsItem+Create.h"; sourceTree = "<group>"; };
 		F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NewsItem+Create.m"; sourceTree = "<group>"; };
+		F988FA161D78168300702D65 /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
+		F988FA171D78168300702D65 /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
 		F9B4E8B91D71C43D00CB0FA8 /* HackerNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HackerNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9B4E8BD1D71C43D00CB0FA8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -74,6 +80,10 @@
 		F93B0D0A1D740C0C00D5A172 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				F939C08D1D7D367000AF23DE /* CommentVC.h */,
+				F939C08E1D7D367000AF23DE /* CommentVC.m */,
+				F988FA161D78168300702D65 /* CoreDataTableViewController.h */,
+				F988FA171D78168300702D65 /* CoreDataTableViewController.m */,
 				F9B4E8EF1D71C82200CB0FA8 /* NewsItemContentVC.h */,
 				F9B4E8F01D71C82200CB0FA8 /* NewsItemContentVC.m */,
 				F9B4E8F11D71C82200CB0FA8 /* NewsTVC.h */,
@@ -228,6 +238,7 @@
 			files = (
 				F9B4E8DE1D71C6CA00CB0FA8 /* User+CoreDataProperties.m in Sources */,
 				F9B4E8E11D71C6CA00CB0FA8 /* NewsItem.m in Sources */,
+				F939C08F1D7D367000AF23DE /* CommentVC.m in Sources */,
 				F9B4E8E01D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m in Sources */,
 				F9B4E8E61D71C74300CB0FA8 /* HNFetcher.m in Sources */,
 				F9B4E8F61D71C82200CB0FA8 /* NewsTVC.m in Sources */,
@@ -240,6 +251,7 @@
 				F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */,
 				F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */,
 				F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */,
+				F988FA181D78168300702D65 /* CoreDataTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

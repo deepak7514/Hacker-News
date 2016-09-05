@@ -212,7 +212,7 @@
             </objects>
             <point key="canvasLocation" x="2905" y="216"/>
         </scene>
-        <!--News Item ContentVC-->
+        <!--News Content-->
         <scene sceneID="kGg-gY-7wH">
             <objects>
                 <viewController id="NIe-cR-UTf" customClass="NewsItemContentVC" sceneMemberID="viewController">
@@ -225,25 +225,34 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GQE-sa-cDj">
-                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="492"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="deviceRGB"/>
                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                             </webView>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="eeD-uC-6g6">
-                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                                <rect key="frame" x="290" y="300" width="20" height="20"/>
                                 <color key="color" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="GQE-sa-cDj" firstAttribute="top" secondItem="CBc-IY-UaF" secondAttribute="bottom" id="Dr0-4m-zgx"/>
-                            <constraint firstItem="eeD-uC-6g6" firstAttribute="centerY" secondItem="Egk-3P-yQH" secondAttribute="centerY" id="OB2-0v-wEl"/>
-                            <constraint firstItem="GQE-sa-cDj" firstAttribute="bottom" secondItem="uBd-rn-bom" secondAttribute="top" id="OKP-nV-ZCv"/>
-                            <constraint firstItem="GQE-sa-cDj" firstAttribute="centerX" secondItem="eeD-uC-6g6" secondAttribute="centerX" id="XlG-9U-kgZ"/>
-                            <constraint firstItem="GQE-sa-cDj" firstAttribute="leading" secondItem="Egk-3P-yQH" secondAttribute="leading" id="bwF-lQ-o07"/>
-                            <constraint firstAttribute="trailing" secondItem="GQE-sa-cDj" secondAttribute="trailing" id="weq-H1-hbi"/>
+                            <constraint firstAttribute="trailing" secondItem="GQE-sa-cDj" secondAttribute="trailing" id="KDb-MC-wX8"/>
+                            <constraint firstItem="GQE-sa-cDj" firstAttribute="top" secondItem="CBc-IY-UaF" secondAttribute="bottom" id="Ogb-8m-YdX"/>
+                            <constraint firstItem="GQE-sa-cDj" firstAttribute="bottom" secondItem="uBd-rn-bom" secondAttribute="top" id="SjA-qW-OdE"/>
+                            <constraint firstItem="GQE-sa-cDj" firstAttribute="centerX" secondItem="eeD-uC-6g6" secondAttribute="centerX" id="jF1-Ic-Iwe"/>
+                            <constraint firstItem="GQE-sa-cDj" firstAttribute="centerY" secondItem="eeD-uC-6g6" secondAttribute="centerY" id="tQZ-uq-uwJ"/>
+                            <constraint firstItem="GQE-sa-cDj" firstAttribute="leading" secondItem="Egk-3P-yQH" secondAttribute="leading" id="y4D-QI-w6p"/>
                         </constraints>
                     </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="News Content" id="L6i-cW-Dqb">
+                        <barButtonItem key="rightBarButtonItem" title="Comments" id="r2g-kF-Phz">
+                            <connections>
+                                <segue destination="1g7-kC-nIL" kind="show" identifier="Show Comments" id="Kag-qJ-eZB"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="spinner" destination="eeD-uC-6g6" id="CiF-Yr-Gi3"/>
                         <outlet property="webView" destination="GQE-sa-cDj" id="q4L-PW-CNu"/>
@@ -251,7 +260,48 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rIX-XZ-EbN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3641" y="216"/>
+            <point key="canvasLocation" x="3597" y="216"/>
+        </scene>
+        <!--CommentVC-->
+        <scene sceneID="qQN-zY-Nqj">
+            <objects>
+                <viewController id="1g7-kC-nIL" customClass="CommentVC" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="f3j-iL-WYX"/>
+                        <viewControllerLayoutGuide type="bottom" id="zDV-ks-lej"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7Xx-lV-K4J">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RPh-O3-64K">
+                                <rect key="frame" x="0.0" y="64" width="600" height="492"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="deviceRGB"/>
+                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                            </webView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="49k-Cl-fhq">
+                                <rect key="frame" x="290" y="300" width="20" height="20"/>
+                                <color key="color" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="RPh-O3-64K" firstAttribute="centerX" secondItem="49k-Cl-fhq" secondAttribute="centerX" id="Ele-Gh-g6a"/>
+                            <constraint firstItem="RPh-O3-64K" firstAttribute="leading" secondItem="7Xx-lV-K4J" secondAttribute="leading" id="LDw-Pm-ZtW"/>
+                            <constraint firstItem="RPh-O3-64K" firstAttribute="top" secondItem="f3j-iL-WYX" secondAttribute="bottom" id="M4m-wX-Rth"/>
+                            <constraint firstAttribute="trailing" secondItem="RPh-O3-64K" secondAttribute="trailing" id="awF-8z-LHo"/>
+                            <constraint firstItem="RPh-O3-64K" firstAttribute="centerY" secondItem="49k-Cl-fhq" secondAttribute="centerY" id="dEd-FD-Cbo"/>
+                            <constraint firstItem="RPh-O3-64K" firstAttribute="bottom" secondItem="zDV-ks-lej" secondAttribute="top" id="yfT-Tt-t2Z"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="spinner" destination="49k-Cl-fhq" id="1CT-7e-IAr"/>
+                        <outlet property="webView" destination="RPh-O3-64K" id="qhw-AR-YdS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oZg-p7-cDu" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4330" y="216"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="W4f-qa-Ye8">

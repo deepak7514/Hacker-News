@@ -10,9 +10,11 @@
 #import "NewsItemContentVC.h"
 #import "HNFetcher.h"
 #import "AppDelegate.h"
+#import "NewsItem+Create.h"
 
 @interface NewsItemTVC ()
 
+@property (nonatomic, strong) NSArray *newsItems; // of News Items IDs
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 
 @end
@@ -52,6 +54,16 @@
     [self.tableView addSubview:self.refreshControl];
 }
 
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if(_managedObjectContext == nil)
+    {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        _managedObjectContext = appDelegate.managedObjectContext;
+    }
+    return _managedObjectContext;
+}
+
 - (void)refresh:(UIRefreshControl *)refreshControl {
     // Do your job, when done:
     [self startDownloadingContent];
@@ -80,8 +92,19 @@
 - (void)setNewsItems:(NSArray *)newsItems
 {
     _newsItems = newsItems;
+    //[NewsItem loadNewsItemsFromArray:newsItems intoManagedObjectContext:self.managedObjectContext];
     //self.tableView.backgroundView = nil;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    
+//    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
+//    request.predicate = [NSPredicate predicateWithFormat:@"unique IN %@", newsItems];
+//    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
+//                                                              ascending:YES
+//                                                               selector:@selector(localizedStandardCompare:)]];
+//    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
+//                                                                        managedObjectContext:self.managedObjectContext
+//                                                                          sectionNameKeyPath:nil cacheName:nil];
+//    
     [self reloadData];
     [self.spinner stopAnimating];
 }
@@ -93,26 +116,6 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Return the number of sections.
-//    if(self.newsItems)
-//    {
-//        return 1;
-//    }
-//    else
-//    {
-//        // Display a message when the table is empty
-//        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-//        
-//        messageLabel.text = @"No data is currently available. Please pull down to refresh.";
-//        messageLabel.textColor = [UIColor blackColor];
-//        messageLabel.numberOfLines = 0;
-//        messageLabel.textAlignment = NSTextAlignmentCenter;
-//        messageLabel.font = [UIFont fontWithName:@"Palatino-Italic" size:20];
-//        [messageLabel sizeToFit];
-//        
-//        self.tableView.backgroundView = messageLabel;
-//        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//    }
     return 1;
 }
 
@@ -136,12 +139,12 @@
     // Configure the cell...
     
     // get the photo out of our Model
-    NSDictionary *newsItem = [self fetchNewsItem:[self.newsItems objectAtIndex:indexPath.row]];
+    NewsItem *newsItem = [NewsItem newsItemWithNewsItemId:[self.newsItems objectAtIndex:indexPath.row] inManagedObjectContext:self.managedObjectContext];
+    //NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     // update UILabels in the UITableViewCell
-    // valueForKeyPath: supports "dot notation" to look inside dictionaries at other dictionaries
-    cell.textLabel.text = [newsItem valueForKeyPath:HN_NEWSITEM_TITLE];
-    cell.detailTextLabel.text = [newsItem valueForKeyPath:HN_NEWSITEM_URL];
+    cell.textLabel.text = newsItem.title;
+    cell.detailTextLabel.text = newsItem.url;
     
     return cell;
 }
@@ -190,7 +193,7 @@
 - (void)prepareNewsItemContentVC:(NewsItemContentVC *)vc toDisplayNewsItem:(NSString *)newsItemId
 {
     vc.itemURL = [HNFetcher URLforItem:newsItemId];
-    vc.title = [NSString stringWithFormat:@"Item Number: %@", newsItemId];
+    vc.title = [NSString stringWithFormat:@"%@", newsItemId];
 }
 
 // In a story board-based application, you will often want to do a little preparation before navigation

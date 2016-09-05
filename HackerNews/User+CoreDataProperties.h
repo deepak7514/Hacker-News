@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *created;
 @property (nullable, nonatomic, retain) NSNumber *delay;
 @property (nullable, nonatomic, retain) NSNumber *karma;
-@property (nullable, nonatomic, retain) NSNumber *unique;
+@property (nullable, nonatomic, retain) NSString *unique;
 @property (nullable, nonatomic, retain) NSSet<NewsItem *> *submitted;
 
 @end

@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CoreDataTableViewController.h"
 
-@interface NewsItemTVC : UITableViewController
+@interface NewsItemTVC : CoreDataTableViewController
 
 // Model of this MVC (it can be publicly set)
-@property (nonatomic, strong) NSArray *newsItems; // of News Items
 @property (nonatomic, strong) NSURL *storyTypeURL; // passed by segue of corresponding type
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 @end

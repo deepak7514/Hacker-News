@@ -7,6 +7,7 @@
 //
 
 #import "NewsItemContentVC.h"
+#import "CommentVC.h"
 #import "HNFetcher.h"
 
 @interface NewsItemContentVC ()<UISplitViewControllerDelegate, UIWebViewDelegate>
@@ -40,16 +41,29 @@
     _webView.backgroundColor = [UIColor clearColor];
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender 
- {
+{
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    
+    if ([sender isKindOfClass:[UIBarButtonItem class]]) {
+        // found it ... are we doing the Show Comments segue?
+        if ([segue.identifier isEqualToString:@"Show Comments"]){
+            // yes ... is the destination an NewsItemContentVC
+            if ([segue.destinationViewController isKindOfClass:[CommentVC class]]) {
+                // yes ... then we know how to prepare for that segue!
+                CommentVC *vc = (CommentVC *)segue.destinationViewController;
+                NSLog(@"Title %@ %@", self.title, [self.title class]);
+                vc.itemId = self.title;
+                vc.title = [NSString stringWithFormat:@"Comments"];
+            }
+        }
+    }
 }
-*/
 
 #pragma mark - Setting the Text from the Item's URL
 
@@ -85,7 +99,6 @@
                                                                     if(e)
                                                                     {
                                                                         NSLog(@"Error Fetching JSON Data from url-%@ error-%@",[propertyLists valueForKey:HN_NEWSITEM_URL], e);
-                                                                        htmlBody = @"<div><p style=\"font-size: 40px;text-align: center;\">Cannot Parse Content. Try to Open in External Browser.</p></div>";
                                                                     }
                                                                     else
                                                                     {
@@ -96,9 +109,18 @@
                                                                     //token=b3e1c93a93f080bc01eb0480fffd6bdd3cb8a7fa
                                                                     //we must dispatch this back to the main queue
                                                                     dispatch_async(dispatch_get_main_queue(), ^{
-                                                                        NSString *html =
+                                                                        if(htmlBody)
+                                                                        {
+                                                                            NSString *html =
                                                                         [NSString stringWithFormat:@"<html><head><title></title><style>img{max-width:100%%;height:auto !important;width:auto !important;};</style></head><body style=\"margin:20px; padding:0; background:transparent;\">%@</body></html>", htmlBody];
-                                                                        self.html = html;
+                                                                            self.html = html;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            self.html = @"";
+                                                                            NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlEncoded]];
+                                                                            [self.webView loadRequest:request];
+                                                                        }
                                                                     });
                                                                 }
                                                             } else
