@@ -67,68 +67,66 @@
 
 #pragma mark - Setting the Text from the Item's URL
 
-- (void)setItemURL:(NSURL *)ItemURL
+- (void)setNewsItem:(NewsItem *)newsItem
 {
-    _itemURL = ItemURL;
+    _newsItem = newsItem;
     [self startDownloadingContent];
 }
 
 - (void)startDownloadingContent
 {
-    if (self.itemURL)
+    if (self.newsItem)
     {
-        NSURLRequest *request = [NSURLRequest requestWithURL:self.itemURL];
-        
-        // another configuration option is backgroundSessionConfiguration (multitasking API required though)
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-        
-        // create the session without specifying a queue to run completion handler on (thus, not main queue)
-        // we also don't specify a delegate (since completion handler is all we need)
-        NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-        
-        NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request
-                                                        completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
-                                                            // this handler is not executing on the main queue, so we can't do UI directly here
-                                                            if (!error) {
-                                                                if ([request.URL isEqual:self.itemURL]) {
-                                                                    NSError *e = nil;
-                                                                    NSString *htmlBody = nil;
-                                                                    NSDictionary *propertyLists = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:localfile] options:0 error:NULL];
-                                                                    NSString *urlEncoded = [[propertyLists valueForKey:HN_NEWSITEM_URL] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
-                                                                    NSData *jsonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://readability.com/api/content/v1/parser?url=%@&token=b3e1c93a93f080bc01eb0480fffd6bdd3cb8a7fa",urlEncoded]] options:0 error:&e];
-                                                                    if(e)
-                                                                    {
-                                                                        NSLog(@"Error Fetching JSON Data from url-%@ error-%@",[propertyLists valueForKey:HN_NEWSITEM_URL], e);
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                    NSDictionary *jsonContent = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&e];
-                                                                    if(e){NSLog(@"Error Parsing JSON Data from url-%@ error-%@",[propertyLists valueForKey:HN_NEWSITEM_URL], e);}
-                                                                    htmlBody = [jsonContent valueForKey:@"content"];
-                                                                    }
-                                                                    //token=b3e1c93a93f080bc01eb0480fffd6bdd3cb8a7fa
-                                                                    //we must dispatch this back to the main queue
-                                                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                                                        if(htmlBody)
-                                                                        {
-                                                                            NSString *html =
-                                                                        [NSString stringWithFormat:@"<html><head><title></title><style>img{max-width:100%%;height:auto !important;width:auto !important;};</style></head><body style=\"margin:20px; padding:0; background:transparent;\">%@</body></html>", htmlBody];
-                                                                            self.html = html;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            self.html = @"";
-                                                                            NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlEncoded]];
-                                                                            [self.webView loadRequest:request];
-                                                                        }
-                                                                    });
-                                                                }
-                                                            } else
-                                                            {
-                                                                NSLog(@"Background Task failed : %@", error);
-                                                            }
-                                                        }];
-        [task resume]; // don't forget that all NSURLSession tasks start out suspended!
+        if(self.newsItem.url)
+        {
+            NSString *encodedURL = [self.newsItem.url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+            NSURL *contentURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://readability.com/api/content/v1/parser?url=%@&token=b3e1c93a93f080bc01eb0480fffd6bdd3cb8a7fa",encodedURL]];
+            
+            NSURLRequest *request = [NSURLRequest requestWithURL:contentURL];
+            
+            // another configuration option is backgroundSessionConfiguration (multitasking API required though)
+            NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+            
+            // create the session without specifying a queue to run completion handler on (thus, not main queue)
+            // we also don't specify a delegate (since completion handler is all we need)
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+            
+            NSURLSessionDownloadTask *task =
+                [session downloadTaskWithRequest:request
+                    completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
+                        // this handler is not executing on the main queue, so we can't do UI directly here
+                        if (!error) {
+                            NSError *err = nil;
+                            NSDictionary *propertyLists = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:localfile] options:0 error:&err];
+                            if(err){
+                                NSLog(@"Error Parsing JSON Data from url-%@ error-%@",contentURL, err);
+                            }
+                            NSString *htmlBody = [propertyLists valueForKey:@"content"];
+                            //we must dispatch this back to the main queue
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                if(htmlBody){
+                                    NSString *html =
+                                        [NSString stringWithFormat:@"<html><head><title></title><style>img{max-width:100%%;height:auto !important;width:auto !important;};</style></head><body style=\"margin:20px; padding:0; background:transparent;\">%@</body></html>", htmlBody];
+                                    self.html = html;
+                                }
+                                else {
+                                    self.html = @"";
+                                    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:encodedURL]];
+                                    [self.webView loadRequest:request];
+                                }
+                            });
+                        } else {
+                            NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
+                        }
+                    }
+                 ];
+            [task resume]; // don't forget that all NSURLSession tasks start out suspended!
+        } else {
+            NSString *html =
+            [NSString stringWithFormat:@"<html><head><title></title><style>img{max-width:100%%;height:auto !important;width:auto !important;};</style></head><body style=\"margin:20px; padding:0; background:transparent;\">%@</body></html>", self.newsItem.text];
+            self.html = html;
+
+        }
     }
 }
 

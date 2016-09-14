@@ -38,6 +38,12 @@
         user.created = [userDictionary valueForKey:HN_USER_CREATED];
         user.delay = [userDictionary valueForKey:HN_USER_DELAY];
         user.karma = [userDictionary valueForKey:HN_USER_KARMA];
+        
+        NSError *error = nil;
+        if ([context save:&error] == NO) {
+            NSAssert(NO, @"Error saving context: %@\n%@\n%@", [error localizedDescription], [error userInfo], error);
+        }
+        
     }
     
     return user;

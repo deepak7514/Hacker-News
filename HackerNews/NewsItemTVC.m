@@ -11,12 +11,13 @@
 #import "HNFetcher.h"
 #import "AppDelegate.h"
 #import "NewsItem+Create.h"
+#import <AFNetworking/AFHTTPSessionManager.h>
 
 @interface NewsItemTVC ()
 
 @property (nonatomic, strong) NSArray *newsItems; // of News Items IDs
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
-
+- (IBAction)refresh:(UIRefreshControl *)sender;
 @end
 
 
@@ -25,7 +26,22 @@
 // whenever our Model is set, must update our View
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // Default Story Type
+    //self.storyTypeURL = [HNFetcher URLforNewsItem:@"top"];
+    
     self.tableView.contentInset = UIEdgeInsetsMake(0, -10, 0, 0);
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
+    request.predicate = nil;
+    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
+                                                              ascending:YES
+                                                               selector:@selector(compare:)]];
+    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
+                                                                        managedObjectContext:self.managedObjectContext
+                                                                          sectionNameKeyPath:nil cacheName:nil];
+    
     
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.spinner.color = [UIColor blueColor];
@@ -34,24 +50,7 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.spinner.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.spinner];
-    
-//    NSLayoutConstraint *xconstraint = [self.spinner.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor];
-//    NSLayoutConstraint *yconstraint = [self.spinner.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor];
-//    [self.view addConstraints:@[xconstraint, yconstraint]];
-    
-    //NSLayoutConstraint *xCenterConstraint = [NSLayoutConstraint constraintWithItem:self.spinner attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
-    //[self.view addConstraint:xCenterConstraint];
-    
-    //NSLayoutConstraint *yCenterConstraint = [NSLayoutConstraint constraintWithItem:self.spinner attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
-    //[self.view addConstraint:yCenterConstraint];
-    
     [self.spinner startAnimating];
-    
-    self.refreshControl = [[UIRefreshControl alloc] init];
-    self.refreshControl.backgroundColor = [UIColor purpleColor];
-    self.refreshControl.tintColor = [UIColor whiteColor];
-    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
-    [self.tableView addSubview:self.refreshControl];
 }
 
 - (NSManagedObjectContext *)managedObjectContext
@@ -64,49 +63,14 @@
     return _managedObjectContext;
 }
 
-- (void)refresh:(UIRefreshControl *)refreshControl {
-    // Do your job, when done:
-    [self startDownloadingContent];
-}
-
-- (void)reloadData
-{
-    // Reload table data
-    [self.tableView reloadData];
-    
-    // End the refreshing
-    if (self.refreshControl) {
-        
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"MMM d, h:mm a"];
-        NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
-        NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
-                                                                    forKey:NSForegroundColorAttributeName];
-        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
-        self.refreshControl.attributedTitle = attributedTitle;
-        
-        [self.refreshControl endRefreshing];
-    }
-}
-
 - (void)setNewsItems:(NSArray *)newsItems
 {
     _newsItems = newsItems;
-    //[NewsItem loadNewsItemsFromArray:newsItems intoManagedObjectContext:self.managedObjectContext];
-    //self.tableView.backgroundView = nil;
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    
-//    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
-//    request.predicate = [NSPredicate predicateWithFormat:@"unique IN %@", newsItems];
-//    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
-//                                                              ascending:YES
-//                                                               selector:@selector(localizedStandardCompare:)]];
-//    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
-//                                                                        managedObjectContext:self.managedObjectContext
-//                                                                          sectionNameKeyPath:nil cacheName:nil];
-//    
-    [self reloadData];
+    [NewsItem loadNewsItemsFromArray:newsItems];
     [self.spinner stopAnimating];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    //[self.tableView reloadData];
+    
 }
 
 #pragma mark - UITableViewDataSource
@@ -114,16 +78,16 @@
 // the methods in this protocol are what provides the View its data
 // (remember that Views are not allowed to own their data)
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section (we only have one)
-    return [self.newsItems count];
-}
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+//{
+//    return 1;
+//}
+//
+//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+//{
+//    // Return the number of rows in the section (we only have one)
+//    return [self.newsItems count];
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -139,12 +103,12 @@
     // Configure the cell...
     
     // get the photo out of our Model
-    NewsItem *newsItem = [NewsItem newsItemWithNewsItemId:[self.newsItems objectAtIndex:indexPath.row] inManagedObjectContext:self.managedObjectContext];
-    //NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    //NewsItem *newsItem = [NewsItem newsItemWithNewsItemId:[self.newsItems objectAtIndex:indexPath.row] inManagedObjectContext:self.managedObjectContext];
+    NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     // update UILabels in the UITableViewCell
     cell.textLabel.text = newsItem.title;
-    cell.detailTextLabel.text = newsItem.url;
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@-%@", newsItem.unique, newsItem.url];
     
     return cell;
 }
@@ -190,10 +154,10 @@
 // used either when segueing to an ImageViewController
 //   or when our UISplitViewController's Detail view controller is an ImageViewController
 
-- (void)prepareNewsItemContentVC:(NewsItemContentVC *)vc toDisplayNewsItem:(NSString *)newsItemId
+- (void)prepareNewsItemContentVC:(NewsItemContentVC *)vc toDisplayNewsItem:(NewsItem *)newsItem
 {
-    vc.itemURL = [HNFetcher URLforItem:newsItemId];
-    vc.title = [NSString stringWithFormat:@"%@", newsItemId];
+    vc.newsItem = newsItem;
+    vc.title = [NSString stringWithFormat:@"%@", newsItem.unique];
 }
 
 // In a story board-based application, you will often want to do a little preparation before navigation
@@ -212,24 +176,11 @@
                 // yes ... is the destination an NewsItemContentVC
                 if ([segue.destinationViewController isKindOfClass:[NewsItemContentVC class]]) {
                     // yes ... then we know how to prepare for that segue!
-                    [self prepareNewsItemContentVC:segue.destinationViewController toDisplayNewsItem:[self.newsItems objectAtIndex:indexPath.row]];
+                    [self prepareNewsItemContentVC:segue.destinationViewController toDisplayNewsItem:[self.fetchedResultsController objectAtIndexPath:indexPath]];
                 }
             }
         }
     }
-}
-
-- (NSDictionary *)fetchNewsItem:(NSString *)itemId
-{
-    NSURL *url = [HNFetcher URLforItem:itemId];
-    // fetch the JSON data from HackerNews
-    NSError *error = nil;
-    NSData *jsonResults = [NSData dataWithContentsOfURL:url options:0 error:&error];
-    if(error){NSLog(@"Error Fetching JSON Data from url-%@ error-%@",url, error);}
-    // convert it to a Property List (NSArray and NSDictionary)
-    NSDictionary *propertyListResults = [NSJSONSerialization JSONObjectWithData:jsonResults options:0 error:&error];
-    if(error){NSLog(@"Error Parsing JSON Data from url-%@ error-%@",url, error);}
-    return propertyListResults;
 }
 
 #pragma mark - Setting the NewsItems from the StoryType's URL
@@ -279,4 +230,8 @@
     }
 }
 
+- (IBAction)refresh:(UIRefreshControl *)sender {
+    [self startDownloadingContent];
+    [sender endRefreshing];
+}
 @end

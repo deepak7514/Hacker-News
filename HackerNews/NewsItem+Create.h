@@ -13,7 +13,6 @@
 + (NewsItem *)newsItemWithNewsItemId:(NSString *)newsItemid
         inManagedObjectContext:(NSManagedObjectContext *)context;
 
-+ (void)loadNewsItemsFromArray:(NSArray *)newsItems // of NewsItem NSDictionary
-         intoManagedObjectContext:(NSManagedObjectContext *)context;
++ (void)loadNewsItemsFromArray:(NSArray *)newsItems; // of NewsItem NSDictionary
 
 @end

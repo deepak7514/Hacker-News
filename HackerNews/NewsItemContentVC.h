@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NewsItem.h"
 
 @interface NewsItemContentVC : UIViewController
-@property (strong, nonatomic) NSURL *itemURL;
+@property (strong, nonatomic) NewsItem *newsItem;
 @end

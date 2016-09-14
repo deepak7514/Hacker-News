@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F939C08F1D7D367000AF23DE /* CommentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F939C08E1D7D367000AF23DE /* CommentVC.m */; };
+		F939C0911D7D619F00AF23DE /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F939C0901D7D619F00AF23DE /* AFNetworking.framework */; };
 		F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0C1D74154F00D5A172 /* User+Create.m */; };
 		F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */; };
 		F988FA181D78168300702D65 /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F988FA171D78168300702D65 /* CoreDataTableViewController.m */; };
@@ -31,6 +32,7 @@
 /* Begin PBXFileReference section */
 		F939C08D1D7D367000AF23DE /* CommentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentVC.h; sourceTree = "<group>"; };
 		F939C08E1D7D367000AF23DE /* CommentVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentVC.m; sourceTree = "<group>"; };
+		F939C0901D7D619F00AF23DE /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
 		F93B0D0B1D74154F00D5A172 /* User+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+Create.h"; sourceTree = "<group>"; };
 		F93B0D0C1D74154F00D5A172 /* User+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Create.m"; sourceTree = "<group>"; };
 		F93B0D0E1D74156600D5A172 /* NewsItem+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NewsItem+Create.h"; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F939C0911D7D619F00AF23DE /* AFNetworking.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +102,7 @@
 		F9B4E8B01D71C43D00CB0FA8 = {
 			isa = PBXGroup;
 			children = (
+				F939C0901D7D619F00AF23DE /* AFNetworking.framework */,
 				F9B4E8BB1D71C43D00CB0FA8 /* HackerNews */,
 				F9B4E8BA1D71C43D00CB0FA8 /* Products */,
 			);
@@ -176,6 +180,7 @@
 				F9B4E8B51D71C43D00CB0FA8 /* Sources */,
 				F9B4E8B61D71C43D00CB0FA8 /* Frameworks */,
 				F9B4E8B71D71C43D00CB0FA8 /* Resources */,
+				F939C0921D7D61E600AF23DE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -197,6 +202,11 @@
 				TargetAttributes = {
 					F9B4E8B81D71C43D00CB0FA8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -230,6 +240,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F939C0921D7D61E600AF23DE /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/AFNetworking.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F9B4E8B51D71C43D00CB0FA8 /* Sources */ = {
@@ -363,6 +390,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = HackerNews/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deepak.HackerNews;
@@ -374,6 +405,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = HackerNews/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deepak.HackerNews;

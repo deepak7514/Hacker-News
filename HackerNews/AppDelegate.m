@@ -107,9 +107,36 @@
     if (!coordinator) {
         return nil;
     }
+    
+    // create MOC
     _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    
+    // subscribe to change notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_mocDidSaveNotification:) name:NSManagedObjectContextDidSaveNotification object:nil];
+    
     return _managedObjectContext;
+}
+
+- (void)_mocDidSaveNotification:(NSNotification *)notification
+{
+    NSManagedObjectContext *savedContext = [notification object];
+    
+    // ignore change notifications for the main MOC
+    if (_managedObjectContext == savedContext)
+    {
+        return;
+    }
+    
+    if (_managedObjectContext.persistentStoreCoordinator != savedContext.persistentStoreCoordinator)
+    {
+        // that's another database
+        return;
+    }
+    
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_managedObjectContext mergeChangesFromContextDidSaveNotification:notification];
+    });
 }
 
 #pragma mark - Core Data Saving support

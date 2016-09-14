@@ -207,6 +207,15 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="NewsItem" id="S0n-uS-2hA"/>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="MAD-fW-uM4">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
+                        <attributedString key="attributedTitle"/>
+                        <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <connections>
+                            <action selector="refresh:" destination="kzF-Gf-R07" eventType="valueChanged" id="BA8-C4-frd"/>
+                        </connections>
+                    </refreshControl>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0vh-Z2-M0O" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
