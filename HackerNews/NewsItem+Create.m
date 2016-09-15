@@ -132,7 +132,7 @@
         newsItem.type = [newsItemDictionary valueForKey:HN_NEWSITEM_TYPE];
         newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
         
-        //    newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
+        newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
         //    NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
         //    for (NSString *kid in kidsForNewsItem) {
         //        [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];

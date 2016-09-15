@@ -11,6 +11,7 @@
 #import "HNFetcher.h"
 #import "AppDelegate.h"
 #import "NewsItem+Create.h"
+#import "User.h"
 #import <AFNetworking/AFHTTPSessionManager.h>
 
 @interface NewsItemTVC ()
@@ -33,7 +34,7 @@
         self.storyType = @"top";
     }
     
-    self.tableView.contentInset = UIEdgeInsetsMake(0, -10, 0, 0);
+    //self.tableView.contentInset = UIEdgeInsetsMake(0, -10, 0, 0);
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -84,7 +85,7 @@
     NSLog(@"storyType - %@", self.storyType);
     [self modifyFetchedResultsControllerWithStoryType:self.storyType withNewsItems:newsItems];
     [NewsItem loadNewsItemsFromArray:newsItems];
-    [self.tableView reloadData];
+    //[self.tableView reloadData];
     [self.spinner stopAnimating];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     
@@ -99,9 +100,6 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        //cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        //cell.textLabel.numberOfLines = 0;
-        //cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:16.0];
     }
     // Configure the cell...
     
@@ -109,23 +107,61 @@
     NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     // update UILabels in the UITableViewCell
-    cell.textLabel.text = newsItem.title;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@-%@", newsItem.unique, newsItem.url];
+    UILabel *titleLabel = (UILabel *)[cell viewWithTag:100];
+    titleLabel.text = newsItem.title;
+    titleLabel.font = [UIFont boldSystemFontOfSize:13];
+    
+    UILabel *userNameLabel = (UILabel *)[cell viewWithTag:101];
+    userNameLabel.text = newsItem.by.unique;
+    userNameLabel.font = [UIFont italicSystemFontOfSize:13];
+    
+    UILabel *uriLabel = (UILabel *)[cell viewWithTag:102];
+    uriLabel.text = newsItem.url;
+    uriLabel.font = [UIFont italicSystemFontOfSize:13];
+    
+    UILabel *scoreLabel = (UILabel *)[cell viewWithTag:103];
+    scoreLabel.text = [NSString stringWithFormat:@"S:%@",newsItem.score];
+    scoreLabel.font = [UIFont italicSystemFontOfSize:13];
+    
+    UILabel *commentsLabel = (UILabel *)[cell viewWithTag:104];
+    commentsLabel.text = [NSString stringWithFormat:@"C:%@",newsItem.descendants];
+    commentsLabel.font = [UIFont italicSystemFontOfSize:13];
     
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *cellText = @"Go get some text for your cell.";
-    UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size:16.0];
+    NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
-    NSAttributedString *attributedText =
-    [[NSAttributedString alloc] initWithString:cellText attributes:@{ NSFontAttributeName: cellFont }];
-    CGRect rect = [attributedText boundingRectWithSize:CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX)
-                                               options:NSStringDrawingUsesLineFragmentOrigin
-                                               context:nil];
-    return rect.size.height + 40;
+    NSString *cellTitle = newsItem.title;
+    NSString *cellUserName = newsItem.by.unique;
+    NSString *cellUri = @"Random Url";
+    CGFloat size = 0;
+    
+    if(cellTitle){
+        NSAttributedString *attributedText =
+        [[NSAttributedString alloc] initWithString:cellTitle attributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:13]}];
+        size += [attributedText boundingRectWithSize:CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX)
+                                                   options:NSStringDrawingUsesLineFragmentOrigin
+                                                   context:nil].size.height;
+    }
+    if(cellUserName){
+        NSAttributedString *attributedText =
+        [[NSAttributedString alloc] initWithString:cellUserName attributes:@{ NSFontAttributeName: [UIFont italicSystemFontOfSize:13]}];
+        size += [attributedText boundingRectWithSize:CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX)
+                                                    options:NSStringDrawingUsesLineFragmentOrigin
+                                                    context:nil].size.height;
+    }
+    if(cellUri){
+        NSAttributedString *attributedText =
+        [[NSAttributedString alloc] initWithString:cellUri attributes:@{ NSFontAttributeName: [UIFont italicSystemFontOfSize:13]}];
+        size += [attributedText boundingRectWithSize:CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX)
+                                             options:NSStringDrawingUsesLineFragmentOrigin
+                                             context:nil].size.height;
+    }
+    
+    return size + 25;
 }
 
 #pragma mark - UITableViewDelegate
@@ -146,7 +182,7 @@
     // is the Detail is an NewsItemContentVC?
     if ([detail isKindOfClass:[NewsItemContentVC class]]) {
         // yes ... we know how to update that!
-        [self prepareNewsItemContentVC:detail toDisplayNewsItem:self.newsItems[indexPath.row]];
+        [self prepareNewsItemContentVC:detail toDisplayNewsItem:[self.fetchedResultsController objectAtIndexPath:indexPath]];
     }
 }
 

@@ -14,7 +14,6 @@
 + (User *)userWithUserId:(NSString *)userId
     inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    NSLog(@"User - %@", userId);
     User *user = nil;
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"User"];
@@ -28,22 +27,22 @@
     } else if ([matches count]) {
         user = [matches firstObject];
     } else {
-        user = [NSEntityDescription insertNewObjectForEntityForName:@"User"
-                                                 inManagedObjectContext:context];
-        
         NSDictionary *userDictionary = [self fetchUserInfoWithUserId:userId];
-        
-        user.unique = [userDictionary valueForKey:HN_USER_ID];
-        user.about = [userDictionary valueForKey:HN_USER_ABOUT];
-        user.created = [userDictionary valueForKey:HN_USER_CREATED];
-        user.delay = [userDictionary valueForKey:HN_USER_DELAY];
-        user.karma = [userDictionary valueForKey:HN_USER_KARMA];
-        
-        NSError *error = nil;
-        if ([context save:&error] == NO) {
-            NSAssert(NO, @"Error saving context: %@\n%@\n%@", [error localizedDescription], [error userInfo], error);
+        if(userDictionary){
+            user = [NSEntityDescription insertNewObjectForEntityForName:@"User"
+                                                     inManagedObjectContext:context];
+            
+            user.unique = [userDictionary valueForKey:HN_USER_ID];
+            user.about = [userDictionary valueForKey:HN_USER_ABOUT];
+            user.created = [userDictionary valueForKey:HN_USER_CREATED];
+            user.delay = [userDictionary valueForKey:HN_USER_DELAY];
+            user.karma = [userDictionary valueForKey:HN_USER_KARMA];
+            
+//            NSError *error = nil;
+//            if ([context save:&error] == NO) {
+//                NSAssert(NO, @"Error saving context: %@\n%@\n%@", [error localizedDescription], [error userInfo], error);
+//            }
         }
-        
     }
     
     return user;
