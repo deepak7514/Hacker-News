@@ -27,30 +27,45 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Default Story Type
-    //self.storyTypeURL = [HNFetcher URLforNewsItem:@"top"];
+    NSLog(@"%@", self.storyType);
+    if(self.storyType == nil){
+        // Default Story Type
+        self.storyType = @"top";
+    }
     
     self.tableView.contentInset = UIEdgeInsetsMake(0, -10, 0, 0);
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
-    request.predicate = nil;
-    request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
-                                                              ascending:YES
-                                                               selector:@selector(compare:)]];
-    self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
-                                                                        managedObjectContext:self.managedObjectContext
-                                                                          sectionNameKeyPath:nil cacheName:nil];
-    
     
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.spinner.color = [UIColor blueColor];
     self.spinner.center = CGPointMake([UIScreen mainScreen].bounds.size.width/2,[UIScreen mainScreen].bounds.size.height/3);
     self.spinner.hidesWhenStopped = YES;
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.spinner.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.spinner];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.spinner startAnimating];
+}
+
+- (void)modifyFetchedResultsControllerWithStoryType:(NSString *)storyType withNewsItems:(NSArray *)newsItems
+{
+    if(self.fetchedResultsController == nil)
+    {
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
+        request.predicate = [NSPredicate predicateWithFormat:@"unique IN %@", newsItems];
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
+                                                                  ascending:YES
+                                                                   selector:@selector(compare:)]];
+        self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
+                                                                            managedObjectContext:self.managedObjectContext
+                                                                              sectionNameKeyPath:nil cacheName:nil];
+    } else {
+        [self.fetchedResultsController.fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"unique IN %@", newsItems]];
+        NSError *error;
+        if (![[self fetchedResultsController] performFetch:&error]) {
+            // Update to handle the error appropriately.
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        }
+    }
 }
 
 - (NSManagedObjectContext *)managedObjectContext
@@ -66,28 +81,16 @@
 - (void)setNewsItems:(NSArray *)newsItems
 {
     _newsItems = newsItems;
+    NSLog(@"storyType - %@", self.storyType);
+    [self modifyFetchedResultsControllerWithStoryType:self.storyType withNewsItems:newsItems];
     [NewsItem loadNewsItemsFromArray:newsItems];
+    [self.tableView reloadData];
     [self.spinner stopAnimating];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    //[self.tableView reloadData];
     
 }
 
 #pragma mark - UITableViewDataSource
-
-// the methods in this protocol are what provides the View its data
-// (remember that Views are not allowed to own their data)
-
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-//{
-//    return 1;
-//}
-//
-//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-//{
-//    // Return the number of rows in the section (we only have one)
-//    return [self.newsItems count];
-//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -102,8 +105,7 @@
     }
     // Configure the cell...
     
-    // get the photo out of our Model
-    //NewsItem *newsItem = [NewsItem newsItemWithNewsItemId:[self.newsItems objectAtIndex:indexPath.row] inManagedObjectContext:self.managedObjectContext];
+    // get the newsItem out of our Model
     NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     // update UILabels in the UITableViewCell
@@ -185,17 +187,20 @@
 
 #pragma mark - Setting the NewsItems from the StoryType's URL
 
-- (void)setStoryTypeURL:(NSURL *)storyTypeURL
+- (void)setStoryType:(NSString *)storyType
 {
-    _storyTypeURL = storyTypeURL;
+    _storyType = storyType;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.spinner startAnimating];
     [self startDownloadingContent];
 }
 
 - (void)startDownloadingContent
 {
-    if (self.storyTypeURL)
+    if (self.storyType)
     {
-        NSURLRequest *request = [NSURLRequest requestWithURL:self.storyTypeURL];
+        NSURL *storyTypeURL = [HNFetcher URLforNewsItem:self.storyType];
+        NSURLRequest *request = [NSURLRequest requestWithURL:storyTypeURL];
         
         // another configuration option is backgroundSessionConfiguration (multitasking API required though)
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
@@ -211,13 +216,13 @@
                                                     // this handler is not executing on the main queue, so we can't do UI directly here
                                                     if (!error)
                                                     {
-                                                        if ([request.URL isEqual:self.storyTypeURL])
+                                                        if ([request.URL isEqual:storyTypeURL])
                                                         {
                                                             NSError *error = nil;
                                                             NSData *jsonData = [NSData dataWithContentsOfURL:localfile options:0 error:&error];
-                                                            if(error){NSLog(@"Error Fetching JSON Data from url-%@ error-%@",self.storyTypeURL, error);}
+                                                            if(error){NSLog(@"Error Fetching JSON Data from url-%@ error-%@",storyTypeURL, error);}
                                                             NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&error];
-                                                            if(error){NSLog(@"Error Parsing JSON Data from url-%@ error-%@",self.storyTypeURL, error);}
+                                                            if(error){NSLog(@"Error Parsing JSON Data from url-%@ error-%@", storyTypeURL, error);}
                                                             //we must dispatch this back to the main queue
                                                             dispatch_async(dispatch_get_main_queue(), ^{ self.newsItems = jsonArray;});
                                                         }

@@ -23,13 +23,20 @@
 {
     [super viewDidLoad];
     [super setAutomaticallyAdjustsScrollViewInsets:NO];
-    [self.spinner startAnimating];
+    
+    if(self.html)
+    {
+        self.html = self.html;
+    }
+    
+    //[self.spinner startAnimating];
 }
 
 #pragma mark - Properties
 
 - (void)setHtml:(NSString *)html
 {
+    _html = html;
     [self.webView loadHTMLString:[html description] baseURL:nil];
     [self.spinner stopAnimating];
 }

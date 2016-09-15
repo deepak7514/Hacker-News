@@ -36,7 +36,7 @@
     if([segue.destinationViewController isKindOfClass:[NewsItemTVC class]])
     {
         NewsItemTVC *dest = (NewsItemTVC *)segue.destinationViewController;
-        dest.storyTypeURL = [HNFetcher URLforNewsItem:segue.identifier];
+        dest.storyType = segue.identifier;
         dest.title = [NSString stringWithFormat:@"%@ Stories", [[NSString stringWithFormat:@"%@",segue.identifier] capitalizedString]];
     }
 }

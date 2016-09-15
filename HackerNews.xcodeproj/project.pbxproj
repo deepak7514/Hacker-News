@@ -14,7 +14,6 @@
 		F988FA181D78168300702D65 /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F988FA171D78168300702D65 /* CoreDataTableViewController.m */; };
 		F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8BD1D71C43D00CB0FA8 /* main.m */; };
 		F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */; };
-		F9B4E8C41D71C43D00CB0FA8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C31D71C43D00CB0FA8 /* ViewController.m */; };
 		F9B4E8C71D71C43D00CB0FA8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */; };
 		F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C81D71C43D00CB0FA8 /* HackerNews.xcdatamodeld */; };
 		F9B4E8CC1D71C43D00CB0FA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F9B4E8CB1D71C43D00CB0FA8 /* Assets.xcassets */; };
@@ -43,8 +42,6 @@
 		F9B4E8BD1D71C43D00CB0FA8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		F9B4E8C21D71C43D00CB0FA8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		F9B4E8C31D71C43D00CB0FA8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		F9B4E8C61D71C43D00CB0FA8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F9B4E8C91D71C43D00CB0FA8 /* HackerNews.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HackerNews.xcdatamodel; sourceTree = "<group>"; };
 		F9B4E8CB1D71C43D00CB0FA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -93,8 +90,6 @@
 				F9B4E8F21D71C82200CB0FA8 /* NewsTVC.m */,
 				F9B4E8F31D71C82200CB0FA8 /* NewsItemTVC.h */,
 				F9B4E8F41D71C82200CB0FA8 /* NewsItemTVC.m */,
-				F9B4E8C21D71C43D00CB0FA8 /* ViewController.h */,
-				F9B4E8C31D71C43D00CB0FA8 /* ViewController.m */,
 			);
 			name = "View Controller";
 			sourceTree = "<group>";
@@ -271,7 +266,6 @@
 				F9B4E8F61D71C82200CB0FA8 /* NewsTVC.m in Sources */,
 				F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */,
 				F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */,
-				F9B4E8C41D71C43D00CB0FA8 /* ViewController.m in Sources */,
 				F9B4E8F71D71C82200CB0FA8 /* NewsItemTVC.m in Sources */,
 				F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */,
 				F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */,
