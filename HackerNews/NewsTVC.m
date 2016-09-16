@@ -9,6 +9,7 @@
 #import "NewsTVC.h"
 #import "NewsItemTVC.h"
 #import "HN Fetcher/HNFetcher.h"
+#import "SWRevealViewController.h"
 
 @interface NewsTVC ()
 
@@ -23,8 +24,8 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
 
+}
 
 #pragma mark - Navigation
 
@@ -32,13 +33,13 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-  
-    if([segue.destinationViewController isKindOfClass:[NewsItemTVC class]])
-    {
-        NewsItemTVC *dest = (NewsItemTVC *)segue.destinationViewController;
-        dest.storyType = segue.identifier;
-        dest.title = [NSString stringWithFormat:@"%@ Stories", [[NSString stringWithFormat:@"%@",segue.identifier] capitalizedString]];
-    }
+    
+    UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
+    navController.title = [NSString stringWithFormat:@"%@ Stories", [[NSString stringWithFormat:@"%@",segue.identifier] capitalizedString]];
+    
+    NewsItemTVC *dest = (NewsItemTVC *)[navController childViewControllers].firstObject;
+    dest.storyType = segue.identifier;
+    dest.title = [NSString stringWithFormat:@"%@ Stories", [[NSString stringWithFormat:@"%@",segue.identifier] capitalizedString]];
 }
 
 @end

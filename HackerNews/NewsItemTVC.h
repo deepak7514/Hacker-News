@@ -14,5 +14,6 @@
 // Model of this MVC (it can be publicly set)
 @property (nonatomic, strong) NSString *storyType; // passed by segue of corresponding type
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 
 @end

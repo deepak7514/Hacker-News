@@ -139,8 +139,24 @@
         //    }
         
         NSError *error = nil;
-        if ([context save:&error] == NO) {
-            NSAssert(NO, @"Error saving context: %@\n%@\n%@", [error localizedDescription], [error userInfo], error);
+        if ([context hasChanges] && ![context save:&error]) {
+            
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            
+            NSArray * conflictListArray = (NSArray*)[[error userInfo] objectForKey:@"conflictList"];
+            NSLog(@"conflict array: %@",conflictListArray);
+            NSError * conflictFixError = nil;
+            
+            if ([conflictListArray count] > 0) {
+                
+                NSMergePolicy *mergePolicy = [[NSMergePolicy alloc] initWithMergeType:NSOverwriteMergePolicyType];
+                
+                if (![mergePolicy resolveConflicts:conflictListArray error:&conflictFixError]) {
+                    NSLog(@"Unresolved conflict error %@, %@", conflictFixError, [conflictFixError userInfo]);
+                    NSLog(@"abort");
+                    abort();
+                }
+            }
         }
     }];
 }

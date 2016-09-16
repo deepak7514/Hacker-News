@@ -12,6 +12,7 @@
 #import "AppDelegate.h"
 #import "NewsItem+Create.h"
 #import "User.h"
+#import "SWRevealViewController.h"
 #import <AFNetworking/AFHTTPSessionManager.h>
 
 @interface NewsItemTVC ()
@@ -28,11 +29,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSLog(@"%@", self.storyType);
+    SWRevealViewController *revealViewController = self.revealViewController;
+    if ( revealViewController )
+    {
+        [self.sidebarButton setTarget: self.revealViewController];
+        [self.sidebarButton setAction: @selector( revealToggle: )];
+        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    }
+    
     if(self.storyType == nil){
         // Default Story Type
+        self.title = @"Top Stories";
         self.storyType = @"top";
     }
+    [self startDownloadingContent];
     
     //self.tableView.contentInset = UIEdgeInsetsMake(0, -10, 0, 0);
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -49,10 +59,13 @@
 
 - (void)modifyFetchedResultsControllerWithStoryType:(NSString *)storyType withNewsItems:(NSArray *)newsItems
 {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"unique IN %@", newsItems];
+    
+    
     if(self.fetchedResultsController == nil)
     {
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
-        request.predicate = [NSPredicate predicateWithFormat:@"unique IN %@", newsItems];
+        request.predicate = predicate;
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
                                                                   ascending:YES
                                                                    selector:@selector(compare:)]];
@@ -60,7 +73,7 @@
                                                                             managedObjectContext:self.managedObjectContext
                                                                               sectionNameKeyPath:nil cacheName:nil];
     } else {
-        [self.fetchedResultsController.fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"unique IN %@", newsItems]];
+        [self.fetchedResultsController.fetchRequest setPredicate:predicate];
         NSError *error;
         if (![[self fetchedResultsController] performFetch:&error]) {
             // Update to handle the error appropriately.
@@ -82,7 +95,6 @@
 - (void)setNewsItems:(NSArray *)newsItems
 {
     _newsItems = newsItems;
-    NSLog(@"storyType - %@", self.storyType);
     [self modifyFetchedResultsControllerWithStoryType:self.storyType withNewsItems:newsItems];
     [NewsItem loadNewsItemsFromArray:newsItems];
     //[self.tableView reloadData];
@@ -222,14 +234,6 @@
 }
 
 #pragma mark - Setting the NewsItems from the StoryType's URL
-
-- (void)setStoryType:(NSString *)storyType
-{
-    _storyType = storyType;
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.spinner startAnimating];
-    [self startDownloadingContent];
-}
 
 - (void)startDownloadingContent
 {

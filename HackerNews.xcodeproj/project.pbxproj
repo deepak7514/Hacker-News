@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */; };
 		F939C08F1D7D367000AF23DE /* CommentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F939C08E1D7D367000AF23DE /* CommentVC.m */; };
 		F939C0911D7D619F00AF23DE /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F939C0901D7D619F00AF23DE /* AFNetworking.framework */; };
 		F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0C1D74154F00D5A172 /* User+Create.m */; };
@@ -29,6 +30,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F903F8141D8BAF5900DDC885 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
+		F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
 		F939C08D1D7D367000AF23DE /* CommentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentVC.h; sourceTree = "<group>"; };
 		F939C08E1D7D367000AF23DE /* CommentVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentVC.m; sourceTree = "<group>"; };
 		F939C0901D7D619F00AF23DE /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
@@ -77,6 +80,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F903F8131D8BAE8200DDC885 /* SWRevealView Controller */ = {
+			isa = PBXGroup;
+			children = (
+				F903F8141D8BAF5900DDC885 /* SWRevealViewController.h */,
+				F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */,
+			);
+			name = "SWRevealView Controller";
+			sourceTree = "<group>";
+		};
 		F93B0D0A1D740C0C00D5A172 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -117,6 +129,7 @@
 				F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */,
 				F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */,
 				F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */,
+				F903F8131D8BAE8200DDC885 /* SWRevealView Controller */,
 				F9B4E8E31D71C74300CB0FA8 /* HN Fetcher */,
 				F9B4E8E21D71C6DC00CB0FA8 /* Core Data Model */,
 				F93B0D0A1D740C0C00D5A172 /* View Controller */,
@@ -269,6 +282,7 @@
 				F9B4E8F71D71C82200CB0FA8 /* NewsItemTVC.m in Sources */,
 				F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */,
 				F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */,
+				F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */,
 				F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */,
 				F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */,
 				F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */,
