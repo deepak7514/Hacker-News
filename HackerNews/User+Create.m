@@ -14,36 +14,45 @@
 + (User *)userWithUserId:(NSString *)userId
     inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    User *user = nil;
+    __block User *user = nil;
     
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"User"];
-    request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", userId];
-    
-    NSError *error;
-    NSArray *matches = [context executeFetchRequest:request error:&error];
-    
-    if (!matches || error || ([matches count] > 1)) {
-        // handle error
-    } else if ([matches count]) {
-        user = [matches firstObject];
-    } else {
-        NSDictionary *userDictionary = [self fetchUserInfoWithUserId:userId];
-        if(userDictionary){
-            user = [NSEntityDescription insertNewObjectForEntityForName:@"User"
-                                                     inManagedObjectContext:context];
-            
-            user.unique = [userDictionary valueForKey:HN_USER_ID];
-            user.about = [userDictionary valueForKey:HN_USER_ABOUT];
-            user.created = [userDictionary valueForKey:HN_USER_CREATED];
-            user.delay = [userDictionary valueForKey:HN_USER_DELAY];
-            user.karma = [userDictionary valueForKey:HN_USER_KARMA];
-            
-//            NSError *error = nil;
-//            if ([context save:&error] == NO) {
-//                NSAssert(NO, @"Error saving context: %@\n%@\n%@", [error localizedDescription], [error userInfo], error);
-//            }
+    [context performBlock:^{
+        
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"User"];
+        request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", userId];
+        
+        NSError *error;
+        NSArray *matches = [context executeFetchRequest:request error:&error];
+        
+        if (!matches) {
+            NSLog(@"Match is nil for User - %@", userId);
+        } else if (error) {
+            // handle error
+            NSLog(@"Error in fetching User -%@ from Core data - %@", userId, error);
+        } else if([matches count] > 1) {
+            // handle error
+            NSLog(@"Multiple Users found for UserId - %@", userId);
+        } else if ([matches count]) {
+            //NSLog(@"User - %@ already present", userId);
+            user = [matches firstObject];
+        } else {
+            //NSLog(@"Creating User - %@", userId);
+            NSDictionary *userDictionary = [self fetchUserInfoWithUserId:userId];
+            if(userDictionary){
+                user = [NSEntityDescription insertNewObjectForEntityForName:@"User"
+                                                         inManagedObjectContext:context];
+                
+                user.unique = [userDictionary valueForKey:HN_USER_ID];
+                user.about = [userDictionary valueForKey:HN_USER_ABOUT];
+                user.created = [userDictionary valueForKey:HN_USER_CREATED];
+                user.delay = [userDictionary valueForKey:HN_USER_DELAY];
+                user.karma = [userDictionary valueForKey:HN_USER_KARMA];
+                
+            } else {
+                NSLog(@"Empty PropertyLists for User - %@", userId);
+            }
         }
-    }
+    }];
     
     return user;
 }
@@ -60,7 +69,7 @@
     }
     // convert it to a Property List (NSArray and NSDictionary)
     NSDictionary *propertyListResults = [NSJSONSerialization JSONObjectWithData:jsonResults options:0 error:&error];
-    if(propertyListResults == nil)
+    if(error)
     {
         NSLog(@"Error in Parsing User Details with userName:%@ - %@", userId, error);
         return nil;

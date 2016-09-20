@@ -1,0 +1,6 @@
+framework module FormatterKit {
+  umbrella header "FormatterKit.h"
+
+  export *
+  module * { export * }
+}

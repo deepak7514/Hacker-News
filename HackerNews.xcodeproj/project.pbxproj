@@ -8,10 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */; };
-		F939C08F1D7D367000AF23DE /* CommentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F939C08E1D7D367000AF23DE /* CommentVC.m */; };
+		F91FA0751D90F57C00E9A0E0 /* CommentTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F903E9861D8D6576007931A4 /* CommentTVC.m */; };
+		F91FA0771D91064300E9A0E0 /* FormatterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F91FA0761D91064300E9A0E0 /* FormatterKit.framework */; };
 		F939C0911D7D619F00AF23DE /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F939C0901D7D619F00AF23DE /* AFNetworking.framework */; };
 		F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0C1D74154F00D5A172 /* User+Create.m */; };
 		F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */; };
+		F981E8181D8FC6F200AA88A8 /* RABatchChangeEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E7FA1D8FC6F200AA88A8 /* RABatchChangeEntity.m */; };
+		F981E8191D8FC6F200AA88A8 /* RABatchChanges.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E7FC1D8FC6F200AA88A8 /* RABatchChanges.m */; };
+		F981E81A1D8FC6F200AA88A8 /* RATableView.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E7FE1D8FC6F200AA88A8 /* RATableView.m */; };
+		F981E81B1D8FC6F200AA88A8 /* RATreeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8001D8FC6F200AA88A8 /* RATreeNode.m */; };
+		F981E81C1D8FC6F200AA88A8 /* RATreeNodeCollectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8031D8FC6F200AA88A8 /* RATreeNodeCollectionController.m */; };
+		F981E81D1D8FC6F200AA88A8 /* RATreeNodeController.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8051D8FC6F200AA88A8 /* RATreeNodeController.m */; };
+		F981E81E1D8FC6F200AA88A8 /* RATreeNodeItem+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8081D8FC6F200AA88A8 /* RATreeNodeItem+Private.m */; };
+		F981E81F1D8FC6F200AA88A8 /* RATreeNodeItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E80A1D8FC6F200AA88A8 /* RATreeNodeItem.m */; };
+		F981E8201D8FC6F200AA88A8 /* RATreeView+Enums.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E80C1D8FC6F200AA88A8 /* RATreeView+Enums.m */; };
+		F981E8211D8FC6F200AA88A8 /* RATreeView+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E80E1D8FC6F200AA88A8 /* RATreeView+Private.m */; };
+		F981E8221D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8101D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m */; };
+		F981E8231D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8121D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.m */; };
+		F981E8241D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8141D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m */; };
+		F981E8251D8FC6F200AA88A8 /* RATreeView.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8171D8FC6F200AA88A8 /* RATreeView.m */; };
+		F981E82B1D8FC83F00AA88A8 /* RADataObject.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8271D8FC83F00AA88A8 /* RADataObject.m */; };
+		F981E82C1D8FC83F00AA88A8 /* RATableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8291D8FC83F00AA88A8 /* RATableViewCell.m */; };
+		F981E82D1D8FC83F00AA88A8 /* RATableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */; };
 		F988FA181D78168300702D65 /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F988FA171D78168300702D65 /* CoreDataTableViewController.m */; };
 		F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8BD1D71C43D00CB0FA8 /* main.m */; };
 		F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */; };
@@ -30,15 +48,52 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F903E9851D8D6576007931A4 /* CommentTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentTVC.h; sourceTree = "<group>"; };
+		F903E9861D8D6576007931A4 /* CommentTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTVC.m; sourceTree = "<group>"; };
 		F903F8141D8BAF5900DDC885 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
-		F939C08D1D7D367000AF23DE /* CommentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentVC.h; sourceTree = "<group>"; };
-		F939C08E1D7D367000AF23DE /* CommentVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentVC.m; sourceTree = "<group>"; };
+		F91FA0761D91064300E9A0E0 /* FormatterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FormatterKit.framework; path = Carthage/Build/iOS/FormatterKit.framework; sourceTree = "<group>"; };
 		F939C0901D7D619F00AF23DE /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
 		F93B0D0B1D74154F00D5A172 /* User+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+Create.h"; sourceTree = "<group>"; };
 		F93B0D0C1D74154F00D5A172 /* User+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Create.m"; sourceTree = "<group>"; };
 		F93B0D0E1D74156600D5A172 /* NewsItem+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NewsItem+Create.h"; sourceTree = "<group>"; };
 		F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NewsItem+Create.m"; sourceTree = "<group>"; };
+		F981E7F91D8FC6F200AA88A8 /* RABatchChangeEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RABatchChangeEntity.h; sourceTree = "<group>"; };
+		F981E7FA1D8FC6F200AA88A8 /* RABatchChangeEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RABatchChangeEntity.m; sourceTree = "<group>"; };
+		F981E7FB1D8FC6F200AA88A8 /* RABatchChanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RABatchChanges.h; sourceTree = "<group>"; };
+		F981E7FC1D8FC6F200AA88A8 /* RABatchChanges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RABatchChanges.m; sourceTree = "<group>"; };
+		F981E7FD1D8FC6F200AA88A8 /* RATableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATableView.h; sourceTree = "<group>"; };
+		F981E7FE1D8FC6F200AA88A8 /* RATableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATableView.m; sourceTree = "<group>"; };
+		F981E7FF1D8FC6F200AA88A8 /* RATreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATreeNode.h; sourceTree = "<group>"; };
+		F981E8001D8FC6F200AA88A8 /* RATreeNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATreeNode.m; sourceTree = "<group>"; };
+		F981E8011D8FC6F200AA88A8 /* RATreeNode_ClassExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATreeNode_ClassExtension.h; sourceTree = "<group>"; };
+		F981E8021D8FC6F200AA88A8 /* RATreeNodeCollectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATreeNodeCollectionController.h; sourceTree = "<group>"; };
+		F981E8031D8FC6F200AA88A8 /* RATreeNodeCollectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATreeNodeCollectionController.m; sourceTree = "<group>"; };
+		F981E8041D8FC6F200AA88A8 /* RATreeNodeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATreeNodeController.h; sourceTree = "<group>"; };
+		F981E8051D8FC6F200AA88A8 /* RATreeNodeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATreeNodeController.m; sourceTree = "<group>"; };
+		F981E8061D8FC6F200AA88A8 /* RATreeNodeItem+ClassExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATreeNodeItem+ClassExtension.h"; sourceTree = "<group>"; };
+		F981E8071D8FC6F200AA88A8 /* RATreeNodeItem+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATreeNodeItem+Private.h"; sourceTree = "<group>"; };
+		F981E8081D8FC6F200AA88A8 /* RATreeNodeItem+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RATreeNodeItem+Private.m"; sourceTree = "<group>"; };
+		F981E8091D8FC6F200AA88A8 /* RATreeNodeItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATreeNodeItem.h; sourceTree = "<group>"; };
+		F981E80A1D8FC6F200AA88A8 /* RATreeNodeItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATreeNodeItem.m; sourceTree = "<group>"; };
+		F981E80B1D8FC6F200AA88A8 /* RATreeView+Enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATreeView+Enums.h"; sourceTree = "<group>"; };
+		F981E80C1D8FC6F200AA88A8 /* RATreeView+Enums.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RATreeView+Enums.m"; sourceTree = "<group>"; };
+		F981E80D1D8FC6F200AA88A8 /* RATreeView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATreeView+Private.h"; sourceTree = "<group>"; };
+		F981E80E1D8FC6F200AA88A8 /* RATreeView+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RATreeView+Private.m"; sourceTree = "<group>"; };
+		F981E80F1D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATreeView+RATreeNodeCollectionControllerDataSource.h"; sourceTree = "<group>"; };
+		F981E8101D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RATreeView+RATreeNodeCollectionControllerDataSource.m"; sourceTree = "<group>"; };
+		F981E8111D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATreeView+TableViewDataSource.h"; sourceTree = "<group>"; };
+		F981E8121D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RATreeView+TableViewDataSource.m"; sourceTree = "<group>"; };
+		F981E8131D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATreeView+TableViewDelegate.h"; sourceTree = "<group>"; };
+		F981E8141D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RATreeView+TableViewDelegate.m"; sourceTree = "<group>"; };
+		F981E8151D8FC6F200AA88A8 /* RATreeView_ClassExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATreeView_ClassExtension.h; sourceTree = "<group>"; };
+		F981E8161D8FC6F200AA88A8 /* RATreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATreeView.h; sourceTree = "<group>"; };
+		F981E8171D8FC6F200AA88A8 /* RATreeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATreeView.m; sourceTree = "<group>"; };
+		F981E8261D8FC83F00AA88A8 /* RADataObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RADataObject.h; sourceTree = "<group>"; };
+		F981E8271D8FC83F00AA88A8 /* RADataObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RADataObject.m; sourceTree = "<group>"; };
+		F981E8281D8FC83F00AA88A8 /* RATableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATableViewCell.h; sourceTree = "<group>"; };
+		F981E8291D8FC83F00AA88A8 /* RATableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATableViewCell.m; sourceTree = "<group>"; };
+		F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RATableViewCell.xib; sourceTree = "<group>"; };
 		F988FA161D78168300702D65 /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		F988FA171D78168300702D65 /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
 		F9B4E8B91D71C43D00CB0FA8 /* HackerNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HackerNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -74,6 +129,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F939C0911D7D619F00AF23DE /* AFNetworking.framework in Frameworks */,
+				F91FA0771D91064300E9A0E0 /* FormatterKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,8 +148,13 @@
 		F93B0D0A1D740C0C00D5A172 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				F939C08D1D7D367000AF23DE /* CommentVC.h */,
-				F939C08E1D7D367000AF23DE /* CommentVC.m */,
+				F981E8261D8FC83F00AA88A8 /* RADataObject.h */,
+				F981E8271D8FC83F00AA88A8 /* RADataObject.m */,
+				F981E8281D8FC83F00AA88A8 /* RATableViewCell.h */,
+				F981E8291D8FC83F00AA88A8 /* RATableViewCell.m */,
+				F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */,
+				F903E9851D8D6576007931A4 /* CommentTVC.h */,
+				F903E9861D8D6576007931A4 /* CommentTVC.m */,
 				F988FA161D78168300702D65 /* CoreDataTableViewController.h */,
 				F988FA171D78168300702D65 /* CoreDataTableViewController.m */,
 				F9B4E8EF1D71C82200CB0FA8 /* NewsItemContentVC.h */,
@@ -106,9 +167,56 @@
 			name = "View Controller";
 			sourceTree = "<group>";
 		};
+		F981E7F71D8FC6F200AA88A8 /* RATreeView */ = {
+			isa = PBXGroup;
+			children = (
+				F981E7F81D8FC6F200AA88A8 /* Private Files */,
+				F981E8161D8FC6F200AA88A8 /* RATreeView.h */,
+				F981E8171D8FC6F200AA88A8 /* RATreeView.m */,
+			);
+			path = RATreeView;
+			sourceTree = "<group>";
+		};
+		F981E7F81D8FC6F200AA88A8 /* Private Files */ = {
+			isa = PBXGroup;
+			children = (
+				F981E7F91D8FC6F200AA88A8 /* RABatchChangeEntity.h */,
+				F981E7FA1D8FC6F200AA88A8 /* RABatchChangeEntity.m */,
+				F981E7FB1D8FC6F200AA88A8 /* RABatchChanges.h */,
+				F981E7FC1D8FC6F200AA88A8 /* RABatchChanges.m */,
+				F981E7FD1D8FC6F200AA88A8 /* RATableView.h */,
+				F981E7FE1D8FC6F200AA88A8 /* RATableView.m */,
+				F981E7FF1D8FC6F200AA88A8 /* RATreeNode.h */,
+				F981E8001D8FC6F200AA88A8 /* RATreeNode.m */,
+				F981E8011D8FC6F200AA88A8 /* RATreeNode_ClassExtension.h */,
+				F981E8021D8FC6F200AA88A8 /* RATreeNodeCollectionController.h */,
+				F981E8031D8FC6F200AA88A8 /* RATreeNodeCollectionController.m */,
+				F981E8041D8FC6F200AA88A8 /* RATreeNodeController.h */,
+				F981E8051D8FC6F200AA88A8 /* RATreeNodeController.m */,
+				F981E8061D8FC6F200AA88A8 /* RATreeNodeItem+ClassExtension.h */,
+				F981E8071D8FC6F200AA88A8 /* RATreeNodeItem+Private.h */,
+				F981E8081D8FC6F200AA88A8 /* RATreeNodeItem+Private.m */,
+				F981E8091D8FC6F200AA88A8 /* RATreeNodeItem.h */,
+				F981E80A1D8FC6F200AA88A8 /* RATreeNodeItem.m */,
+				F981E80B1D8FC6F200AA88A8 /* RATreeView+Enums.h */,
+				F981E80C1D8FC6F200AA88A8 /* RATreeView+Enums.m */,
+				F981E80D1D8FC6F200AA88A8 /* RATreeView+Private.h */,
+				F981E80E1D8FC6F200AA88A8 /* RATreeView+Private.m */,
+				F981E80F1D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.h */,
+				F981E8101D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m */,
+				F981E8111D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.h */,
+				F981E8121D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.m */,
+				F981E8131D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.h */,
+				F981E8141D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m */,
+				F981E8151D8FC6F200AA88A8 /* RATreeView_ClassExtension.h */,
+			);
+			path = "Private Files";
+			sourceTree = "<group>";
+		};
 		F9B4E8B01D71C43D00CB0FA8 = {
 			isa = PBXGroup;
 			children = (
+				F91FA0761D91064300E9A0E0 /* FormatterKit.framework */,
 				F939C0901D7D619F00AF23DE /* AFNetworking.framework */,
 				F9B4E8BB1D71C43D00CB0FA8 /* HackerNews */,
 				F9B4E8BA1D71C43D00CB0FA8 /* Products */,
@@ -126,16 +234,14 @@
 		F9B4E8BB1D71C43D00CB0FA8 /* HackerNews */ = {
 			isa = PBXGroup;
 			children = (
-				F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */,
 				F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */,
 				F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */,
+				F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */,
+				F981E7F71D8FC6F200AA88A8 /* RATreeView */,
 				F903F8131D8BAE8200DDC885 /* SWRevealView Controller */,
 				F9B4E8E31D71C74300CB0FA8 /* HN Fetcher */,
 				F9B4E8E21D71C6DC00CB0FA8 /* Core Data Model */,
 				F93B0D0A1D740C0C00D5A172 /* View Controller */,
-				F9B4E8CB1D71C43D00CB0FA8 /* Assets.xcassets */,
-				F9B4E8CD1D71C43D00CB0FA8 /* LaunchScreen.storyboard */,
-				F9B4E8D01D71C43D00CB0FA8 /* Info.plist */,
 				F9B4E8BC1D71C43D00CB0FA8 /* Supporting Files */,
 			);
 			path = HackerNews;
@@ -144,6 +250,9 @@
 		F9B4E8BC1D71C43D00CB0FA8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				F9B4E8CB1D71C43D00CB0FA8 /* Assets.xcassets */,
+				F9B4E8CD1D71C43D00CB0FA8 /* LaunchScreen.storyboard */,
+				F9B4E8D01D71C43D00CB0FA8 /* Info.plist */,
 				F9B4E8BD1D71C43D00CB0FA8 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -188,7 +297,7 @@
 				F9B4E8B51D71C43D00CB0FA8 /* Sources */,
 				F9B4E8B61D71C43D00CB0FA8 /* Frameworks */,
 				F9B4E8B71D71C43D00CB0FA8 /* Resources */,
-				F939C0921D7D61E600AF23DE /* ShellScript */,
+				F939C0921D7D61E600AF23DE /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -243,6 +352,7 @@
 			files = (
 				F9B4E8CF1D71C43D00CB0FA8 /* LaunchScreen.storyboard in Resources */,
 				F9B4E8CC1D71C43D00CB0FA8 /* Assets.xcassets in Resources */,
+				F981E82D1D8FC83F00AA88A8 /* RATableViewCell.xib in Resources */,
 				F9B4E8C71D71C43D00CB0FA8 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -250,14 +360,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		F939C0921D7D61E600AF23DE /* ShellScript */ = {
+		F939C0921D7D61E600AF23DE /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/AFNetworking.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/FormatterKit.framework",
 			);
+			name = "Run Script";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -272,20 +384,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				F9B4E8DE1D71C6CA00CB0FA8 /* User+CoreDataProperties.m in Sources */,
+				F981E8221D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m in Sources */,
+				F981E8191D8FC6F200AA88A8 /* RABatchChanges.m in Sources */,
+				F981E81A1D8FC6F200AA88A8 /* RATableView.m in Sources */,
 				F9B4E8E11D71C6CA00CB0FA8 /* NewsItem.m in Sources */,
-				F939C08F1D7D367000AF23DE /* CommentVC.m in Sources */,
+				F981E81D1D8FC6F200AA88A8 /* RATreeNodeController.m in Sources */,
+				F981E8201D8FC6F200AA88A8 /* RATreeView+Enums.m in Sources */,
+				F981E8231D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.m in Sources */,
 				F9B4E8E01D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m in Sources */,
 				F9B4E8E61D71C74300CB0FA8 /* HNFetcher.m in Sources */,
+				F981E81E1D8FC6F200AA88A8 /* RATreeNodeItem+Private.m in Sources */,
+				F981E82B1D8FC83F00AA88A8 /* RADataObject.m in Sources */,
+				F981E81C1D8FC6F200AA88A8 /* RATreeNodeCollectionController.m in Sources */,
 				F9B4E8F61D71C82200CB0FA8 /* NewsTVC.m in Sources */,
 				F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */,
 				F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */,
 				F9B4E8F71D71C82200CB0FA8 /* NewsItemTVC.m in Sources */,
+				F981E8251D8FC6F200AA88A8 /* RATreeView.m in Sources */,
+				F981E8241D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m in Sources */,
 				F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */,
+				F981E82C1D8FC83F00AA88A8 /* RATableViewCell.m in Sources */,
+				F981E81B1D8FC6F200AA88A8 /* RATreeNode.m in Sources */,
+				F91FA0751D90F57C00E9A0E0 /* CommentTVC.m in Sources */,
 				F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */,
 				F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */,
+				F981E8211D8FC6F200AA88A8 /* RATreeView+Private.m in Sources */,
 				F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */,
 				F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */,
+				F981E81F1D8FC6F200AA88A8 /* RATreeNodeItem.m in Sources */,
 				F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */,
+				F981E8181D8FC6F200AA88A8 /* RABatchChangeEntity.m in Sources */,
 				F988FA181D78168300702D65 /* CoreDataTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -403,6 +531,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = HackerNews/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deepak.HackerNews;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -418,6 +547,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = HackerNews/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deepak.HackerNews;
 				PRODUCT_NAME = "$(TARGET_NAME)";

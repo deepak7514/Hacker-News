@@ -46,6 +46,7 @@
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         NSManagedObjectContext *secondaryContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
         secondaryContext.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator;
+        [secondaryContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
         
         for (NSString *newsItem in newsItems) {
             [backgroundQueue addOperationWithBlock:^{
@@ -57,44 +58,59 @@
 
 + (void)createNewsItemWithId:(NSString *)newsItemId inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
-    request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", newsItemId];
-    
-    NSError *error;
-    NSArray *matches = [context executeFetchRequest:request error:&error];
-    
-    if (!matches || error || [matches count]) {
-        // handle error or Item obtained
-    } else {
-    
-        NSURLRequest *request = [NSURLRequest requestWithURL:[HNFetcher URLforItem:newsItemId]];
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-        NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-        NSURLSessionDownloadTask *task = [session
-                                          downloadTaskWithRequest:request
-                                          completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error)
-                                          {
-                                              if (!error)
-                                              {
-                                                  if ([request.URL isEqual:[HNFetcher URLforItem:newsItemId]])
-                                                  {
-                                                      NSError *err = nil;
-                                                      NSData *jsonData = [NSData dataWithContentsOfURL:localfile options:0 error:&err];
-                                                      if(error){NSLog(@"Error Fetching NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
-                                                      NSDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&err];
-                                                      if(error){NSLog(@"Error Parsing NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
-                                                      // Create NewsItem
-                                                      [self createNewsItemWithNewsItemInfo:jsonArray inManagedObjectContext:context];
-                                                  }
-                                              } else
-                                              {
-                                                  NSLog(@"NewsItem Fetch Task failed : %@", error);
-                                              }
-                                          }];
-        [task resume]; // don't forget that all NSURLSession tasks start out suspended!
+    [context performBlock:^{
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
+        request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", newsItemId];
         
-    }
+        NSError *error;
+        NSArray *matches = [context executeFetchRequest:request error:&error];
+        
+        if (!matches) {
+            NSLog(@"Match is nil for NewsItem - %@", newsItemId);
+        } else if (error) {
+            // handle error
+            NSLog(@"Error in fetching NewsItem -%@ from Core data - %@", newsItemId, error);
+        } else if ([matches count] > 1) {
+            // Multiple Items already present
+            NSLog(@"Multiple NewsItems - %@ present", newsItemId);
+        } else if ([matches count]) {
+            // Item already present
+            //NSLog(@"NewsItem - %@ already present", newsItemId);
+        } else {
+            //NSLog(@"Creating NewsItem - %@", newsItemId);
+            NSURLRequest *request = [NSURLRequest requestWithURL:[HNFetcher URLforItem:newsItemId]];
+            NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+            NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+            NSURLSessionDownloadTask *task = [session
+                                              downloadTaskWithRequest:request
+                                              completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error)
+                                              {
+                                                  if (!error)
+                                                  {
+                                                      if ([request.URL isEqual:[HNFetcher URLforItem:newsItemId]])
+                                                      {
+                                                          NSError *err = nil;
+                                                          NSData *jsonData = [NSData dataWithContentsOfURL:localfile options:0 error:&err];
+                                                          if(error){NSLog(@"Error Fetching NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
+                                                          NSDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&err];
+                                                          if(error){NSLog(@"Error Parsing NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
+                                                          // Create NewsItem
+                                                          if(jsonArray)
+                                                          {
+                                                              [self createNewsItemWithNewsItemInfo:jsonArray inManagedObjectContext:context];
+                                                          } else {
+                                                              NSLog(@"Error - empty propertyLists for NewsItem - %@ - %@", newsItemId, jsonArray);
+                                                          }
+                                                      }
+                                                  } else
+                                                  {
+                                                      NSLog(@"NewsItem Fetch Task failed : %@", error);
+                                                  }
+                                              }];
+            [task resume]; // don't forget that all NSURLSession tasks start out suspended!
+            
+        }
+    }];
     
 //    NSError *error = nil;
 //    // fetch the JSON data from HackerNews
@@ -141,10 +157,10 @@
         NSError *error = nil;
         if ([context hasChanges] && ![context save:&error]) {
             
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            NSLog(@"NewsItem Unresolved error %@", error);
             
             NSArray * conflictListArray = (NSArray*)[[error userInfo] objectForKey:@"conflictList"];
-            NSLog(@"conflict array: %@",conflictListArray);
+            //NSLog(@"conflict array: %@",conflictListArray);
             NSError * conflictFixError = nil;
             
             if ([conflictListArray count] > 0) {

@@ -7,8 +7,8 @@
 //
 
 #import "NewsItemContentVC.h"
-#import "CommentVC.h"
 #import "HNFetcher.h"
+#import "CommentTVC.h"
 
 @interface NewsItemContentVC ()<UISplitViewControllerDelegate, UIWebViewDelegate>
 @property (strong, nonatomic) NSString *html;
@@ -61,12 +61,11 @@
         // found it ... are we doing the Show Comments segue?
         if ([segue.identifier isEqualToString:@"Show Comments"]){
             // yes ... is the destination an NewsItemContentVC
-            if ([segue.destinationViewController isKindOfClass:[CommentVC class]]) {
+            if ([segue.destinationViewController isKindOfClass:[CommentTVC class]]) {
                 // yes ... then we know how to prepare for that segue!
-                CommentVC *vc = (CommentVC *)segue.destinationViewController;
-                NSLog(@"Title %@ %@", self.title, [self.title class]);
-                vc.itemId = self.title;
-                vc.title = [NSString stringWithFormat:@"Comments"];
+                CommentTVC *vc = (CommentTVC *)segue.destinationViewController;
+                vc.itemId = [ NSString stringWithFormat:@"%@", self.newsItem.unique ];
+                vc.title = [ NSString stringWithFormat:@"Comments" ];
             }
         }
     }

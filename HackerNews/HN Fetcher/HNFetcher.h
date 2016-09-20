@@ -32,6 +32,8 @@
 
 @interface HNFetcher : NSObject
 
++ (NSURL *)URLforComments:(NSString *)itemId;
+
 + (NSURL *)URLforNewsItem:(NSString *)newsItem;
 
 + (NSURL *)URLforItem:(NSString *)itemId;
