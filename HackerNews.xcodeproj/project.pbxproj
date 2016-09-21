@@ -10,6 +10,9 @@
 		F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */; };
 		F91FA0751D90F57C00E9A0E0 /* CommentTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F903E9861D8D6576007931A4 /* CommentTVC.m */; };
 		F91FA0771D91064300E9A0E0 /* FormatterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F91FA0761D91064300E9A0E0 /* FormatterKit.framework */; };
+		F926D1111D927112000AB742 /* Stories+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = F926D10E1D927112000AB742 /* Stories+CoreDataProperties.m */; };
+		F926D1121D927112000AB742 /* Stories.m in Sources */ = {isa = PBXBuildFile; fileRef = F926D1101D927112000AB742 /* Stories.m */; };
+		F926D1151D92714C000AB742 /* Stories+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F926D1141D92714C000AB742 /* Stories+Create.m */; };
 		F939C0911D7D619F00AF23DE /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F939C0901D7D619F00AF23DE /* AFNetworking.framework */; };
 		F93B0D0D1D74154F00D5A172 /* User+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0C1D74154F00D5A172 /* User+Create.m */; };
 		F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */; };
@@ -53,6 +56,12 @@
 		F903F8141D8BAF5900DDC885 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
 		F91FA0761D91064300E9A0E0 /* FormatterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FormatterKit.framework; path = Carthage/Build/iOS/FormatterKit.framework; sourceTree = "<group>"; };
+		F926D10D1D927112000AB742 /* Stories+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Stories+CoreDataProperties.h"; sourceTree = "<group>"; };
+		F926D10E1D927112000AB742 /* Stories+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Stories+CoreDataProperties.m"; sourceTree = "<group>"; };
+		F926D10F1D927112000AB742 /* Stories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stories.h; sourceTree = "<group>"; };
+		F926D1101D927112000AB742 /* Stories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stories.m; sourceTree = "<group>"; };
+		F926D1131D92714C000AB742 /* Stories+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Stories+Create.h"; sourceTree = "<group>"; };
+		F926D1141D92714C000AB742 /* Stories+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Stories+Create.m"; sourceTree = "<group>"; };
 		F939C0901D7D619F00AF23DE /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
 		F93B0D0B1D74154F00D5A172 /* User+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+Create.h"; sourceTree = "<group>"; };
 		F93B0D0C1D74154F00D5A172 /* User+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Create.m"; sourceTree = "<group>"; };
@@ -261,18 +270,24 @@
 		F9B4E8E21D71C6DC00CB0FA8 /* Core Data Model */ = {
 			isa = PBXGroup;
 			children = (
-				F9B4E8D61D71C6CA00CB0FA8 /* User+CoreDataProperties.h */,
-				F9B4E8D71D71C6CA00CB0FA8 /* User+CoreDataProperties.m */,
+				F926D10F1D927112000AB742 /* Stories.h */,
+				F926D1101D927112000AB742 /* Stories.m */,
+				F926D10D1D927112000AB742 /* Stories+CoreDataProperties.h */,
+				F926D10E1D927112000AB742 /* Stories+CoreDataProperties.m */,
+				F926D1131D92714C000AB742 /* Stories+Create.h */,
+				F926D1141D92714C000AB742 /* Stories+Create.m */,
 				F9B4E8D81D71C6CA00CB0FA8 /* User.h */,
 				F9B4E8D91D71C6CA00CB0FA8 /* User.m */,
+				F9B4E8D61D71C6CA00CB0FA8 /* User+CoreDataProperties.h */,
+				F9B4E8D71D71C6CA00CB0FA8 /* User+CoreDataProperties.m */,
 				F93B0D0B1D74154F00D5A172 /* User+Create.h */,
 				F93B0D0C1D74154F00D5A172 /* User+Create.m */,
+				F9B4E8DC1D71C6CA00CB0FA8 /* NewsItem.h */,
+				F9B4E8DD1D71C6CA00CB0FA8 /* NewsItem.m */,
 				F9B4E8DA1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.h */,
 				F9B4E8DB1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m */,
 				F93B0D0E1D74156600D5A172 /* NewsItem+Create.h */,
 				F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */,
-				F9B4E8DC1D71C6CA00CB0FA8 /* NewsItem.h */,
-				F9B4E8DD1D71C6CA00CB0FA8 /* NewsItem.m */,
 				F9B4E8C81D71C43D00CB0FA8 /* HackerNews.xcdatamodeld */,
 			);
 			name = "Core Data Model";
@@ -383,6 +398,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F926D1151D92714C000AB742 /* Stories+Create.m in Sources */,
 				F9B4E8DE1D71C6CA00CB0FA8 /* User+CoreDataProperties.m in Sources */,
 				F981E8221D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m in Sources */,
 				F981E8191D8FC6F200AA88A8 /* RABatchChanges.m in Sources */,
@@ -392,6 +408,7 @@
 				F981E8201D8FC6F200AA88A8 /* RATreeView+Enums.m in Sources */,
 				F981E8231D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.m in Sources */,
 				F9B4E8E01D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m in Sources */,
+				F926D1111D927112000AB742 /* Stories+CoreDataProperties.m in Sources */,
 				F9B4E8E61D71C74300CB0FA8 /* HNFetcher.m in Sources */,
 				F981E81E1D8FC6F200AA88A8 /* RATreeNodeItem+Private.m in Sources */,
 				F981E82B1D8FC83F00AA88A8 /* RADataObject.m in Sources */,
@@ -409,6 +426,7 @@
 				F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */,
 				F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */,
 				F981E8211D8FC6F200AA88A8 /* RATreeView+Private.m in Sources */,
+				F926D1121D927112000AB742 /* Stories.m in Sources */,
 				F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */,
 				F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */,
 				F981E81F1D8FC6F200AA88A8 /* RATreeNodeItem.m in Sources */,

@@ -59,6 +59,7 @@
 + (void)createNewsItemWithId:(NSString *)newsItemId inManagedObjectContext:(NSManagedObjectContext *)context
 {
     [context performBlock:^{
+        
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
         request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", newsItemId];
         
@@ -78,7 +79,25 @@
             //NSLog(@"NewsItem - %@ already present", newsItemId);
         } else {
             //NSLog(@"Creating NewsItem - %@", newsItemId);
+            
             NSURLRequest *request = [NSURLRequest requestWithURL:[HNFetcher URLforItem:newsItemId]];
+            
+//            NSURLResponse *response = nil;
+//            NSError *error = nil;
+//            NSData *data = [NSURLConnection sendSynchronousRequest:request
+//                                                 returningResponse:&response
+//                                                             error:&error];
+//            if(error){NSLog(@"Error Fetching NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], error);}
+//            NSDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+//            if(error){NSLog(@"Error Parsing NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], error);}
+//            // Create NewsItem
+//            if(jsonArray)
+//            {
+//                [self createNewsItemWithNewsItemInfo:jsonArray inManagedObjectContext:context];
+//            } else {
+//                NSLog(@"Error - empty propertyLists for NewsItem - %@ - %@", newsItemId, jsonArray);
+//            }
+            
             NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
             NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
             NSURLSessionDownloadTask *task = [session
@@ -91,9 +110,9 @@
                                                       {
                                                           NSError *err = nil;
                                                           NSData *jsonData = [NSData dataWithContentsOfURL:localfile options:0 error:&err];
-                                                          if(error){NSLog(@"Error Fetching NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
+                                                          if(err){NSLog(@"Error Fetching NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
                                                           NSDictionary *jsonArray = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&err];
-                                                          if(error){NSLog(@"Error Parsing NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
+                                                          if(err){NSLog(@"Error Parsing NewsItem-%@ error-%@",[HNFetcher URLforItem:newsItemId], err);}
                                                           // Create NewsItem
                                                           if(jsonArray)
                                                           {
@@ -111,70 +130,85 @@
             
         }
     }];
-    
-//    NSError *error = nil;
-//    // fetch the JSON data from HackerNews
-//    NSData *jsonResults = [NSData dataWithContentsOfURL:[HNFetcher URLforItem:newsItemId] options:0 error:&error];
-//    if(error)
-//    {
-//        NSLog(@"Error in Fetching NewsItem Details with newsItemId:%@ - %@", newsItemId, error);
-//        return nil;
-//    }
-//    // convert it to a Property List (NSArray and NSDictionary)
-//    NSDictionary *propertyListResults = [NSJSONSerialization JSONObjectWithData:jsonResults options:0 error:&error];
-//    if(propertyListResults == nil)
-//    {
-//        NSLog(@"Error in Parsing NewsItem Details with newsItemId:%@ - %@", newsItemId, error);
-//        return nil;
-//    }
-//    return propertyListResults;
 }
 
 + (void)createNewsItemWithNewsItemInfo:(NSDictionary *)newsItemDictionary inManagedObjectContext:(NSManagedObjectContext *)context
 {
     [context performBlock:^{
         
-        NewsItem *newsItem = [NSEntityDescription insertNewObjectForEntityForName:@"NewsItem"
-                                                           inManagedObjectContext:context];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
+        request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]];
         
-        newsItem.unique = [newsItemDictionary valueForKey:HN_NEWSITEM_ID];
-        newsItem.title = [newsItemDictionary valueForKey:HN_NEWSITEM_TITLE];
-        newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-        newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-        newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
-        newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
-        newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
-        newsItem.time = [newsItemDictionary valueForKey:HN_NEWSITEM_TIME];
-        newsItem.type = [newsItemDictionary valueForKey:HN_NEWSITEM_TYPE];
-        newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
+        NSError *error;
+        NSArray *matches = [context executeFetchRequest:request error:&error];
+        if (!matches) {
+            NSLog(@"Match is nil for NewsItem - %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]);
+        } else if (error) {
+            // handle error
+            NSLog(@"Error in fetching NewsItem -%@ from Core data - %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID], error);
+        } else if ([matches count] > 1) {
+            // Multiple Items already present
+            NSLog(@"Multiple NewsItems - %@ present", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]);
+        } else if ([matches count]) {
+            // Item already present
+            //NSLog(@"NewsItem - %@ already present", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]);
+        } else {
         
-        newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
-        //    NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
-        //    for (NSString *kid in kidsForNewsItem) {
-        //        [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
-        //    }
-        
-        NSError *error = nil;
-        if ([context hasChanges] && ![context save:&error]) {
+            NewsItem *newsItem = [NSEntityDescription insertNewObjectForEntityForName:@"NewsItem"
+                                                               inManagedObjectContext:context];
             
-            NSLog(@"NewsItem Unresolved error %@", error);
+            newsItem.unique = [newsItemDictionary valueForKey:HN_NEWSITEM_ID];
+            newsItem.title = [newsItemDictionary valueForKey:HN_NEWSITEM_TITLE];
+            newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+            newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+            newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
+            newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
+            newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
+            newsItem.time = [newsItemDictionary valueForKey:HN_NEWSITEM_TIME];
+            newsItem.type = [newsItemDictionary valueForKey:HN_NEWSITEM_TYPE];
+            newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
+            newsItem.author = [newsItemDictionary valueForKey:HN_NEWSITEM_BY];
             
-            NSArray * conflictListArray = (NSArray*)[[error userInfo] objectForKey:@"conflictList"];
-            //NSLog(@"conflict array: %@",conflictListArray);
-            NSError * conflictFixError = nil;
+            //newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
+            //    NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
+            //    for (NSString *kid in kidsForNewsItem) {
+            //        [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
+            //    }
             
-            if ([conflictListArray count] > 0) {
+            NSError *error = nil;
+            if ([context hasChanges] && ![context save:&error]) {
                 
-                NSMergePolicy *mergePolicy = [[NSMergePolicy alloc] initWithMergeType:NSOverwriteMergePolicyType];
+                NSLog(@"NewsItem Unresolved error %@", error);
                 
-                if (![mergePolicy resolveConflicts:conflictListArray error:&conflictFixError]) {
-                    NSLog(@"Unresolved conflict error %@, %@", conflictFixError, [conflictFixError userInfo]);
-                    NSLog(@"abort");
-                    abort();
+                NSArray * conflictListArray = (NSArray*)[[error userInfo] objectForKey:@"conflictList"];
+                //NSLog(@"conflict array: %@",conflictListArray);
+                NSError * conflictFixError = nil;
+                
+                if ([conflictListArray count] > 0) {
+                    
+                    NSMergePolicy *mergePolicy = [[NSMergePolicy alloc] initWithMergeType:NSOverwriteMergePolicyType];
+                    
+                    if (![mergePolicy resolveConflicts:conflictListArray error:&conflictFixError]) {
+                        NSLog(@"Unresolved conflict error %@, %@", conflictFixError, [conflictFixError userInfo]);
+                        NSLog(@"abort");
+                        abort();
+                    }
                 }
             }
         }
     }];
+}
+
+- (NSDictionary *) indexKeyedDictionaryFromArray:(NSArray *)array
+{
+    id objectInstance;
+    NSUInteger indexKey = 0;
+    
+    NSMutableDictionary *mutableDictionary = [[NSMutableDictionary alloc] init];
+    for (objectInstance in array)
+        [mutableDictionary setObject:objectInstance forKey:[NSNumber numberWithUnsignedInt:indexKey++]];
+    
+    return (NSDictionary *)mutableDictionary;
 }
 
 @end

@@ -11,9 +11,11 @@
 #import "HNFetcher.h"
 #import "AppDelegate.h"
 #import "NewsItem+Create.h"
+#import "Stories+Create.h"
 #import "User.h"
 #import "SWRevealViewController.h"
 #import <AFNetworking/AFHTTPSessionManager.h>
+#import <FormatterKit/FormatterKit.h>
 
 @interface NewsItemTVC ()
 
@@ -66,8 +68,8 @@
     {
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
         request.predicate = predicate;
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"unique"
-                                                                  ascending:YES
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"time"
+                                                                  ascending:NO
                                                                    selector:@selector(compare:)]];
         self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                                             managedObjectContext:self.managedObjectContext
@@ -96,6 +98,7 @@
 {
     _newsItems = newsItems;
     [self modifyFetchedResultsControllerWithStoryType:self.storyType withNewsItems:newsItems];
+    [Stories updateStoriesWithStoryType:self.storyType stories:newsItems];
     [NewsItem loadNewsItemsFromArray:newsItems];
     //[self.tableView reloadData];
     [self.spinner stopAnimating];
@@ -124,7 +127,10 @@
     titleLabel.font = [UIFont boldSystemFontOfSize:13];
     
     UILabel *userNameLabel = (UILabel *)[cell viewWithTag:101];
-    userNameLabel.text = newsItem.by.unique;
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[newsItem.time doubleValue]];
+    TTTTimeIntervalFormatter *timeIntervalFormatter = [[TTTTimeIntervalFormatter alloc] init];
+    NSString *dateInterval = [timeIntervalFormatter stringForTimeInterval:[date timeIntervalSinceNow]];
+    userNameLabel.text = [NSString stringWithFormat:@"%@ %@", newsItem.author, dateInterval];
     userNameLabel.font = [UIFont italicSystemFontOfSize:13];
     
     UILabel *uriLabel = (UILabel *)[cell viewWithTag:102];
@@ -269,6 +275,21 @@
                                                     } else
                                                     {
                                                         NSLog(@"Background Task failed : %@", error);
+                                                        dispatch_async(dispatch_get_main_queue(), ^{
+                                                            NSArray *stories = [Stories storiesWithStoryType:self.storyType];
+                                                            if(stories == nil)
+                                                            {
+                                                                UILabel *noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, self.tableView.bounds.size.height)];
+                                                                noDataLabel.text = @"No data available";
+                                                                noDataLabel.textColor = [UIColor blackColor];
+                                                                noDataLabel.textAlignment = NSTextAlignmentCenter;
+                                                                [self.spinner stopAnimating];
+                                                                self.tableView.backgroundView = noDataLabel;
+                                                            } else {
+                                                                self.newsItems = stories;
+                                                            }
+                                                            
+                                                        });
                                                     }
                                                 }];
         [task resume]; // don't forget that all NSURLSession tasks start out suspended!

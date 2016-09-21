@@ -19,7 +19,9 @@
 
 @property (strong, nonatomic) NSArray *data;
 @property (weak, nonatomic) RATreeView *treeView;
-@property (strong, nonatomic) UIActivityIndicatorView *spinner;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
+@property (weak, nonatomic) IBOutlet UITextView *textView;
+@property (strong, nonatomic) NSNumber *internetConnectivityError;
 
 @end
 
@@ -36,24 +38,26 @@
     treeView.treeFooterView = [UIView new];
     treeView.separatorStyle = RATreeViewCellSeparatorStyleSingleLine;
     
-    [treeView setBackgroundColor:[UIColor colorWithWhite:0.97 alpha:1.0]];
+    UIRefreshControl *refreshControl = [UIRefreshControl new];
+    [refreshControl addTarget:self action:@selector(refreshControlChanged:) forControlEvents:UIControlEventValueChanged];
+    [treeView.scrollView addSubview:refreshControl];
     
-    self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.spinner.color = [UIColor blueColor];
-    self.spinner.center = CGPointMake([UIScreen mainScreen].bounds.size.width/2,[UIScreen mainScreen].bounds.size.height/3);
-    self.spinner.hidesWhenStopped = YES;
-    self.spinner.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:self.spinner];
-    [self.spinner startAnimating];
+    [treeView setBackgroundColor:[UIColor colorWithWhite:0.97 alpha:1.0]];
     
     self.treeView = treeView;
     self.treeView.frame = self.view.bounds;
     self.treeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view insertSubview:treeView atIndex:0];
     
-    [self.navigationController setNavigationBarHidden:NO];
-    
     [self.treeView registerNib:[UINib nibWithNibName:NSStringFromClass([RATableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([RATableViewCell class])];
+    
+    if (self.internetConnectivityError)
+    {
+        [self loadInternetConnectivityErrorPage];
+    } else {
+        [self.textView setHidden:YES];
+        [self.spinner startAnimating];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -69,6 +73,16 @@
     }
     
     self.treeView.frame = self.view.bounds;
+}
+
+#pragma mark - Actions
+
+- (void)refreshControlChanged:(UIRefreshControl *)refreshControl
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self startDownloadingContent];
+        [refreshControl endRefreshing];
+    });
 }
 
 #pragma mark TreeView Delegate methods
@@ -213,12 +227,24 @@
                                }
                                //we must dispatch this back to the main queue
                                dispatch_async(dispatch_get_main_queue(), ^{
-                                   self.data = [self loadComments:[propertyLists objectForKey:@"children"]];
                                    [self.spinner stopAnimating];
-                                   [self.treeView reloadData];
+                                   if([[propertyLists objectForKey:@"children"] count])
+                                   {
+                                       self.data = [self loadComments:[propertyLists objectForKey:@"children"]];
+                                       [self.treeView reloadData];
+                                   } else {
+                                       [self.textView setHidden:NO];
+                                       [self loadInternetConnectivityErrorPage];
+                                   }
                                });
                            } else {
                                NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
+                               dispatch_async(dispatch_get_main_queue(), ^{
+                                   [self.spinner stopAnimating];
+                                   [self.textView setHidden:NO];
+                                   self.internetConnectivityError = [NSNumber numberWithBool:YES];
+                                   [self loadInternetConnectivityErrorPage];
+                               });
                            }
                        }
          ];
@@ -250,12 +276,22 @@
                 
                 obj = [RADataObject dataObjectWithUserName:[comment objectForKey:@"author"] dateInterval:dateInterval CommentText:[attrString string] children:[self loadComments:[comment objectForKey:@"children"]]];
             } else {
-                obj = [RADataObject dataObjectWithUserName:@" " dateInterval:@" " CommentText:@"[Deleted comment]" children:[self loadComments:[comment objectForKey:@"children"]]];
+                obj = [RADataObject dataObjectWithUserName:@"[Deleted comment]" dateInterval:@" " CommentText:@"" children:[self loadComments:[comment objectForKey:@"children"]]];
             }
             [result addObject:obj];
         }
     }
     return [result copy];
+}
+
+- (void)loadInternetConnectivityErrorPage
+{
+    [self.textView setText:@"No Comments"];
+    [self.textView setFont:[UIFont boldSystemFontOfSize:14]];
+    [self.textView setTextAlignment:NSTextAlignmentCenter];
+    CGSize contentSize = [self.textView sizeThatFits:CGSizeMake(self.textView.bounds.size.width, CGFLOAT_MAX)];
+    CGFloat topCorrection = (self.textView.bounds.size.height - contentSize.height * self.textView.zoomScale) / 2.0;
+    self.textView.contentOffset = CGPointMake(0, -topCorrection);
 }
 
 @end

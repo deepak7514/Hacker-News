@@ -23,13 +23,13 @@
 {
     [super viewDidLoad];
     [super setAutomaticallyAdjustsScrollViewInsets:NO];
+    [self.spinner startAnimating];
     
     if(self.html)
     {
-        self.html = self.html;
+        [self.webView loadHTMLString:[self.html description] baseURL:nil];
+        [self.spinner stopAnimating];
     }
-    
-    //[self.spinner startAnimating];
 }
 
 #pragma mark - Properties
@@ -116,13 +116,19 @@
                                     self.html = html;
                                 }
                                 else {
-                                    self.html = @"";
+                                    [self.spinner stopAnimating];
                                     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:encodedURL]];
                                     [self.webView loadRequest:request];
                                 }
                             });
                         } else {
                             NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [self.spinner stopAnimating];
+                                NSString *html =
+                                [NSString stringWithFormat:@"<html><head><title></title><style>div{position:absolute;width:200px;height:200px;left:50%%;top:50%%;margin-left:-100px;margin-top:-100px;};</style></head><body><div><p>Cannot connect to URL. Try after some time.</p></div></body></html>"];
+                                self.html = html;
+                            });
                         }
                     }
                  ];

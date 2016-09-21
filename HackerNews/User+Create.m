@@ -14,9 +14,9 @@
 + (User *)userWithUserId:(NSString *)userId
     inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    __block User *user = nil;
+    User *user = nil;
     
-    [context performBlock:^{
+    //[context performBlock:^{
         
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"User"];
         request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", userId];
@@ -52,7 +52,7 @@
                 NSLog(@"Empty PropertyLists for User - %@", userId);
             }
         }
-    }];
+    //}];
     
     return user;
 }

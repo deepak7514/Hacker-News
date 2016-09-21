@@ -354,8 +354,32 @@
                     <view key="view" contentMode="scaleToFill" id="9Tx-ER-8iA">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="LkQ-wB-H8k">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                                <color key="color" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </activityIndicatorView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xZ7-bA-MdL">
+                                <rect key="frame" x="0.0" y="64" width="600" height="492"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="AvenirNext-UltraLight" family="Avenir Next" pointSize="18"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="xZ7-bA-MdL" firstAttribute="leading" secondItem="9Tx-ER-8iA" secondAttribute="leading" id="3SB-Uk-xMr"/>
+                            <constraint firstItem="xZ7-bA-MdL" firstAttribute="centerX" secondItem="LkQ-wB-H8k" secondAttribute="centerX" id="SNo-co-qdB"/>
+                            <constraint firstItem="LkQ-wB-H8k" firstAttribute="centerX" secondItem="9Tx-ER-8iA" secondAttribute="centerX" id="TEb-AA-4RE"/>
+                            <constraint firstItem="xZ7-bA-MdL" firstAttribute="bottom" secondItem="0Pj-RK-8Jm" secondAttribute="top" id="U4Y-7R-sl2"/>
+                            <constraint firstItem="xZ7-bA-MdL" firstAttribute="top" secondItem="eiq-i2-5qS" secondAttribute="bottom" id="o2h-U0-NUx"/>
+                            <constraint firstItem="LkQ-wB-H8k" firstAttribute="centerY" secondItem="9Tx-ER-8iA" secondAttribute="centerY" id="zq3-mq-xTT"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="spinner" destination="LkQ-wB-H8k" id="fKv-kT-jaK"/>
+                        <outlet property="textView" destination="xZ7-bA-MdL" id="aw9-Jf-8U2"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vdq-P9-ujL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
