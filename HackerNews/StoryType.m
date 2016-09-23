@@ -1,16 +1,15 @@
 //
-//  NewsItem.m
+//  StoryType.m
 //  HackerNews
 //
-//  Created by deepak.go on 27/08/16.
+//  Created by deepak.go on 22/09/16.
 //  Copyright © 2016 deepak. All rights reserved.
 //
 
-#import "NewsItem.h"
-#import "User.h"
 #import "StoryType.h"
+#import "NewsItem.h"
 
-@implementation NewsItem
+@implementation StoryType
 
 // Insert code here to add functionality to your managed object subclass
 

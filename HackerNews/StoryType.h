@@ -1,19 +1,19 @@
 //
-//  NewsItem.h
+//  StoryType.h
 //  HackerNews
 //
-//  Created by deepak.go on 27/08/16.
+//  Created by deepak.go on 22/09/16.
 //  Copyright © 2016 deepak. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class User, StoryType;
+@class NewsItem;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NewsItem : NSManagedObject
+@interface StoryType : NSManagedObject
 
 // Insert code here to declare functionality of your managed object subclass
 
@@ -21,4 +21,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#import "NewsItem+CoreDataProperties.h"
+#import "StoryType+CoreDataProperties.h"

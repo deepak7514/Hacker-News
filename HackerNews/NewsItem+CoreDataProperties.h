@@ -2,7 +2,7 @@
 //  NewsItem+CoreDataProperties.h
 //  HackerNews
 //
-//  Created by deepak.go on 20/09/16.
+//  Created by deepak.go on 22/09/16.
 //  Copyright © 2016 deepak. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NewsItem (CoreDataProperties)
 
+@property (nullable, nonatomic, retain) NSString *author;
 @property (nullable, nonatomic, retain) NSNumber *dead;
 @property (nullable, nonatomic, retain) NSNumber *deleted;
 @property (nullable, nonatomic, retain) NSNumber *descendants;
@@ -25,10 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSString *type;
 @property (nullable, nonatomic, retain) NSNumber *unique;
 @property (nullable, nonatomic, retain) NSString *url;
-@property (nullable, nonatomic, retain) NSString *author;
 @property (nullable, nonatomic, retain) User *by;
 @property (nullable, nonatomic, retain) NSSet<NewsItem *> *kids;
 @property (nullable, nonatomic, retain) NewsItem *parent;
+@property (nullable, nonatomic, retain) StoryType *storyType;
 
 @end
 

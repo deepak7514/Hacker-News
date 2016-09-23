@@ -49,6 +49,7 @@
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+@synthesize secondaryMOC = _secondaryMOC;
 
 - (NSURL *)applicationDocumentsDirectory {
     // The directory the application uses to store the Core Data store file. This code uses a directory named "com.deepak.HackerNews" in the application's documents directory.
@@ -139,6 +140,19 @@
     dispatch_sync(dispatch_get_main_queue(), ^{
         [_managedObjectContext mergeChangesFromContextDidSaveNotification:notification];
     });
+}
+
+- (NSManagedObjectContext *)secondaryMOC
+{
+    if (_secondaryMOC != nil)
+    {
+        return _secondaryMOC;
+    }
+    
+    _secondaryMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    _secondaryMOC.persistentStoreCoordinator = _persistentStoreCoordinator;
+    [_secondaryMOC setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+    return _secondaryMOC;
 }
 
 #pragma mark - Core Data Saving support

@@ -18,9 +18,7 @@
     [backgroundQueue addOperationWithBlock:^{
         
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        NSManagedObjectContext *secondaryContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        secondaryContext.persistentStoreCoordinator = appDelegate.persistentStoreCoordinator;
-        [secondaryContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+        NSManagedObjectContext *secondaryContext = appDelegate.secondaryMOC;
         
         [secondaryContext performBlock:^{
             NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Stories"];

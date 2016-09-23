@@ -11,6 +11,7 @@
 #import "HNFetcher.h"
 #import "AppDelegate.h"
 #import "NewsItem+Create.h"
+#import "StoryType+Create.h"
 #import "Stories+Create.h"
 #import "User.h"
 #import "SWRevealViewController.h"
@@ -20,6 +21,8 @@
 @interface NewsItemTVC ()
 
 @property (nonatomic, strong) NSArray *newsItems; // of News Items IDs
+@property (nonatomic, strong) NSOperationQueue *backgroundQueue;
+@property (nonatomic, strong) NSManagedObjectContext *secondaryContext;
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 - (IBAction)refresh:(UIRefreshControl *)sender;
 @end
@@ -59,17 +62,57 @@
     [self.spinner startAnimating];
 }
 
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if(_managedObjectContext == nil)
+    {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        _managedObjectContext = appDelegate.managedObjectContext;
+    }
+    return _managedObjectContext;
+}
+
+- (NSManagedObjectContext *)secondaryContext
+{
+    if(_secondaryContext == nil)
+    {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        _secondaryContext = appDelegate.secondaryMOC;
+    }
+    return _secondaryContext;
+}
+
+- (NSOperationQueue *)backgroundQueue
+{
+    if(_backgroundQueue == nil)
+    {
+        self.backgroundQueue = [[NSOperationQueue alloc] init];
+    }
+    return _backgroundQueue;
+}
+
+- (void)setNewsItems:(NSArray *)newsItems
+{
+    _newsItems = newsItems;
+    [self modifyFetchedResultsControllerWithStoryType:self.storyType withNewsItems:newsItems];
+    [NewsItem loadNewsItemsFromArray:newsItems storyType:self.storyType];
+    //[self.tableView reloadData];
+    [self.spinner stopAnimating];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    
+}
+
 - (void)modifyFetchedResultsControllerWithStoryType:(NSString *)storyType withNewsItems:(NSArray *)newsItems
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"unique IN %@", newsItems];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"storyType.type = %@", storyType];
     
     
     if(self.fetchedResultsController == nil)
     {
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
         request.predicate = predicate;
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"time"
-                                                                  ascending:NO
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"storyType.index"
+                                                                  ascending:YES
                                                                    selector:@selector(compare:)]];
         self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                                             managedObjectContext:self.managedObjectContext
@@ -84,27 +127,6 @@
     }
 }
 
-- (NSManagedObjectContext *)managedObjectContext
-{
-    if(_managedObjectContext == nil)
-    {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        _managedObjectContext = appDelegate.managedObjectContext;
-    }
-    return _managedObjectContext;
-}
-
-- (void)setNewsItems:(NSArray *)newsItems
-{
-    _newsItems = newsItems;
-    [self modifyFetchedResultsControllerWithStoryType:self.storyType withNewsItems:newsItems];
-    [Stories updateStoriesWithStoryType:self.storyType stories:newsItems];
-    [NewsItem loadNewsItemsFromArray:newsItems];
-    //[self.tableView reloadData];
-    [self.spinner stopAnimating];
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    
-}
 
 #pragma mark - UITableViewDataSource
 
@@ -120,7 +142,12 @@
     
     // get the newsItem out of our Model
     NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    
+    if (newsItem && newsItem.unique)
+    {
+        [self.backgroundQueue addOperationWithBlock:^{
+            [NewsItem createOrUpdateNewsItemWithId:[newsItem.unique stringValue] index:-1 storyType:@"" inManagedObjectContext:self.secondaryContext];
+        }];
+    }
     // update UILabels in the UITableViewCell
     UILabel *titleLabel = (UILabel *)[cell viewWithTag:100];
     titleLabel.text = newsItem.title;
@@ -138,11 +165,11 @@
     uriLabel.font = [UIFont italicSystemFontOfSize:13];
     
     UILabel *scoreLabel = (UILabel *)[cell viewWithTag:103];
-    scoreLabel.text = [NSString stringWithFormat:@"S:%@",newsItem.score];
+    scoreLabel.text = [NSString stringWithFormat:@"S:%@", newsItem.score];
     scoreLabel.font = [UIFont italicSystemFontOfSize:13];
     
     UILabel *commentsLabel = (UILabel *)[cell viewWithTag:104];
-    commentsLabel.text = [NSString stringWithFormat:@"C:%@",newsItem.descendants];
+    commentsLabel.text = [NSString stringWithFormat:@"C:%@", newsItem.descendants];
     commentsLabel.font = [UIFont italicSystemFontOfSize:13];
     
     return cell;
@@ -276,7 +303,7 @@
                                                     {
                                                         NSLog(@"Background Task failed : %@", error);
                                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                                            NSArray *stories = [Stories storiesWithStoryType:self.storyType];
+                                                            NSArray *stories = [StoryType newsItemsForStoryType:self.storyType inManagedObjectContext:self.managedObjectContext];
                                                             if(stories == nil)
                                                             {
                                                                 UILabel *noDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, self.tableView.bounds.size.height)];

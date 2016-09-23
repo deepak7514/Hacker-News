@@ -2,7 +2,7 @@
 //  NewsItem+CoreDataProperties.m
 //  HackerNews
 //
-//  Created by deepak.go on 20/09/16.
+//  Created by deepak.go on 22/09/16.
 //  Copyright © 2016 deepak. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -13,6 +13,7 @@
 
 @implementation NewsItem (CoreDataProperties)
 
+@dynamic author;
 @dynamic dead;
 @dynamic deleted;
 @dynamic descendants;
@@ -23,9 +24,9 @@
 @dynamic type;
 @dynamic unique;
 @dynamic url;
-@dynamic author;
 @dynamic by;
 @dynamic kids;
 @dynamic parent;
+@dynamic storyType;
 
 @end

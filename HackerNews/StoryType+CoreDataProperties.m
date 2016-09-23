@@ -1,5 +1,5 @@
 //
-//  Stories+CoreDataProperties.m
+//  StoryType+CoreDataProperties.m
 //  HackerNews
 //
 //  Created by deepak.go on 22/09/16.
@@ -9,11 +9,13 @@
 //  to delete and recreate this implementation file for your updated model.
 //
 
-#import "Stories+CoreDataProperties.h"
+#import "StoryType+CoreDataProperties.h"
 
-@implementation Stories (CoreDataProperties)
+@implementation StoryType (CoreDataProperties)
 
-@dynamic name;
-@dynamic value;
+@dynamic index;
+@dynamic unique;
+@dynamic type;
+@dynamic newsItem;
 
 @end
