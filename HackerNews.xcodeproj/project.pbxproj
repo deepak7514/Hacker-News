@@ -10,9 +10,6 @@
 		F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */; };
 		F91FA0751D90F57C00E9A0E0 /* CommentTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F903E9861D8D6576007931A4 /* CommentTVC.m */; };
 		F91FA0771D91064300E9A0E0 /* FormatterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F91FA0761D91064300E9A0E0 /* FormatterKit.framework */; };
-		F926D1111D927112000AB742 /* Stories+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = F926D10E1D927112000AB742 /* Stories+CoreDataProperties.m */; };
-		F926D1121D927112000AB742 /* Stories.m in Sources */ = {isa = PBXBuildFile; fileRef = F926D1101D927112000AB742 /* Stories.m */; };
-		F926D1151D92714C000AB742 /* Stories+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F926D1141D92714C000AB742 /* Stories+Create.m */; };
 		F930EF4B1D93E9A400E86DE0 /* StoryType+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = F930EF481D93E9A400E86DE0 /* StoryType+CoreDataProperties.m */; };
 		F930EF4C1D93E9A400E86DE0 /* StoryType.m in Sources */ = {isa = PBXBuildFile; fileRef = F930EF4A1D93E9A400E86DE0 /* StoryType.m */; };
 		F930EF4F1D93EB6800E86DE0 /* StoryType+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = F930EF4E1D93EB6800E86DE0 /* StoryType+Create.m */; };
@@ -51,6 +48,7 @@
 		F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8F01D71C82200CB0FA8 /* NewsItemContentVC.m */; };
 		F9B4E8F61D71C82200CB0FA8 /* NewsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8F21D71C82200CB0FA8 /* NewsTVC.m */; };
 		F9B4E8F71D71C82200CB0FA8 /* NewsItemTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8F41D71C82200CB0FA8 /* NewsItemTVC.m */; };
+		F9C8BB7C1D98EA770021C7AB /* HNWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C8BB7B1D98EA770021C7AB /* HNWebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,12 +57,6 @@
 		F903F8141D8BAF5900DDC885 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
 		F91FA0761D91064300E9A0E0 /* FormatterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FormatterKit.framework; path = Carthage/Build/iOS/FormatterKit.framework; sourceTree = "<group>"; };
-		F926D10D1D927112000AB742 /* Stories+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Stories+CoreDataProperties.h"; sourceTree = "<group>"; };
-		F926D10E1D927112000AB742 /* Stories+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Stories+CoreDataProperties.m"; sourceTree = "<group>"; };
-		F926D10F1D927112000AB742 /* Stories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stories.h; sourceTree = "<group>"; };
-		F926D1101D927112000AB742 /* Stories.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stories.m; sourceTree = "<group>"; };
-		F926D1131D92714C000AB742 /* Stories+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Stories+Create.h"; sourceTree = "<group>"; };
-		F926D1141D92714C000AB742 /* Stories+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Stories+Create.m"; sourceTree = "<group>"; };
 		F930EF471D93E9A400E86DE0 /* StoryType+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "StoryType+CoreDataProperties.h"; sourceTree = "<group>"; };
 		F930EF481D93E9A400E86DE0 /* StoryType+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "StoryType+CoreDataProperties.m"; sourceTree = "<group>"; };
 		F930EF491D93E9A400E86DE0 /* StoryType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryType.h; sourceTree = "<group>"; };
@@ -139,6 +131,8 @@
 		F9B4E8F21D71C82200CB0FA8 /* NewsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsTVC.m; sourceTree = "<group>"; };
 		F9B4E8F31D71C82200CB0FA8 /* NewsItemTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsItemTVC.h; sourceTree = "<group>"; };
 		F9B4E8F41D71C82200CB0FA8 /* NewsItemTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsItemTVC.m; sourceTree = "<group>"; };
+		F9C8BB7A1D98EA770021C7AB /* HNWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HNWebViewController.h; sourceTree = "<group>"; };
+		F9C8BB7B1D98EA770021C7AB /* HNWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HNWebViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +160,8 @@
 		F93B0D0A1D740C0C00D5A172 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				F9C8BB7A1D98EA770021C7AB /* HNWebViewController.h */,
+				F9C8BB7B1D98EA770021C7AB /* HNWebViewController.m */,
 				F981E8261D8FC83F00AA88A8 /* RADataObject.h */,
 				F981E8271D8FC83F00AA88A8 /* RADataObject.m */,
 				F981E8281D8FC83F00AA88A8 /* RATableViewCell.h */,
@@ -279,27 +275,21 @@
 		F9B4E8E21D71C6DC00CB0FA8 /* Core Data Model */ = {
 			isa = PBXGroup;
 			children = (
-				F930EF471D93E9A400E86DE0 /* StoryType+CoreDataProperties.h */,
-				F930EF481D93E9A400E86DE0 /* StoryType+CoreDataProperties.m */,
-				F930EF491D93E9A400E86DE0 /* StoryType.h */,
-				F930EF4A1D93E9A400E86DE0 /* StoryType.m */,
-				F926D10F1D927112000AB742 /* Stories.h */,
-				F926D1101D927112000AB742 /* Stories.m */,
-				F926D10D1D927112000AB742 /* Stories+CoreDataProperties.h */,
-				F926D10E1D927112000AB742 /* Stories+CoreDataProperties.m */,
-				F926D1131D92714C000AB742 /* Stories+Create.h */,
-				F926D1141D92714C000AB742 /* Stories+Create.m */,
 				F9B4E8D81D71C6CA00CB0FA8 /* User.h */,
 				F9B4E8D91D71C6CA00CB0FA8 /* User.m */,
 				F9B4E8D61D71C6CA00CB0FA8 /* User+CoreDataProperties.h */,
 				F9B4E8D71D71C6CA00CB0FA8 /* User+CoreDataProperties.m */,
 				F93B0D0B1D74154F00D5A172 /* User+Create.h */,
 				F93B0D0C1D74154F00D5A172 /* User+Create.m */,
+				F930EF491D93E9A400E86DE0 /* StoryType.h */,
+				F930EF4A1D93E9A400E86DE0 /* StoryType.m */,
+				F930EF471D93E9A400E86DE0 /* StoryType+CoreDataProperties.h */,
+				F930EF481D93E9A400E86DE0 /* StoryType+CoreDataProperties.m */,
+				F930EF4D1D93EB6800E86DE0 /* StoryType+Create.h */,
+				F930EF4E1D93EB6800E86DE0 /* StoryType+Create.m */,
 				F9B4E8DC1D71C6CA00CB0FA8 /* NewsItem.h */,
 				F9B4E8DD1D71C6CA00CB0FA8 /* NewsItem.m */,
 				F9B4E8DA1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.h */,
-				F930EF4D1D93EB6800E86DE0 /* StoryType+Create.h */,
-				F930EF4E1D93EB6800E86DE0 /* StoryType+Create.m */,
 				F9B4E8DB1D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m */,
 				F93B0D0E1D74156600D5A172 /* NewsItem+Create.h */,
 				F93B0D0F1D74156600D5A172 /* NewsItem+Create.m */,
@@ -414,7 +404,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F930EF4C1D93E9A400E86DE0 /* StoryType.m in Sources */,
-				F926D1151D92714C000AB742 /* Stories+Create.m in Sources */,
 				F9B4E8DE1D71C6CA00CB0FA8 /* User+CoreDataProperties.m in Sources */,
 				F981E8221D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m in Sources */,
 				F981E8191D8FC6F200AA88A8 /* RABatchChanges.m in Sources */,
@@ -425,7 +414,6 @@
 				F981E8201D8FC6F200AA88A8 /* RATreeView+Enums.m in Sources */,
 				F981E8231D8FC6F200AA88A8 /* RATreeView+TableViewDataSource.m in Sources */,
 				F9B4E8E01D71C6CA00CB0FA8 /* NewsItem+CoreDataProperties.m in Sources */,
-				F926D1111D927112000AB742 /* Stories+CoreDataProperties.m in Sources */,
 				F9B4E8E61D71C74300CB0FA8 /* HNFetcher.m in Sources */,
 				F981E81E1D8FC6F200AA88A8 /* RATreeNodeItem+Private.m in Sources */,
 				F981E82B1D8FC83F00AA88A8 /* RADataObject.m in Sources */,
@@ -438,13 +426,13 @@
 				F981E8251D8FC6F200AA88A8 /* RATreeView.m in Sources */,
 				F981E8241D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m in Sources */,
 				F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */,
+				F9C8BB7C1D98EA770021C7AB /* HNWebViewController.m in Sources */,
 				F981E82C1D8FC83F00AA88A8 /* RATableViewCell.m in Sources */,
 				F981E81B1D8FC6F200AA88A8 /* RATreeNode.m in Sources */,
 				F91FA0751D90F57C00E9A0E0 /* CommentTVC.m in Sources */,
 				F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */,
 				F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */,
 				F981E8211D8FC6F200AA88A8 /* RATreeView+Private.m in Sources */,
-				F926D1121D927112000AB742 /* Stories.m in Sources */,
 				F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */,
 				F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */,
 				F981E81F1D8FC6F200AA88A8 /* RATreeNodeItem.m in Sources */,

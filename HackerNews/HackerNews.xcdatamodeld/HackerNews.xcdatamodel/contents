@@ -17,10 +17,6 @@
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="NewsItem" inverseName="kids" inverseEntity="NewsItem" syncable="YES"/>
         <relationship name="storyType" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StoryType" inverseName="newsItem" inverseEntity="StoryType" syncable="YES"/>
     </entity>
-    <entity name="Stories" representedClassName="Stories" syncable="YES">
-        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
-        <attribute name="value" optional="YES" attributeType="Transformable" valueTransformerName="StoryTransformer" syncable="YES"/>
-    </entity>
     <entity name="StoryType" representedClassName="StoryType" syncable="YES">
         <attribute name="index" attributeType="Integer 64" indexed="YES" syncable="YES"/>
         <attribute name="type" attributeType="String" indexed="YES" syncable="YES"/>
@@ -36,9 +32,8 @@
         <relationship name="submitted" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NewsItem" inverseName="by" inverseEntity="NewsItem" syncable="YES"/>
     </entity>
     <elements>
-        <element name="NewsItem" positionX="439" positionY="489" width="128" height="268"/>
-        <element name="Stories" positionX="151" positionY="648" width="128" height="73"/>
-        <element name="User" positionX="153" positionY="369" width="128" height="133"/>
-        <element name="StoryType" positionX="144" positionY="551" width="128" height="103"/>
+        <element name="NewsItem" positionX="495" positionY="810" width="128" height="268"/>
+        <element name="StoryType" positionX="261" positionY="990" width="128" height="103"/>
+        <element name="User" positionX="261" positionY="810" width="128" height="133"/>
     </elements>
 </model>

@@ -9,19 +9,42 @@
 #import "NewsItemContentVC.h"
 #import "HNFetcher.h"
 #import "CommentTVC.h"
+#import "HNWebViewController.h"
 
-@interface NewsItemContentVC ()<UISplitViewControllerDelegate, UIWebViewDelegate>
+@interface NewsItemContentVC ()<UISplitViewControllerDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 @property (strong, nonatomic) NSString *html;
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
 
 @end
 
-@implementation NewsItemContentVC
+@implementation NewsItemContentVC {
+    int _currentFontSize;
+    BOOL pageDidFinishedLoading;
+    NSTimer *progressTimer;
+    UIToolbar *toolBar;
+}
+
+enum actionSheetButtonIndex {
+    kSafariButtonIndex,
+    kChromeButtonIndex,
+};
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // getting current Font Size from User Defaults
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ftsz"] == nil)
+    {
+        _currentFontSize = 100;
+    }
+    else
+    {
+        _currentFontSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"ftsz"];
+    }
+    
     [super setAutomaticallyAdjustsScrollViewInsets:NO];
     [self.spinner startAnimating];
     
@@ -30,12 +53,15 @@
         [self.webView loadHTMLString:[self.html description] baseURL:nil];
         [self.spinner stopAnimating];
     }
+    
+    [self initToolBar];
 }
 
 #pragma mark - Properties
 
 - (void)setHtml:(NSString *)html
 {
+    self.newsItem.text = html;
     _html = html;
     [self.webView loadHTMLString:[html description] baseURL:nil];
     [self.spinner stopAnimating];
@@ -45,9 +71,55 @@
 {
     _webView = webView;
     _webView.delegate = self;
-    _webView.backgroundColor = [UIColor clearColor];
+    //_webView.backgroundColor = [UIColor clearColor];
 }
 
+#pragma mark  - Prepare WebView
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    self.progressView.progress = 0;
+    pageDidFinishedLoading = false;
+    //0.01667 is roughly 1/60, so it will update at 60 FPS
+    progressTimer = [NSTimer scheduledTimerWithTimeInterval:0.01667 target:self selector:@selector(timerCallback) userInfo:nil repeats:YES];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    pageDidFinishedLoading = true;
+}
+
+-(void)timerCallback {
+    if (pageDidFinishedLoading) {
+        if (self.progressView.progress >= 1) {
+            self.progressView.hidden = true;
+            [progressTimer invalidate];
+        }
+        else {
+            self.progressView.progress += 0.1;
+        }
+    }
+    else {
+        self.progressView.progress += 0.05;
+        if (self.progressView.progress >= 0.95) {
+            self.progressView.progress = 0.95;
+        }
+    }
+}
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    if (navigationType == UIWebViewNavigationTypeReload)
+    {
+        NSLog(@"%@",request.URL);
+    }
+    if (navigationType == UIWebViewNavigationTypeLinkClicked)
+    {
+        [self performSegueWithIdentifier:@"Show Web" sender:request];
+        return NO;
+    }
+    return YES;
+}
 
 #pragma mark - Navigation
 
@@ -56,10 +128,13 @@
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
-    
-    if ([sender isKindOfClass:[UIBarButtonItem class]]) {
-        // found it ... are we doing the Show Comments segue?
-        if ([segue.identifier isEqualToString:@"Show Comments"]){
+    if ([segue.identifier isEqualToString:@"Show Web"])
+    {
+        NSURLRequest *URLRequest = sender;
+        HNWebViewController *webViewController = segue.destinationViewController;
+        [webViewController loadURL:URLRequest.URL];
+    } else if ([segue.identifier isEqualToString:@"Show Comments"]){
+        if ([sender isKindOfClass:[UIBarButtonItem class]]) {
             // yes ... is the destination an NewsItemContentVC
             if ([segue.destinationViewController isKindOfClass:[CommentTVC class]]) {
                 // yes ... then we know how to prepare for that segue!
@@ -83,6 +158,7 @@
 {
     if (self.newsItem)
     {
+        NSString *itemURL = [NSString stringWithFormat:@"https://news.ycombinator.com/item?id=%@",self.newsItem.unique];
         if(self.newsItem.url)
         {
             NSString *encodedURL = [self.newsItem.url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
@@ -111,13 +187,12 @@
                             //we must dispatch this back to the main queue
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 if(htmlBody){
-                                    NSString *html =
-                                        [NSString stringWithFormat:@"<html><head><title></title><style>img{max-width:100%%;height:auto !important;width:auto !important;};</style></head><body style=\"margin:20px; padding:0; background:transparent;\">%@</body></html>", htmlBody];
+                                    NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL];
                                     self.html = html;
                                 }
                                 else {
                                     [self.spinner stopAnimating];
-                                    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:encodedURL]];
+                                    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.newsItem.url]];
                                     [self.webView loadRequest:request];
                                 }
                             });
@@ -125,8 +200,9 @@
                             NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 [self.spinner stopAnimating];
-                                NSString *html =
-                                [NSString stringWithFormat:@"<html><head><title></title><style>div{position:absolute;width:200px;height:200px;left:50%%;top:50%%;margin-left:-100px;margin-top:-100px;};</style></head><body><div><p>Cannot connect to URL. Try after some time.</p></div></body></html>"];
+                                NSString *htmlBody =
+                                [NSString stringWithFormat:@"<div style=\"position:absolute; width:200px; height:200px; left:50%%; top:50%%; margin-left:-100px; margin-top:-100px;\"><p>Cannot connect to URL. Try after some time.</p></div>"];
+                                NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL];
                                 self.html = html;
                             });
                         }
@@ -134,18 +210,114 @@
                  ];
             [task resume]; // don't forget that all NSURLSession tasks start out suspended!
         } else {
-            NSString *html =
-            [NSString stringWithFormat:@"<html><head><title></title><style>img{max-width:100%%;height:auto !important;width:auto !important;};</style></head><body style=\"margin:20px; padding:0; background:transparent;\">%@</body></html>", self.newsItem.text];
+            NSString *html = [self getHTMLStringWithContent:self.newsItem.text URL:@"#" title:self.newsItem.title domain:@"" itemID:self.newsItem.unique itemURL:itemURL ];
             self.html = html;
 
         }
     }
 }
 
+#pragma mark - ToolBar
+
+-(void) initToolBar {
+    
+    CGSize viewSize = self.view.frame.size;
+    toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, viewSize.height-44, viewSize.width, 44)];
+    
+    toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+    toolBar.barStyle = UIBarStyleDefault;
+    [self.view addSubview:toolBar];
+    
+    UIBarButtonItem *buttonUpVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"upvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    
+    UIBarButtonItem *buttonDownVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"downvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    
+    UIBarButtonItem *buttonFavStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"favourite.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    
+    UIBarButtonItem *buttonHideStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"hide.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    UIBarButtonItem *buttonComment = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"comment.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    
+    UIBarButtonItem *buttonAction = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(buttonActionTouchUp:)];
+    
+    // Add butons to an array
+    NSMutableArray *toolBarButtons = [[NSMutableArray alloc] init];
+    [toolBarButtons addObject:buttonUpVote];
+    [toolBarButtons addObject:flexibleSpace];
+    [toolBarButtons addObject:buttonDownVote];
+    [toolBarButtons addObject:flexibleSpace];
+    [toolBarButtons addObject:buttonFavStory];
+    [toolBarButtons addObject:flexibleSpace];
+    [toolBarButtons addObject:buttonHideStory];
+    [toolBarButtons addObject:flexibleSpace];
+    [toolBarButtons addObject:buttonComment];
+    [toolBarButtons addObject:flexibleSpace];
+    [toolBarButtons addObject:buttonAction];
+    
+    // Set buttons to tool bar
+    [toolBar setItems:toolBarButtons animated:NO];
+    [toolBar setTranslucent:NO];
+}
+
+#pragma mark - Action Sheet
+
+- (void)showActionSheet {
+    
+    NSURL *theURL = [NSURL URLWithString:self.newsItem.url];
+    
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:self.newsItem.url message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        
+        // Cancel button tappped do nothing.
+        
+    }]];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        // safari button tapped.
+        [[UIApplication sharedApplication] openURL:theURL];
+    }]];
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"googlechrome://"]]) {
+        // Chrome is installed, add the option to open in chrome.
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Chrome" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            NSString *scheme = theURL.scheme;
+    
+            // Replace the URL Scheme with the Chrome equivalent.
+            NSString *chromeScheme = nil;
+            if ([scheme isEqualToString:@"http"]) {
+                chromeScheme = @"googlechrome";
+            } else if ([scheme isEqualToString:@"https"]) {
+                chromeScheme = @"googlechromes";
+            }
+    
+            // Proceed only if a valid Google Chrome URI Scheme is available.
+            if (chromeScheme) {
+                NSString *absoluteString = [theURL absoluteString];
+                NSRange rangeForScheme = [absoluteString rangeOfString:@":"];
+                NSString *urlNoScheme = [absoluteString substringFromIndex:rangeForScheme.location];
+                NSString *chromeURLString = [chromeScheme stringByAppendingString:urlNoScheme];
+                NSURL *chromeURL = [NSURL URLWithString:chromeURLString];
+                
+                // Open the URL with Chrome.
+                [[UIApplication sharedApplication] openURL:chromeURL];
+            }
+        }]];
+    }
+    [self presentViewController:actionSheet animated:YES completion:^{}];
+}
+
+#pragma mark - Button Actions
+- (void)backButtonTouchUp:(id)sender {
+    
+}
+
+
+- (void)buttonActionTouchUp:(id)sender {
+    [self showActionSheet];
+}
+
+
 #pragma mark - UISplitViewControllerDelegate
-
-// this section added during Shutterbug demo
-
 - (void)awakeFromNib
 {
     self.splitViewController.delegate = self;
@@ -165,5 +337,10 @@
     self.navigationItem.leftBarButtonItem = nil;
 }
 
-
+#pragma mark - Helper Methods
+- (NSString *)getHTMLStringWithContent:(NSString *)mainContent URL:(NSString *)url title:(NSString *)title domain:(NSString *)domain itemID:(NSNumber *)itemID itemURL:(NSString *)itemURL
+{
+    NSString *html = [NSString stringWithFormat:@"<html><head> <meta charset=\"utf-8\">  <style type=\"text/css\">  body {font-family: \"Helvetica Neue\", sans-serif  !Important;-webkit-text-size-adjust: %d;  font-size: 16px !Important;background-color:none;  color: #454545;  width:90%% !Important;  padding-top:15px !Important;  padding-bottom:20px !Important;  margin: 0 auto !Important;  word-wrap: break-word !Important;  line-height:170%% !Important;  overflow: hidden;  }  textarea {  display: none !important;  }  input {  display: none !important;  }   form {  display: none !important;  }  .title {  font-weight:bold !Important;  font-size: 1.4em !Important;  line-height:1.1em !Important;  margin-bottom: 10px;  }  .title a {  text-decoration: none !Important;  color:#333 !Important;  }table,thead,tbody{ table-layout: fixed; max-width:100%% !important; }  table, tr, td {  background-color: transparent !important;  }  h1,h2,h3 {  font-size:1.0em !important;  }  .info {  font-size: 0.9em;  color: #999;  }.info a{ text-decoration: none; color: #999;}  .article a {  text-decoration: none !Important;  color: #333;  border-bottom:1px dashed;  }table {width: 100%% !important;max-width 100%% !important;}  img {  max-width: 100%% !important;  width: auto !important;  height: auto !important;  margin: 0 auto !important;border: 1px solid #DDD;  display: block !important;  }  .article video,  .article embed,  .article object {  display: none;  }  .article pre,  .article code {  white-space: pre-line;  font-size: 0.9em;  }  .article .img-1,  .article .wp-smiley,  .article .feedflare img,  .article img[src*='/smilies/'],  .article img[src*='.feedburner.com/~ff/'],  .article img[data-src*='/smilies/'],  .article img[data-src*='.feedburner.com/~ff/'] {  border: 0 !important;  outline: 0 !important;  margin: 0 !important;  background-color: transparent !important;  }  .article img[src*='.feedburner.com/~r/'],  .article img[data-src*='.feedburner.com/~r/'] {  display: none;  }  </style>  </head><body><div class=\"info\"><a href=\"http://%@\">%@</a>  <a href=\"%@\">#%@</a></div><div class=\"title\"><a href=\"%@\">%@</a></div><div class=\"article\">%@</div></body></html>", _currentFontSize, domain, domain, itemURL, itemID, url, title, mainContent ];
+    return html;
+}
 @end

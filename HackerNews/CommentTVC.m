@@ -58,6 +58,8 @@
         [self.textView setHidden:YES];
         [self.spinner startAnimating];
     }
+    
+    self.navigationController.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -257,7 +259,8 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     if([data count])
     {
-        for (NSDictionary* comment in data) {
+        for (NSDictionary* comment in data)
+        {
             RADataObject *obj = nil;
             if([comment objectForKey:@"text"])
             {
@@ -275,10 +278,9 @@
                 NSString *dateInterval = [timeIntervalFormatter stringForTimeInterval:[date timeIntervalSinceNow]];
                 
                 obj = [RADataObject dataObjectWithUserName:[comment objectForKey:@"author"] dateInterval:dateInterval CommentText:[attrString string] children:[self loadComments:[comment objectForKey:@"children"]]];
-            } else {
-                obj = [RADataObject dataObjectWithUserName:@"[Deleted comment]" dateInterval:@" " CommentText:@"" children:[self loadComments:[comment objectForKey:@"children"]]];
+                [result addObject:obj];
             }
-            [result addObject:obj];
+            //obj = [RADataObject dataObjectWithUserName:@"[Deleted comment]" dateInterval:@" " CommentText:@"" children:[self loadComments:[comment objectForKey:@"children"]]];
         }
     }
     return [result copy];

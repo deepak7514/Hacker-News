@@ -12,7 +12,6 @@
 #import "AppDelegate.h"
 #import "NewsItem+Create.h"
 #import "StoryType+Create.h"
-#import "Stories+Create.h"
 #import "User.h"
 #import "SWRevealViewController.h"
 #import <AFNetworking/AFHTTPSessionManager.h>
@@ -50,6 +49,9 @@
     [self startDownloadingContent];
     
     //self.tableView.contentInset = UIEdgeInsetsMake(0, -10, 0, 0);
+    self.tableView.estimatedRowHeight = 66;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -60,6 +62,8 @@
     [self.view addSubview:self.spinner];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.spinner startAnimating];
+    
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
 - (NSManagedObjectContext *)managedObjectContext
@@ -95,8 +99,6 @@
 {
     _newsItems = newsItems;
     [self modifyFetchedResultsControllerWithStoryType:self.storyType withNewsItems:newsItems];
-    [NewsItem loadNewsItemsFromArray:newsItems storyType:self.storyType];
-    //[self.tableView reloadData];
     [self.spinner stopAnimating];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     
@@ -142,12 +144,6 @@
     
     // get the newsItem out of our Model
     NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    if (newsItem && newsItem.unique)
-    {
-        [self.backgroundQueue addOperationWithBlock:^{
-            [NewsItem createOrUpdateNewsItemWithId:[newsItem.unique stringValue] index:-1 storyType:@"" inManagedObjectContext:self.secondaryContext];
-        }];
-    }
     // update UILabels in the UITableViewCell
     UILabel *titleLabel = (UILabel *)[cell viewWithTag:100];
     titleLabel.text = newsItem.title;
@@ -157,7 +153,7 @@
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[newsItem.time doubleValue]];
     TTTTimeIntervalFormatter *timeIntervalFormatter = [[TTTTimeIntervalFormatter alloc] init];
     NSString *dateInterval = [timeIntervalFormatter stringForTimeInterval:[date timeIntervalSinceNow]];
-    userNameLabel.text = [NSString stringWithFormat:@"%@ %@", newsItem.author, dateInterval];
+    userNameLabel.text = [NSString stringWithFormat:@"Submitted %@ by %@", dateInterval, newsItem.author];
     userNameLabel.font = [UIFont italicSystemFontOfSize:13];
     
     UILabel *uriLabel = (UILabel *)[cell viewWithTag:102];
@@ -173,40 +169,6 @@
     commentsLabel.font = [UIFont italicSystemFontOfSize:13];
     
     return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    
-    NSString *cellTitle = newsItem.title;
-    NSString *cellUserName = newsItem.by.unique;
-    NSString *cellUri = @"Random Url";
-    CGFloat size = 0;
-    
-    if(cellTitle){
-        NSAttributedString *attributedText =
-        [[NSAttributedString alloc] initWithString:cellTitle attributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:13]}];
-        size += [attributedText boundingRectWithSize:CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX)
-                                                   options:NSStringDrawingUsesLineFragmentOrigin
-                                                   context:nil].size.height;
-    }
-    if(cellUserName){
-        NSAttributedString *attributedText =
-        [[NSAttributedString alloc] initWithString:cellUserName attributes:@{ NSFontAttributeName: [UIFont italicSystemFontOfSize:13]}];
-        size += [attributedText boundingRectWithSize:CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX)
-                                                    options:NSStringDrawingUsesLineFragmentOrigin
-                                                    context:nil].size.height;
-    }
-    if(cellUri){
-        NSAttributedString *attributedText =
-        [[NSAttributedString alloc] initWithString:cellUri attributes:@{ NSFontAttributeName: [UIFont italicSystemFontOfSize:13]}];
-        size += [attributedText boundingRectWithSize:CGSizeMake(tableView.bounds.size.width, CGFLOAT_MAX)
-                                             options:NSStringDrawingUsesLineFragmentOrigin
-                                             context:nil].size.height;
-    }
-    
-    return size + 25;
 }
 
 #pragma mark - UITableViewDelegate
@@ -297,7 +259,10 @@
                                                             NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&error];
                                                             if(error){NSLog(@"Error Parsing JSON Data from url-%@ error-%@", storyTypeURL, error);}
                                                             //we must dispatch this back to the main queue
-                                                            dispatch_async(dispatch_get_main_queue(), ^{ self.newsItems = jsonArray;});
+                                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                                self.newsItems = jsonArray;
+                                                                [NewsItem loadNewsItemsFromArray:self.newsItems storyType:self.storyType];
+                                                            });
                                                         }
                                                     } else
                                                     {
