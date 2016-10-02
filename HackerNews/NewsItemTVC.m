@@ -154,18 +154,18 @@
     TTTTimeIntervalFormatter *timeIntervalFormatter = [[TTTTimeIntervalFormatter alloc] init];
     NSString *dateInterval = [timeIntervalFormatter stringForTimeInterval:[date timeIntervalSinceNow]];
     userNameLabel.text = [NSString stringWithFormat:@"Submitted %@ by %@", dateInterval, newsItem.author];
-    userNameLabel.font = [UIFont italicSystemFontOfSize:13];
+    userNameLabel.font = [UIFont italicSystemFontOfSize:12];
     
     UILabel *uriLabel = (UILabel *)[cell viewWithTag:102];
     uriLabel.text = newsItem.url;
-    uriLabel.font = [UIFont italicSystemFontOfSize:13];
+    uriLabel.font = [UIFont italicSystemFontOfSize:12];
     
     UILabel *scoreLabel = (UILabel *)[cell viewWithTag:103];
     scoreLabel.text = [NSString stringWithFormat:@"S:%@", newsItem.score];
     scoreLabel.font = [UIFont italicSystemFontOfSize:13];
     
     UILabel *commentsLabel = (UILabel *)[cell viewWithTag:104];
-    commentsLabel.text = [NSString stringWithFormat:@"C:%@", newsItem.descendants];
+    commentsLabel.text = [NSString stringWithFormat:@"C:%@", [newsItem.descendants isKindOfClass:[NSNumber class]]?newsItem.descendants:@0];
     commentsLabel.font = [UIFont italicSystemFontOfSize:13];
     
     return cell;

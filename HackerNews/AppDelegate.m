@@ -150,7 +150,7 @@
     }
     
     _secondaryMOC = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-    _secondaryMOC.persistentStoreCoordinator = _persistentStoreCoordinator;
+    _secondaryMOC.persistentStoreCoordinator = [self persistentStoreCoordinator];
     [_secondaryMOC setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
     return _secondaryMOC;
 }

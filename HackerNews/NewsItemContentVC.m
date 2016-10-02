@@ -10,6 +10,8 @@
 #import "HNFetcher.h"
 #import "CommentTVC.h"
 #import "HNWebViewController.h"
+#import <FormatterKit/FormatterKit.h>
+#import "TFHpple.h"
 
 @interface NewsItemContentVC ()<UISplitViewControllerDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 @property (strong, nonatomic) NSString *html;
@@ -24,6 +26,8 @@
     BOOL pageDidFinishedLoading;
     NSTimer *progressTimer;
     UIToolbar *toolBar;
+    NSString *authToken; // token for making post requests
+    NSString *hmacToken; // token for comment
 }
 
 enum actionSheetButtonIndex {
@@ -152,13 +156,19 @@ enum actionSheetButtonIndex {
 {
     _newsItem = newsItem;
     [self startDownloadingContent];
+    [self fetchAuthTokenFromNewsItemId:newsItem.unique];
 }
 
 - (void)startDownloadingContent
 {
     if (self.newsItem)
     {
-        NSString *itemURL = [NSString stringWithFormat:@"https://news.ycombinator.com/item?id=%@",self.newsItem.unique];
+        NSString *itemURL = [NSString stringWithFormat:@"news.ycombinator.com/item?id=%@",self.newsItem.unique];
+        
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[self.newsItem.time doubleValue]];
+        TTTTimeIntervalFormatter *timeIntervalFormatter = [[TTTTimeIntervalFormatter alloc] init];
+        NSString *dateInterval = [timeIntervalFormatter stringForTimeInterval:[date timeIntervalSinceNow]];
+        
         if(self.newsItem.url)
         {
             NSString *encodedURL = [self.newsItem.url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
@@ -187,7 +197,7 @@ enum actionSheetButtonIndex {
                             //we must dispatch this back to the main queue
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 if(htmlBody){
-                                    NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL];
+                                    NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
                                     self.html = html;
                                 }
                                 else {
@@ -202,7 +212,7 @@ enum actionSheetButtonIndex {
                                 [self.spinner stopAnimating];
                                 NSString *htmlBody =
                                 [NSString stringWithFormat:@"<div style=\"position:absolute; width:200px; height:200px; left:50%%; top:50%%; margin-left:-100px; margin-top:-100px;\"><p>Cannot connect to URL. Try after some time.</p></div>"];
-                                NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL];
+                                NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
                                 self.html = html;
                             });
                         }
@@ -210,11 +220,82 @@ enum actionSheetButtonIndex {
                  ];
             [task resume]; // don't forget that all NSURLSession tasks start out suspended!
         } else {
-            NSString *html = [self getHTMLStringWithContent:self.newsItem.text URL:@"#" title:self.newsItem.title domain:@"" itemID:self.newsItem.unique itemURL:itemURL ];
+            NSString *html = [self getHTMLStringWithContent:self.newsItem.text URL:@"#" title:self.newsItem.title domain:@"" itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
             self.html = html;
 
         }
     }
+}
+
+- (void)fetchAuthTokenFromNewsItemId:(NSNumber *)newsItemId
+{
+    
+    NSString *itemURL = [NSString stringWithFormat:@"http://news.ycombinator.com/item?id=%@",newsItemId];
+    NSURL *contentURL = [NSURL URLWithString:itemURL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setURL:contentURL];
+    [request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI" forHTTPHeaderField:@"cookie"];
+    
+    // another configuration option is backgroundSessionConfiguration (multitasking API required though)
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    
+    // create the session without specifying a queue to run completion handler on (thus, not main queue)
+    // we also don't specify a delegate (since completion handler is all we need)
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    
+    NSURLSessionDownloadTask *task =
+    [session downloadTaskWithRequest:request
+                   completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
+                       // this handler is not executing on the main queue, so we can't do UI directly here
+                       if (!error) {
+                           NSString *hmac = nil;
+                           NSString *auth = nil;
+                           TFHpple *tutorialsParser = [TFHpple hppleWithHTMLData:[NSData dataWithContentsOfURL:localfile]];
+                           
+                           // Extracting Auth Token from ItemUrl
+                           NSString *tutorialsXpathQueryString = [NSString stringWithFormat:@"//a[@id='up_%@']", self.newsItem.unique];
+                           NSArray *tutorialsNodes = [tutorialsParser searchWithXPathQuery:tutorialsXpathQueryString];
+                           for (TFHppleElement *element in tutorialsNodes) {
+                               NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:[NSURL URLWithString:[element objectForKey:@"href"]]
+                                                                           resolvingAgainstBaseURL:NO];
+                               NSArray *queryItems = urlComponents.queryItems;
+                               auth = [self valueForKey:@"auth" fromQueryItems:queryItems];
+                           }
+                           
+                           // Extracting Comment HMAC token from ItemUrl
+                           tutorialsXpathQueryString = @"//form";
+                           tutorialsNodes = [tutorialsParser searchWithXPathQuery:tutorialsXpathQueryString];
+                           for (TFHppleElement *element in tutorialsNodes) {
+                               //NSLog(@"%@", element);
+                               for (TFHppleElement *child in element.children) {
+                                   if ([child.tagName isEqualToString:@"input"] && [[child objectForKey:@"name"] isEqual:@"hmac"]) {
+                                       hmac = [child  objectForKey:@"value"];
+                                       break;
+                                   }
+                               }
+                            }
+                           
+                           //we must dispatch this back to the main queue
+                           dispatch_async(dispatch_get_main_queue(), ^{
+                               authToken = auth;
+                               hmacToken = hmac;
+                           });
+                       } else {
+                           NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
+                       }
+                   }
+     ];
+    [task resume]; // don't forget that all NSURLSession tasks start out suspended!
+}
+
+- (NSString *)valueForKey:(NSString *)key
+           fromQueryItems:(NSArray *)queryItems
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name=%@", key];
+    NSURLQueryItem *queryItem = [[queryItems
+                                  filteredArrayUsingPredicate:predicate]
+                                 firstObject];
+    return queryItem.value;
 }
 
 #pragma mark - ToolBar
@@ -228,17 +309,17 @@ enum actionSheetButtonIndex {
     toolBar.barStyle = UIBarStyleDefault;
     [self.view addSubview:toolBar];
     
-    UIBarButtonItem *buttonUpVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"upvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    UIBarButtonItem *buttonUpVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"upvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(upvoteButtonTouchUp:)];
     
-    UIBarButtonItem *buttonDownVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"downvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    UIBarButtonItem *buttonDownVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"downvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(downvoteButtonTouchUp:)];
     
-    UIBarButtonItem *buttonFavStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"favourite.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    UIBarButtonItem *buttonFavStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"favourite.png"] style:UIBarButtonItemStylePlain target:self action:@selector(likeStoryButtonTouchUp:)];
     
-    UIBarButtonItem *buttonHideStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"hide.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    UIBarButtonItem *buttonHideStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"hide.png"] style:UIBarButtonItemStylePlain target:self action:@selector(hideStoryButtonTouchUp:)];
     
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
-    UIBarButtonItem *buttonComment = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"comment.png"] style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTouchUp:)];
+    UIBarButtonItem *buttonComment = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"comment.png"] style:UIBarButtonItemStylePlain target:self action:@selector(commentButtonTouchUp:)];
     
     UIBarButtonItem *buttonAction = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(buttonActionTouchUp:)];
     
@@ -307,15 +388,135 @@ enum actionSheetButtonIndex {
 }
 
 #pragma mark - Button Actions
-- (void)backButtonTouchUp:(id)sender {
-    
+- (void)upvoteButtonTouchUp:(id)sender {
+    NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=up&auth=%@", self.newsItem.unique, authToken];
+    [self sendGetRequest:url];
 }
 
+- (void)downvoteButtonTouchUp:(id)sender {
+    NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=un&auth=%@", self.newsItem.unique, authToken];
+    [self sendGetRequest:url];
+}
+
+- (void)hideStoryButtonTouchUp:(id)sender {
+    NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@", self.newsItem.unique, authToken];
+    [self sendGetRequest:url];
+}
+
+- (void)unHideStoryButtonTouchUp:(id)sender {
+    NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
+    [self sendGetRequest:url];
+}
+
+- (void)likeStoryButtonTouchUp:(id)sender {
+    NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@", self.newsItem.unique, authToken];
+    [self sendGetRequest:url];
+}
+
+- (void)unLikeStoryButtonTouchUp:(id)sender {
+    NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
+    [self sendGetRequest:url];
+}
+
+- (void)commentButtonTouchUp:(id)sender {
+    UIAlertController *alertController = [UIAlertController
+                                          alertControllerWithTitle:@"Add Comment"
+                                          message:nil
+                                          preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField)
+     {
+         textField.placeholder = NSLocalizedString(@"Comment", @"Enter Comment");
+     }];
+    UIAlertAction *cancelAction = [UIAlertAction
+                                   actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel action")
+                                   style:UIAlertActionStyleCancel
+                                   handler:^(UIAlertAction *action)
+                                   {
+                                       NSLog(@"Cancel action");
+                                   }];
+    UIAlertAction *okAction = [UIAlertAction
+                               actionWithTitle:NSLocalizedString(@"Submit", @"Submit Comment")
+                               style:UIAlertActionStyleDefault
+                               handler:^(UIAlertAction *action)
+                               {
+                                   UITextField *commentText = alertController.textFields.firstObject;
+                                   NSString *postData = [NSString stringWithFormat:@"parent=%@&goto=item%%3Fid%%3D%@&hmac=%@&text=%@", self.newsItem.unique, self.newsItem.unique, hmacToken, [commentText.text stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]]];
+                                   NSLog(@"Comment - %@, %@", commentText.text, postData);
+                                   [self sendPostRequestForCommentWithData:[postData dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
+                               }];
+    [alertController addAction:cancelAction];
+    [alertController addAction:okAction];
+    [self presentViewController:alertController animated:YES completion:^{}];
+}
 
 - (void)buttonActionTouchUp:(id)sender {
     [self showActionSheet];
 }
 
+- (void)sendPostRequestForCommentWithData:(NSData *)postData
+{
+    NSURL *contentURL = [NSURL URLWithString:@"https://news.ycombinator.com/comment"];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setURL:contentURL];
+    [request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI"
+   forHTTPHeaderField:@"cookie"];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:[NSString stringWithFormat:@"%d", postData.length] forHTTPHeaderField:@"Content-Length"];
+    [request setHTTPBody:postData];
+    NSLog(@"request - %@", postData);
+
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    
+    NSURLSessionDownloadTask *task =
+    [session downloadTaskWithRequest:request
+                   completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
+                       if (!error) {
+                           
+                           dispatch_async(dispatch_get_main_queue(), ^{
+                               
+                           });
+                       } else {
+                           NSLog(@"Error making POST request-%@ error-%@",request, error);
+                       }
+                   }
+     ];
+    [task resume];
+}
+
+- (void)sendGetRequest:(NSString *)action
+{
+    NSString *itemURL = [NSString stringWithFormat:@"https://news.ycombinator.com/%@", action];
+    NSURL *contentURL = [NSURL URLWithString:itemURL];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setURL:contentURL];
+    [request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI"
+   forHTTPHeaderField:@"cookie"];
+    [request setHTTPMethod:@"GET"];
+    
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
+    
+    NSURLSessionDownloadTask *task =
+    [session downloadTaskWithRequest:request
+                   completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
+                       if (!error) {
+                           
+                           dispatch_async(dispatch_get_main_queue(), ^{
+                               
+                           });
+                       } else {
+                           NSLog(@"Error making GET request-%@ error-%@",request, error);
+                       }
+                   }
+     ];
+    [task resume];
+}
 
 #pragma mark - UISplitViewControllerDelegate
 - (void)awakeFromNib
@@ -338,9 +539,9 @@ enum actionSheetButtonIndex {
 }
 
 #pragma mark - Helper Methods
-- (NSString *)getHTMLStringWithContent:(NSString *)mainContent URL:(NSString *)url title:(NSString *)title domain:(NSString *)domain itemID:(NSNumber *)itemID itemURL:(NSString *)itemURL
+- (NSString *)getHTMLStringWithContent:(NSString *)mainContent URL:(NSString *)url title:(NSString *)title domain:(NSString *)domain itemID:(NSNumber *)itemID itemURL:(NSString *)itemURL author:(NSString *)author dateInterval:(NSString *)dateInterval
 {
-    NSString *html = [NSString stringWithFormat:@"<html><head> <meta charset=\"utf-8\">  <style type=\"text/css\">  body {font-family: \"Helvetica Neue\", sans-serif  !Important;-webkit-text-size-adjust: %d;  font-size: 16px !Important;background-color:none;  color: #454545;  width:90%% !Important;  padding-top:15px !Important;  padding-bottom:20px !Important;  margin: 0 auto !Important;  word-wrap: break-word !Important;  line-height:170%% !Important;  overflow: hidden;  }  textarea {  display: none !important;  }  input {  display: none !important;  }   form {  display: none !important;  }  .title {  font-weight:bold !Important;  font-size: 1.4em !Important;  line-height:1.1em !Important;  margin-bottom: 10px;  }  .title a {  text-decoration: none !Important;  color:#333 !Important;  }table,thead,tbody{ table-layout: fixed; max-width:100%% !important; }  table, tr, td {  background-color: transparent !important;  }  h1,h2,h3 {  font-size:1.0em !important;  }  .info {  font-size: 0.9em;  color: #999;  }.info a{ text-decoration: none; color: #999;}  .article a {  text-decoration: none !Important;  color: #333;  border-bottom:1px dashed;  }table {width: 100%% !important;max-width 100%% !important;}  img {  max-width: 100%% !important;  width: auto !important;  height: auto !important;  margin: 0 auto !important;border: 1px solid #DDD;  display: block !important;  }  .article video,  .article embed,  .article object {  display: none;  }  .article pre,  .article code {  white-space: pre-line;  font-size: 0.9em;  }  .article .img-1,  .article .wp-smiley,  .article .feedflare img,  .article img[src*='/smilies/'],  .article img[src*='.feedburner.com/~ff/'],  .article img[data-src*='/smilies/'],  .article img[data-src*='.feedburner.com/~ff/'] {  border: 0 !important;  outline: 0 !important;  margin: 0 !important;  background-color: transparent !important;  }  .article img[src*='.feedburner.com/~r/'],  .article img[data-src*='.feedburner.com/~r/'] {  display: none;  }  </style>  </head><body><div class=\"info\"><a href=\"http://%@\">%@</a>  <a href=\"%@\">#%@</a></div><div class=\"title\"><a href=\"%@\">%@</a></div><div class=\"article\">%@</div></body></html>", _currentFontSize, domain, domain, itemURL, itemID, url, title, mainContent ];
+    NSString *html = [NSString stringWithFormat:@"<html><head> <meta charset=\"utf-8\">  <style type=\"text/css\">  body {font-family: \"Helvetica Neue\", sans-serif  !Important;-webkit-text-size-adjust: %d;  font-size: 16px !Important;background-color:none;  color: #454545;  width:90%% !Important;  padding-top:15px !Important;  padding-bottom:20px !Important;  margin: 0 auto !Important;  word-wrap: break-word !Important;  line-height:170%% !Important;  overflow: hidden;  }  textarea {  display: none !important;  }  input {  display: none !important;  }   form {  display: none !important;  }  .title {  font-weight:bold !Important;  font-size: 1.4em !Important;  line-height:1.1em !Important;  margin-bottom: 10px;  }  .title a {  text-decoration: none !Important;  color:#333 !Important;  }table,thead,tbody{ table-layout: fixed; max-width:100%% !important; }  table, tr, td {  background-color: transparent !important;  }  h1,h2,h3 {  font-size:1.0em !important;  }  .info {  font-size: 0.9em;  color: #999;  }.info a{ text-decoration: none; color: #999;}  .article a {  text-decoration: none !Important;  color: #333;  border-bottom:1px dashed;  }table {width: 100%% !important;max-width 100%% !important;}  img {  max-width: 100%% !important;  width: auto !important;  height: auto !important;  margin: 0 auto !important;border: 1px solid #DDD;  display: block !important;  }  .article video,  .article embed,  .article object {  display: none;  }  .article pre,  .article code {  white-space: pre-line;  font-size: 0.9em;  }  .article .img-1,  .article .wp-smiley,  .article .feedflare img,  .article img[src*='/smilies/'],  .article img[src*='.feedburner.com/~ff/'],  .article img[data-src*='/smilies/'],  .article img[data-src*='.feedburner.com/~ff/'] {  border: 0 !important;  outline: 0 !important;  margin: 0 !important;  background-color: transparent !important;  }  .article img[src*='.feedburner.com/~r/'],  .article img[data-src*='.feedburner.com/~r/'] {  display: none;  }  </style>  </head><body><div class=\"info\"><a href=\"http://%@\">%@</a></div><div class=\"title\"><a href=\"%@\">%@</a></div><div class=\"info\" style=\"margin-top: -15px;\"> %@ by %@ <a href=\"https://%@\">#%@</a></div><div class=\"article\">%@</div></body></html>", _currentFontSize, domain, domain, url, title, dateInterval, author, itemURL, itemID, mainContent ];
     return html;
 }
 @end

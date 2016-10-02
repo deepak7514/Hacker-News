@@ -34,6 +34,10 @@
 		F981E82C1D8FC83F00AA88A8 /* RATableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F981E8291D8FC83F00AA88A8 /* RATableViewCell.m */; };
 		F981E82D1D8FC83F00AA88A8 /* RATableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */; };
 		F988FA181D78168300702D65 /* CoreDataTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F988FA171D78168300702D65 /* CoreDataTableViewController.m */; };
+		F9AD0C271D9E360B00B34231 /* TFHpple.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AD0C221D9E360B00B34231 /* TFHpple.m */; };
+		F9AD0C281D9E360B00B34231 /* TFHppleElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AD0C241D9E360B00B34231 /* TFHppleElement.m */; };
+		F9AD0C291D9E360B00B34231 /* XPathQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = F9AD0C261D9E360B00B34231 /* XPathQuery.m */; };
+		F9AD0C2B1D9E36D800B34231 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F9AD0C2A1D9E36D800B34231 /* libxml2.tbd */; };
 		F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8BD1D71C43D00CB0FA8 /* main.m */; };
 		F9B4E8C11D71C43D00CB0FA8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */; };
 		F9B4E8C71D71C43D00CB0FA8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */; };
@@ -106,6 +110,13 @@
 		F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RATableViewCell.xib; sourceTree = "<group>"; };
 		F988FA161D78168300702D65 /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		F988FA171D78168300702D65 /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
+		F9AD0C211D9E360B00B34231 /* TFHpple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFHpple.h; sourceTree = "<group>"; };
+		F9AD0C221D9E360B00B34231 /* TFHpple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFHpple.m; sourceTree = "<group>"; };
+		F9AD0C231D9E360B00B34231 /* TFHppleElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFHppleElement.h; sourceTree = "<group>"; };
+		F9AD0C241D9E360B00B34231 /* TFHppleElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFHppleElement.m; sourceTree = "<group>"; };
+		F9AD0C251D9E360B00B34231 /* XPathQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathQuery.h; sourceTree = "<group>"; };
+		F9AD0C261D9E360B00B34231 /* XPathQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XPathQuery.m; sourceTree = "<group>"; };
+		F9AD0C2A1D9E36D800B34231 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		F9B4E8B91D71C43D00CB0FA8 /* HackerNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HackerNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9B4E8BD1D71C43D00CB0FA8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -140,6 +151,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9AD0C2B1D9E36D800B34231 /* libxml2.tbd in Frameworks */,
 				F939C0911D7D619F00AF23DE /* AFNetworking.framework in Frameworks */,
 				F91FA0771D91064300E9A0E0 /* FormatterKit.framework in Frameworks */,
 			);
@@ -227,9 +239,24 @@
 			path = "Private Files";
 			sourceTree = "<group>";
 		};
+		F9AD0C201D9E35D600B34231 /* Hpple */ = {
+			isa = PBXGroup;
+			children = (
+				F9AD0C211D9E360B00B34231 /* TFHpple.h */,
+				F9AD0C221D9E360B00B34231 /* TFHpple.m */,
+				F9AD0C231D9E360B00B34231 /* TFHppleElement.h */,
+				F9AD0C241D9E360B00B34231 /* TFHppleElement.m */,
+				F9AD0C251D9E360B00B34231 /* XPathQuery.h */,
+				F9AD0C261D9E360B00B34231 /* XPathQuery.m */,
+			);
+			name = Hpple;
+			path = RATreeView;
+			sourceTree = "<group>";
+		};
 		F9B4E8B01D71C43D00CB0FA8 = {
 			isa = PBXGroup;
 			children = (
+				F9AD0C2A1D9E36D800B34231 /* libxml2.tbd */,
 				F91FA0761D91064300E9A0E0 /* FormatterKit.framework */,
 				F939C0901D7D619F00AF23DE /* AFNetworking.framework */,
 				F9B4E8BB1D71C43D00CB0FA8 /* HackerNews */,
@@ -251,6 +278,7 @@
 				F9B4E8BF1D71C43D00CB0FA8 /* AppDelegate.h */,
 				F9B4E8C01D71C43D00CB0FA8 /* AppDelegate.m */,
 				F9B4E8C51D71C43D00CB0FA8 /* Main.storyboard */,
+				F9AD0C201D9E35D600B34231 /* Hpple */,
 				F981E7F71D8FC6F200AA88A8 /* RATreeView */,
 				F903F8131D8BAE8200DDC885 /* SWRevealView Controller */,
 				F9B4E8E31D71C74300CB0FA8 /* HN Fetcher */,
@@ -339,6 +367,7 @@
 				TargetAttributes = {
 					F9B4E8B81D71C43D00CB0FA8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = V4MWK69VX4;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -403,6 +432,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9AD0C281D9E360B00B34231 /* TFHppleElement.m in Sources */,
 				F930EF4C1D93E9A400E86DE0 /* StoryType.m in Sources */,
 				F9B4E8DE1D71C6CA00CB0FA8 /* User+CoreDataProperties.m in Sources */,
 				F981E8221D8FC6F200AA88A8 /* RATreeView+RATreeNodeCollectionControllerDataSource.m in Sources */,
@@ -424,6 +454,7 @@
 				F93B0D101D74156600D5A172 /* NewsItem+Create.m in Sources */,
 				F9B4E8F71D71C82200CB0FA8 /* NewsItemTVC.m in Sources */,
 				F981E8251D8FC6F200AA88A8 /* RATreeView.m in Sources */,
+				F9AD0C271D9E360B00B34231 /* TFHpple.m in Sources */,
 				F981E8241D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m in Sources */,
 				F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */,
 				F9C8BB7C1D98EA770021C7AB /* HNWebViewController.m in Sources */,
@@ -435,6 +466,7 @@
 				F981E8211D8FC6F200AA88A8 /* RATreeView+Private.m in Sources */,
 				F9B4E8CA1D71C43D00CB0FA8 /* HackerNews.xcdatamodeld in Sources */,
 				F9B4E8F51D71C82200CB0FA8 /* NewsItemContentVC.m in Sources */,
+				F9AD0C291D9E360B00B34231 /* XPathQuery.m in Sources */,
 				F981E81F1D8FC6F200AA88A8 /* RATreeNodeItem.m in Sources */,
 				F9B4E8BE1D71C43D00CB0FA8 /* main.m in Sources */,
 				F981E8181D8FC6F200AA88A8 /* RABatchChangeEntity.m in Sources */,
@@ -501,7 +533,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -539,7 +571,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -550,12 +582,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = HackerNews/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deepak.HackerNews;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -566,12 +600,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = HackerNews/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.deepak.HackerNews;
 				PRODUCT_NAME = "$(TARGET_NAME)";

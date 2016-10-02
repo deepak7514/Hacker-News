@@ -57,6 +57,7 @@
             }
             index += 1;
         }
+        NSLog(@"%@ stories, count- %d", type, index);
     }];
 }
 
@@ -124,12 +125,10 @@
         newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
         newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
         
-        if(index != -1) {
-            StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
-            if(storyType)
-            {
-                newsItem.storyType = storyType;
-            }
+        StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
+        if(storyType)
+        {
+            newsItem.storyType = storyType;
         }
         
     } else {
@@ -149,12 +148,10 @@
         newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
         newsItem.author = [newsItemDictionary valueForKey:HN_NEWSITEM_BY];
         
-        if(index != -1) {
-             StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
-            if(storyType)
-            {
-                newsItem.storyType = storyType;
-            }
+        StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
+        if(storyType)
+        {
+            newsItem.storyType = storyType;
         }
         
         //newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
