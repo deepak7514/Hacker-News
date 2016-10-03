@@ -460,8 +460,8 @@ enum actionSheetButtonIndex {
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:contentURL];
-    [request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI"
-   forHTTPHeaderField:@"cookie"];
+    //[request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI" forHTTPHeaderField:@"cookie"];
+    [request setValue:self.cookieToken forHTTPHeaderField:@"cookie"];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" forHTTPHeaderField:@"Accept"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -495,8 +495,8 @@ enum actionSheetButtonIndex {
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:contentURL];
-    [request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI"
-   forHTTPHeaderField:@"cookie"];
+    //[request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI" forHTTPHeaderField:@"cookie"];
+    [request setValue:self.cookieToken forHTTPHeaderField:@"cookie"];
     [request setHTTPMethod:@"GET"];
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];

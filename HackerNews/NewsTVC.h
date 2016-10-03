@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LoginViewController.h"
 
-@interface NewsTVC : UITableViewController
+@interface NewsTVC : UITableViewController <LoginViewControllerDelegate>
 
 @end

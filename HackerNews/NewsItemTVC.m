@@ -109,8 +109,8 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"storyType.type = %@", storyType];
     
     
-    if(self.fetchedResultsController == nil)
-    {
+//    if(self.fetchedResultsController == nil)
+//    {
         NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
         request.predicate = predicate;
         request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"storyType.index"
@@ -119,14 +119,14 @@
         self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                                             managedObjectContext:self.managedObjectContext
                                                                               sectionNameKeyPath:nil cacheName:nil];
-    } else {
-        [self.fetchedResultsController.fetchRequest setPredicate:predicate];
-        NSError *error;
-        if (![[self fetchedResultsController] performFetch:&error]) {
-            // Update to handle the error appropriately.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        }
-    }
+//    } else {
+//        [self.fetchedResultsController.fetchRequest setPredicate:predicate];
+//        NSError *error;
+//        if (![[self fetchedResultsController] performFetch:&error]) {
+//            // Update to handle the error appropriately.
+//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//        }
+//    }
 }
 
 
@@ -203,6 +203,7 @@
 {
     vc.newsItem = newsItem;
     vc.title = [NSString stringWithFormat:@"%@", newsItem.unique];
+    vc.cookieToken = self.cookieToken;
 }
 
 // In a story board-based application, you will often want to do a little preparation before navigation

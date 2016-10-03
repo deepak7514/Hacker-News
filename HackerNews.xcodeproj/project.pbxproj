@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F903F8161D8BAF5900DDC885 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */; };
+		F907C25D1DA241AC0029F1A2 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F907C25C1DA241AC0029F1A2 /* LoginViewController.m */; };
 		F91FA0751D90F57C00E9A0E0 /* CommentTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F903E9861D8D6576007931A4 /* CommentTVC.m */; };
 		F91FA0771D91064300E9A0E0 /* FormatterKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F91FA0761D91064300E9A0E0 /* FormatterKit.framework */; };
 		F930EF4B1D93E9A400E86DE0 /* StoryType+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = F930EF481D93E9A400E86DE0 /* StoryType+CoreDataProperties.m */; };
@@ -60,6 +61,8 @@
 		F903E9861D8D6576007931A4 /* CommentTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTVC.m; sourceTree = "<group>"; };
 		F903F8141D8BAF5900DDC885 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		F903F8151D8BAF5900DDC885 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
+		F907C25B1DA241AC0029F1A2 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		F907C25C1DA241AC0029F1A2 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		F91FA0761D91064300E9A0E0 /* FormatterKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FormatterKit.framework; path = Carthage/Build/iOS/FormatterKit.framework; sourceTree = "<group>"; };
 		F930EF471D93E9A400E86DE0 /* StoryType+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "StoryType+CoreDataProperties.h"; sourceTree = "<group>"; };
 		F930EF481D93E9A400E86DE0 /* StoryType+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "StoryType+CoreDataProperties.m"; sourceTree = "<group>"; };
@@ -110,6 +113,7 @@
 		F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RATableViewCell.xib; sourceTree = "<group>"; };
 		F988FA161D78168300702D65 /* CoreDataTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataTableViewController.h; sourceTree = "<group>"; };
 		F988FA171D78168300702D65 /* CoreDataTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataTableViewController.m; sourceTree = "<group>"; };
+		F9A06C311DA1436F007255EC /* HackerNews 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "HackerNews 2.xcdatamodel"; sourceTree = "<group>"; };
 		F9AD0C211D9E360B00B34231 /* TFHpple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFHpple.h; sourceTree = "<group>"; };
 		F9AD0C221D9E360B00B34231 /* TFHpple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFHpple.m; sourceTree = "<group>"; };
 		F9AD0C231D9E360B00B34231 /* TFHppleElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TFHppleElement.h; sourceTree = "<group>"; };
@@ -172,23 +176,25 @@
 		F93B0D0A1D740C0C00D5A172 /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				F9C8BB7A1D98EA770021C7AB /* HNWebViewController.h */,
-				F9C8BB7B1D98EA770021C7AB /* HNWebViewController.m */,
-				F981E8261D8FC83F00AA88A8 /* RADataObject.h */,
-				F981E8271D8FC83F00AA88A8 /* RADataObject.m */,
-				F981E8281D8FC83F00AA88A8 /* RATableViewCell.h */,
-				F981E8291D8FC83F00AA88A8 /* RATableViewCell.m */,
-				F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */,
-				F903E9851D8D6576007931A4 /* CommentTVC.h */,
-				F903E9861D8D6576007931A4 /* CommentTVC.m */,
+				F907C25B1DA241AC0029F1A2 /* LoginViewController.h */,
+				F907C25C1DA241AC0029F1A2 /* LoginViewController.m */,
 				F988FA161D78168300702D65 /* CoreDataTableViewController.h */,
 				F988FA171D78168300702D65 /* CoreDataTableViewController.m */,
-				F9B4E8EF1D71C82200CB0FA8 /* NewsItemContentVC.h */,
-				F9B4E8F01D71C82200CB0FA8 /* NewsItemContentVC.m */,
 				F9B4E8F11D71C82200CB0FA8 /* NewsTVC.h */,
 				F9B4E8F21D71C82200CB0FA8 /* NewsTVC.m */,
 				F9B4E8F31D71C82200CB0FA8 /* NewsItemTVC.h */,
 				F9B4E8F41D71C82200CB0FA8 /* NewsItemTVC.m */,
+				F9B4E8EF1D71C82200CB0FA8 /* NewsItemContentVC.h */,
+				F9B4E8F01D71C82200CB0FA8 /* NewsItemContentVC.m */,
+				F981E8261D8FC83F00AA88A8 /* RADataObject.h */,
+				F981E8271D8FC83F00AA88A8 /* RADataObject.m */,
+				F981E82A1D8FC83F00AA88A8 /* RATableViewCell.xib */,
+				F981E8281D8FC83F00AA88A8 /* RATableViewCell.h */,
+				F981E8291D8FC83F00AA88A8 /* RATableViewCell.m */,
+				F903E9851D8D6576007931A4 /* CommentTVC.h */,
+				F903E9861D8D6576007931A4 /* CommentTVC.m */,
+				F9C8BB7A1D98EA770021C7AB /* HNWebViewController.h */,
+				F9C8BB7B1D98EA770021C7AB /* HNWebViewController.m */,
 			);
 			name = "View Controller";
 			sourceTree = "<group>";
@@ -456,6 +462,7 @@
 				F981E8251D8FC6F200AA88A8 /* RATreeView.m in Sources */,
 				F9AD0C271D9E360B00B34231 /* TFHpple.m in Sources */,
 				F981E8241D8FC6F200AA88A8 /* RATreeView+TableViewDelegate.m in Sources */,
+				F907C25D1DA241AC0029F1A2 /* LoginViewController.m in Sources */,
 				F9B4E8DF1D71C6CA00CB0FA8 /* User.m in Sources */,
 				F9C8BB7C1D98EA770021C7AB /* HNWebViewController.m in Sources */,
 				F981E82C1D8FC83F00AA88A8 /* RATableViewCell.m in Sources */,
@@ -641,6 +648,7 @@
 		F9B4E8C81D71C43D00CB0FA8 /* HackerNews.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				F9A06C311DA1436F007255EC /* HackerNews 2.xcdatamodel */,
 				F9B4E8C91D71C43D00CB0FA8 /* HackerNews.xcdatamodel */,
 			);
 			currentVersion = F9B4E8C91D71C43D00CB0FA8 /* HackerNews.xcdatamodel */;
