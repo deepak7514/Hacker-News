@@ -17,5 +17,6 @@
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 @property (nonatomic, weak) id <LoginViewControllerDelegate> delegate;
+@property (nonatomic, strong) NSString *username;
 
 @end

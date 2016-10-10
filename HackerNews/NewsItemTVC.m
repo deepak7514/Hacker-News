@@ -20,8 +20,6 @@
 @interface NewsItemTVC ()
 
 @property (nonatomic, strong) NSArray *newsItems; // of News Items IDs
-@property (nonatomic, strong) NSOperationQueue *backgroundQueue;
-@property (nonatomic, strong) NSManagedObjectContext *secondaryContext;
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
 - (IBAction)refresh:(UIRefreshControl *)sender;
 @end
@@ -53,6 +51,7 @@
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.spinner.color = [UIColor blueColor];
@@ -60,7 +59,6 @@
     self.spinner.hidesWhenStopped = YES;
     self.spinner.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:self.spinner];
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.spinner startAnimating];
     
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
@@ -76,25 +74,6 @@
     return _managedObjectContext;
 }
 
-- (NSManagedObjectContext *)secondaryContext
-{
-    if(_secondaryContext == nil)
-    {
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        _secondaryContext = appDelegate.secondaryMOC;
-    }
-    return _secondaryContext;
-}
-
-- (NSOperationQueue *)backgroundQueue
-{
-    if(_backgroundQueue == nil)
-    {
-        self.backgroundQueue = [[NSOperationQueue alloc] init];
-    }
-    return _backgroundQueue;
-}
-
 - (void)setNewsItems:(NSArray *)newsItems
 {
     _newsItems = newsItems;
@@ -106,27 +85,27 @@
 
 - (void)modifyFetchedResultsControllerWithStoryType:(NSString *)storyType withNewsItems:(NSArray *)newsItems
 {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"storyType.type = %@", storyType];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"type = %@", storyType];
     
     
-//    if(self.fetchedResultsController == nil)
-//    {
-        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
+    if(self.fetchedResultsController == nil)
+    {
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"StoryType"];
         request.predicate = predicate;
-        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"storyType.index"
+        request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"index"
                                                                   ascending:YES
                                                                    selector:@selector(compare:)]];
         self.fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request
                                                                             managedObjectContext:self.managedObjectContext
                                                                               sectionNameKeyPath:nil cacheName:nil];
-//    } else {
-//        [self.fetchedResultsController.fetchRequest setPredicate:predicate];
-//        NSError *error;
-//        if (![[self fetchedResultsController] performFetch:&error]) {
-//            // Update to handle the error appropriately.
-//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-//        }
-//    }
+    } else {
+        [self.fetchedResultsController.fetchRequest setPredicate:predicate];
+        NSError *error;
+        if (![[self fetchedResultsController] performFetch:&error]) {
+            // Update to handle the error appropriately.
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        }
+    }
 }
 
 
@@ -143,29 +122,29 @@
     // Configure the cell...
     
     // get the newsItem out of our Model
-    NewsItem *newsItem = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    StoryType *story = [self.fetchedResultsController objectAtIndexPath:indexPath];
     // update UILabels in the UITableViewCell
     UILabel *titleLabel = (UILabel *)[cell viewWithTag:100];
-    titleLabel.text = newsItem.title;
+    titleLabel.text = story.newsItem.title;
     titleLabel.font = [UIFont boldSystemFontOfSize:13];
     
     UILabel *userNameLabel = (UILabel *)[cell viewWithTag:101];
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[newsItem.time doubleValue]];
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:(NSTimeInterval)[story.newsItem.time doubleValue]];
     TTTTimeIntervalFormatter *timeIntervalFormatter = [[TTTTimeIntervalFormatter alloc] init];
     NSString *dateInterval = [timeIntervalFormatter stringForTimeInterval:[date timeIntervalSinceNow]];
-    userNameLabel.text = [NSString stringWithFormat:@"Submitted %@ by %@", dateInterval, newsItem.author];
+    userNameLabel.text = [NSString stringWithFormat:@"Submitted %@ by %@", dateInterval, story.newsItem.author];
     userNameLabel.font = [UIFont italicSystemFontOfSize:12];
     
     UILabel *uriLabel = (UILabel *)[cell viewWithTag:102];
-    uriLabel.text = newsItem.url;
+    uriLabel.text = story.newsItem.url;
     uriLabel.font = [UIFont italicSystemFontOfSize:12];
     
     UILabel *scoreLabel = (UILabel *)[cell viewWithTag:103];
-    scoreLabel.text = [NSString stringWithFormat:@"S:%@", newsItem.score];
+    scoreLabel.text = [NSString stringWithFormat:@"S:%@", story.newsItem.score];
     scoreLabel.font = [UIFont italicSystemFontOfSize:13];
     
     UILabel *commentsLabel = (UILabel *)[cell viewWithTag:104];
-    commentsLabel.text = [NSString stringWithFormat:@"C:%@", [newsItem.descendants isKindOfClass:[NSNumber class]]?newsItem.descendants:@0];
+    commentsLabel.text = [NSString stringWithFormat:@"C:%@", story.newsItem.descendants? :@0];
     commentsLabel.font = [UIFont italicSystemFontOfSize:13];
     
     return cell;
@@ -189,7 +168,7 @@
     // is the Detail is an NewsItemContentVC?
     if ([detail isKindOfClass:[NewsItemContentVC class]]) {
         // yes ... we know how to update that!
-        [self prepareNewsItemContentVC:detail toDisplayNewsItem:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+        [self prepareNewsItemContentVC:detail toDisplayNewsItem:[(StoryType *)[self.fetchedResultsController objectAtIndexPath:indexPath] newsItem]];
     }
 }
 
@@ -203,7 +182,9 @@
 {
     vc.newsItem = newsItem;
     vc.title = [NSString stringWithFormat:@"%@", newsItem.unique];
-    vc.cookieToken = self.cookieToken;
+    if (self.cookieToken != nil) {
+        vc.cookieToken = self.cookieToken;
+    }
 }
 
 // In a story board-based application, you will often want to do a little preparation before navigation
@@ -222,7 +203,7 @@
                 // yes ... is the destination an NewsItemContentVC
                 if ([segue.destinationViewController isKindOfClass:[NewsItemContentVC class]]) {
                     // yes ... then we know how to prepare for that segue!
-                    [self prepareNewsItemContentVC:segue.destinationViewController toDisplayNewsItem:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+                    [self prepareNewsItemContentVC:segue.destinationViewController toDisplayNewsItem:[(StoryType *)[self.fetchedResultsController objectAtIndexPath:indexPath] newsItem]];
                 }
             }
         }

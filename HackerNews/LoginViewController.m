@@ -15,6 +15,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 - (IBAction)loginAction:(id)sender;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
+@property (weak, nonatomic) IBOutlet UITextView *textView;
 
 @end
 
@@ -32,6 +33,15 @@
         [self.sidebarButton setAction: @selector( revealToggle: )];
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
+    
+    [self.textView setHidden:YES];
+    self.automaticallyAdjustsScrollViewInsets = NO;
+}
+
+- (void)setUsername:(NSString *)username
+{
+    _username = username;
+    [self displayPageForLoggedInUser:username];
 }
 
 - (IBAction)loginAction:(UIButton *)sender {
@@ -53,7 +63,7 @@
     [request setHTTPMethod:@"POST"];
     [request setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" forHTTPHeaderField:@"Accept"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", postData.length] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)postData.length] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPBody:postData];
     
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
@@ -70,7 +80,6 @@
                                NSString *cookieToken =@"";
                                BOOL logged_in = NO;
                                NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies];
-                               NSLog(@"cookies - %@", cookies);
                                for (int i = 0; i < [cookies count]; i++) {
                                    NSHTTPCookie *cookie = [cookies objectAtIndex:i];
                                    if([[cookie name] isEqualToString:@"user"]){
@@ -82,12 +91,14 @@
                                if(logged_in) {
                                    UIAlertController *alertController = [UIAlertController
                                                                          alertControllerWithTitle:@""
-                                                                         message:@"Successfull LogIn"
+                                                                         message:@"Successful Login"
                                                                          preferredStyle:UIAlertControllerStyleAlert];
                                    UIAlertAction *cancelAction = [UIAlertAction
                                                                   actionWithTitle:NSLocalizedString(@"Ok", @"Ok")
                                                                   style:UIAlertActionStyleCancel
-                                                                  handler:^(UIAlertAction *action){}];
+                                                                  handler:^(UIAlertAction *action){
+                                                                      [self displayPageForLoggedInUser:userName];
+                                                                  }];
                                    [alertController addAction:cancelAction];
                                    [self presentViewController:alertController animated:YES completion:^{}];
                                    [self.delegate addItemViewController:self didFinishEnteringCookie:cookieToken UserName:userName];
@@ -127,14 +138,13 @@
 
 - (void)displayPageForLoggedInUser:(NSString *)userName
 {
-    UITextView *textView = [[UITextView alloc] init];
-    [textView setText:[ NSString stringWithFormat:@"Welcome, %@", userName]];
-    [textView setFont:[UIFont boldSystemFontOfSize:14]];
-    [textView setTextAlignment:NSTextAlignmentCenter];
-    CGSize contentSize = [textView sizeThatFits:CGSizeMake(textView.bounds.size.width, CGFLOAT_MAX)];
-    CGFloat topCorrection = (textView.bounds.size.height - contentSize.height * textView.zoomScale) / 2.0;
-    textView.contentOffset = CGPointMake(0, -topCorrection);
-    [self.view addSubview:textView];
+    [self.textView setHidden:NO];
+    [self.textView setText:[ NSString stringWithFormat:@"Welcome, %@", userName]];
+    [self.textView setFont:[UIFont boldSystemFontOfSize:14]];
+    [self.textView setTextAlignment:NSTextAlignmentCenter];
+    CGSize contentSize = [self.textView sizeThatFits:CGSizeMake(self.textView.bounds.size.width, CGFLOAT_MAX)];
+    CGFloat topCorrection = (self.textView.bounds.size.height - contentSize.height * self.textView.zoomScale) / 2.0;
+    self.textView.contentOffset = CGPointMake(0, -topCorrection);
 }
 
 @end

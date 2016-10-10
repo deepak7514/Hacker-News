@@ -95,6 +95,7 @@
             self.logged_in = @0;
             self.userName = nil;
             self.cookie = nil;
+            [self.tableView reloadData];
             NSLog(@"User Logged Out");
         } else {
             [self performSegueWithIdentifier:@"Menu" sender:indexPath];
@@ -115,6 +116,9 @@
         UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
         LoginViewController *dest = (LoginViewController *)[navController childViewControllers].firstObject;
         dest.delegate = self;
+        if(self.userName != nil) {
+            dest.username = self.userName;
+        }
     } else if([segue.identifier isEqualToString:@"Menu"]) {
     
         UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
@@ -136,7 +140,9 @@
             dest.storyType  = @"top";
         }
         dest.title = [NSString stringWithFormat:@"%@ Stories", [NSString stringWithFormat:@"%@",CellIdentifier]];
-        dest.cookieToken = self.cookie;
+        if (self.cookie != nil) {
+            dest.cookieToken = self.cookie;
+        }
     }
 }
 
@@ -147,7 +153,6 @@
     self.cookie = cookie;
     self.userName = userName;
     [self.tableView reloadData];
-    NSLog(@"Login View Controller Delegate Method");
 }
 
 @end

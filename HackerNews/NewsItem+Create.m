@@ -57,7 +57,7 @@
             }
             index += 1;
         }
-        NSLog(@"%@ stories, count- %d", type, index);
+        NSLog(@"%@ stories, count- %ld", type, (long)index);
     }];
 }
 
@@ -125,10 +125,20 @@
         newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
         newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
         
+        NSMutableArray *storyItems = [[NSMutableArray alloc] initWithCapacity:0];
+        for (StoryType *storyItem in newsItem.storyType) {
+            if([storyItem.type isEqualToString:type]) {
+                [storyItems addObject:storyItem];
+            }
+        }
+        for (StoryType *item in storyItems) {
+            [newsItem removeStoryTypeObject:item];
+        }
+        
         StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
         if(storyType)
         {
-            newsItem.storyType = storyType;
+            [newsItem addStoryTypeObject:storyType] ;
         }
         
     } else {
@@ -151,7 +161,7 @@
         StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
         if(storyType)
         {
-            newsItem.storyType = storyType;
+            [newsItem addStoryTypeObject:storyType];
         }
         
         //newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
@@ -182,18 +192,6 @@
         }
     }
     }];
-}
-
-+ (NSDictionary *) indexKeyedDictionaryFromArray:(NSArray *)array
-{
-    id objectInstance;
-    NSUInteger indexKey = 0;
-    
-    NSMutableDictionary *mutableDictionary = [[NSMutableDictionary alloc] init];
-    for (objectInstance in array)
-        [mutableDictionary setObject:objectInstance forKey:[NSNumber numberWithUnsignedInt:indexKey++]];
-    
-    return (NSDictionary *)mutableDictionary;
 }
 
 @end

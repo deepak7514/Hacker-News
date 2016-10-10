@@ -12,6 +12,7 @@
 #import "HNWebViewController.h"
 #import <FormatterKit/FormatterKit.h>
 #import "TFHpple.h"
+#import "LoginViewController.h"
 
 @interface NewsItemContentVC ()<UISplitViewControllerDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 @property (strong, nonatomic) NSString *html;
@@ -22,12 +23,16 @@
 @end
 
 @implementation NewsItemContentVC {
-    int _currentFontSize;
+    NSInteger _currentFontSize;
     BOOL pageDidFinishedLoading;
     NSTimer *progressTimer;
     UIToolbar *toolBar;
     NSString *authToken; // token for making post requests
     NSString *hmacToken; // token for comment
+    
+    BOOL itemVoted;
+    BOOL itemHidden;
+    BOOL itemLiked;
 }
 
 enum actionSheetButtonIndex {
@@ -58,6 +63,9 @@ enum actionSheetButtonIndex {
         [self.spinner stopAnimating];
     }
     
+    // Comment this line while in production
+    //self.cookieToken = @"user=deepak7514&WxoOivljHHD3FKZKCyfJ9bA4HwiFxHfc;__cfduid=d7b349affce61d9674dadf09324a23dac1475559037";
+    
     [self initToolBar];
 }
 
@@ -78,6 +86,12 @@ enum actionSheetButtonIndex {
     //_webView.backgroundColor = [UIColor clearColor];
 }
 
+- (void)setCookieToken:(NSString *)cookieToken
+{
+    _cookieToken = cookieToken;
+    [self fetchAuthTokenFromNewsItemId:self.newsItem.unique];
+}
+
 #pragma mark  - Prepare WebView
 
 - (void)webViewDidStartLoad:(UIWebView *)webView
@@ -85,7 +99,7 @@ enum actionSheetButtonIndex {
     self.progressView.progress = 0;
     pageDidFinishedLoading = false;
     //0.01667 is roughly 1/60, so it will update at 60 FPS
-    progressTimer = [NSTimer scheduledTimerWithTimeInterval:0.01667 target:self selector:@selector(timerCallback) userInfo:nil repeats:YES];
+    progressTimer = [NSTimer scheduledTimerWithTimeInterval:0.01667 target:self selector:@selector(timerCallback:) userInfo:nil repeats:YES];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
@@ -93,7 +107,7 @@ enum actionSheetButtonIndex {
     pageDidFinishedLoading = true;
 }
 
--(void)timerCallback {
+-(void)timerCallback:(NSTimer *)timer {
     if (pageDidFinishedLoading) {
         if (self.progressView.progress >= 1) {
             self.progressView.hidden = true;
@@ -156,7 +170,6 @@ enum actionSheetButtonIndex {
 {
     _newsItem = newsItem;
     [self startDownloadingContent];
-    [self fetchAuthTokenFromNewsItemId:newsItem.unique];
 }
 
 - (void)startDownloadingContent
@@ -234,7 +247,7 @@ enum actionSheetButtonIndex {
     NSURL *contentURL = [NSURL URLWithString:itemURL];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:contentURL];
-    [request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI" forHTTPHeaderField:@"cookie"];
+    [request setValue:self.cookieToken forHTTPHeaderField:@"cookie"];
     
     // another configuration option is backgroundSessionConfiguration (multitasking API required though)
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
@@ -256,6 +269,9 @@ enum actionSheetButtonIndex {
                            NSString *tutorialsXpathQueryString = [NSString stringWithFormat:@"//a[@id='up_%@']", self.newsItem.unique];
                            NSArray *tutorialsNodes = [tutorialsParser searchWithXPathQuery:tutorialsXpathQueryString];
                            for (TFHppleElement *element in tutorialsNodes) {
+                               if ([[element objectForKey:@"class"] isEqualToString:@"nosee"]) {
+                                   itemVoted = YES;
+                               }
                                NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:[NSURL URLWithString:[element objectForKey:@"href"]]
                                                                            resolvingAgainstBaseURL:NO];
                                NSArray *queryItems = urlComponents.queryItems;
@@ -275,10 +291,37 @@ enum actionSheetButtonIndex {
                                }
                             }
                            
+                           // Extracting Item Info from ItemUrl
+                           tutorialsXpathQueryString = @"//td[@class='subtext']";
+                           tutorialsNodes = [tutorialsParser searchWithXPathQuery:tutorialsXpathQueryString];
+                           for (TFHppleElement *element in tutorialsNodes) {
+                               NSLog(@"%@", [element content]);
+                               for (TFHppleElement *child in element.children) {
+                                    if([[child content] isEqualToString:@"unvote"]) {
+                                        itemVoted = YES;
+                                    } else if([[child content] isEqualToString:@"un-hide"]) {
+                                        itemHidden = YES;
+                                    }  else if([[child content] isEqualToString:@"un-favorite"]) {
+                                        itemLiked = YES;
+                                    }
+                               }
+                           }
+                           
                            //we must dispatch this back to the main queue
                            dispatch_async(dispatch_get_main_queue(), ^{
                                authToken = auth;
                                hmacToken = hmac;
+                               
+                               if (itemVoted) {
+                                   [self toggleUpVoteAndDownVoteButton];
+                               }
+                               if (itemHidden) {
+                                   [self toggleHideAndUnhideButton];
+                               }
+                               if (itemLiked) {
+                                   [self toggleLikeAndUnlikeButton];
+                               }
+                               
                            });
                        } else {
                            NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
@@ -312,8 +355,9 @@ enum actionSheetButtonIndex {
     UIBarButtonItem *buttonUpVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"upvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(upvoteButtonTouchUp:)];
     
     UIBarButtonItem *buttonDownVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"downvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(downvoteButtonTouchUp:)];
+    [buttonDownVote setEnabled:NO];
     
-    UIBarButtonItem *buttonFavStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"favourite.png"] style:UIBarButtonItemStylePlain target:self action:@selector(likeStoryButtonTouchUp:)];
+    UIBarButtonItem *buttonFavStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"like.png"] style:UIBarButtonItemStylePlain target:self action:@selector(likeStoryButtonTouchUp:)];
     
     UIBarButtonItem *buttonHideStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"hide.png"] style:UIBarButtonItemStylePlain target:self action:@selector(hideStoryButtonTouchUp:)];
     
@@ -340,85 +384,111 @@ enum actionSheetButtonIndex {
     // Set buttons to tool bar
     [toolBar setItems:toolBarButtons animated:NO];
     [toolBar setTranslucent:NO];
+    
+    if (itemVoted) {
+        [self toggleUpVoteAndDownVoteButton];
+    }
+    if (itemHidden) {
+        [self toggleHideAndUnhideButton];
+    }
+    if (itemLiked) {
+        [self toggleLikeAndUnlikeButton];
+    }
 }
 
-#pragma mark - Action Sheet
+- (void)toggleUpVoteAndDownVoteButton
+{
+    UIBarButtonItem *upVoteItem = [[toolBar items] objectAtIndex:0];
+    upVoteItem.enabled = !upVoteItem.isEnabled;
+    UIBarButtonItem *downVoteItem = [[toolBar items] objectAtIndex:2];
+    downVoteItem.enabled = !downVoteItem.isEnabled;
+}
 
-- (void)showActionSheet {
-    
-    NSURL *theURL = [NSURL URLWithString:self.newsItem.url];
-    
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:self.newsItem.url message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        
-        // Cancel button tappped do nothing.
-        
-    }]];
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        // safari button tapped.
-        [[UIApplication sharedApplication] openURL:theURL];
-    }]];
-    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"googlechrome://"]]) {
-        // Chrome is installed, add the option to open in chrome.
-        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Chrome" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            NSString *scheme = theURL.scheme;
-    
-            // Replace the URL Scheme with the Chrome equivalent.
-            NSString *chromeScheme = nil;
-            if ([scheme isEqualToString:@"http"]) {
-                chromeScheme = @"googlechrome";
-            } else if ([scheme isEqualToString:@"https"]) {
-                chromeScheme = @"googlechromes";
-            }
-    
-            // Proceed only if a valid Google Chrome URI Scheme is available.
-            if (chromeScheme) {
-                NSString *absoluteString = [theURL absoluteString];
-                NSRange rangeForScheme = [absoluteString rangeOfString:@":"];
-                NSString *urlNoScheme = [absoluteString substringFromIndex:rangeForScheme.location];
-                NSString *chromeURLString = [chromeScheme stringByAppendingString:urlNoScheme];
-                NSURL *chromeURL = [NSURL URLWithString:chromeURLString];
-                
-                // Open the URL with Chrome.
-                [[UIApplication sharedApplication] openURL:chromeURL];
-            }
-        }]];
+- (void)toggleHideAndUnhideButton
+{
+    UIBarButtonItem *hideItem = [[toolBar items] objectAtIndex:6];
+    if (itemHidden) {
+        [hideItem setAction:@selector(unHideStoryButtonTouchUp:)];
+        [hideItem setImage:[UIImage imageNamed:@"unhide.png"]];
+    } else {
+        [hideItem setAction:@selector(hideStoryButtonTouchUp:)];
+        [hideItem setImage:[UIImage imageNamed:@"hide.png"]];
     }
-    [self presentViewController:actionSheet animated:YES completion:^{}];
+}
+
+- (void)toggleLikeAndUnlikeButton
+{
+    UIBarButtonItem *likeItem = [[toolBar items] objectAtIndex:4];
+    if (itemLiked) {
+        [likeItem setAction:@selector(unLikeStoryButtonTouchUp:)];
+        [likeItem setImage:[UIImage imageNamed:@"unlike.png"]];
+    } else {
+        [likeItem setAction:@selector(likeStoryButtonTouchUp:)];
+        [likeItem setImage:[UIImage imageNamed:@"like.png"]];
+    }
 }
 
 #pragma mark - Button Actions
 - (void)upvoteButtonTouchUp:(id)sender {
-    NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=up&auth=%@", self.newsItem.unique, authToken];
-    [self sendGetRequest:url];
+    if ([self isUserLoggedIn]) {
+        NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=up&auth=%@", self.newsItem.unique, authToken];
+        [self sendGetRequest:url];
+        itemVoted = YES;
+        [self toggleUpVoteAndDownVoteButton];
+    }
 }
 
 - (void)downvoteButtonTouchUp:(id)sender {
-    NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=un&auth=%@", self.newsItem.unique, authToken];
-    [self sendGetRequest:url];
+    if ([self isUserLoggedIn]) {
+        NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=un&auth=%@", self.newsItem.unique, authToken];
+        [self sendGetRequest:url];
+        itemVoted = NO;
+        [self toggleUpVoteAndDownVoteButton];
+    }
 }
 
 - (void)hideStoryButtonTouchUp:(id)sender {
-    NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@", self.newsItem.unique, authToken];
-    [self sendGetRequest:url];
+    if ([self isUserLoggedIn]) {
+        NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@", self.newsItem.unique, authToken];
+        [self sendGetRequest:url];
+        itemHidden = YES;
+        [self toggleHideAndUnhideButton];
+    }
 }
 
 - (void)unHideStoryButtonTouchUp:(id)sender {
-    NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
-    [self sendGetRequest:url];
+    if ([self isUserLoggedIn]) {
+        NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
+        [self sendGetRequest:url];
+        itemHidden = NO;
+        [self toggleHideAndUnhideButton];
+    }
 }
 
 - (void)likeStoryButtonTouchUp:(id)sender {
-    NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@", self.newsItem.unique, authToken];
-    [self sendGetRequest:url];
+    if ([self isUserLoggedIn]) {
+        NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@", self.newsItem.unique, authToken];
+        [self sendGetRequest:url];
+        itemLiked = YES;
+        [self toggleLikeAndUnlikeButton];
+    }
 }
 
 - (void)unLikeStoryButtonTouchUp:(id)sender {
-    NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
-    [self sendGetRequest:url];
+    if ([self isUserLoggedIn]) {
+        NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
+        [self sendGetRequest:url];
+        itemLiked = NO;
+        [self toggleLikeAndUnlikeButton];
+    }
 }
 
 - (void)commentButtonTouchUp:(id)sender {
+    
+    if (![self isUserLoggedIn]) {
+        return;
+    }
+    
     UIAlertController *alertController = [UIAlertController
                                           alertControllerWithTitle:@"Add Comment"
                                           message:nil
@@ -454,6 +524,52 @@ enum actionSheetButtonIndex {
     [self showActionSheet];
 }
 
+#pragma mark - Action Sheet
+
+- (void)showActionSheet {
+    
+    NSURL *theURL = [NSURL URLWithString:self.newsItem.url];
+    
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:self.newsItem.url message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        
+        // Cancel button tappped do nothing.
+        
+    }]];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        // safari button tapped.
+        [[UIApplication sharedApplication] openURL:theURL];
+    }]];
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"googlechrome://"]]) {
+        // Chrome is installed, add the option to open in chrome.
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Chrome" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            NSString *scheme = theURL.scheme;
+            
+            // Replace the URL Scheme with the Chrome equivalent.
+            NSString *chromeScheme = nil;
+            if ([scheme isEqualToString:@"http"]) {
+                chromeScheme = @"googlechrome";
+            } else if ([scheme isEqualToString:@"https"]) {
+                chromeScheme = @"googlechromes";
+            }
+            
+            // Proceed only if a valid Google Chrome URI Scheme is available.
+            if (chromeScheme) {
+                NSString *absoluteString = [theURL absoluteString];
+                NSRange rangeForScheme = [absoluteString rangeOfString:@":"];
+                NSString *urlNoScheme = [absoluteString substringFromIndex:rangeForScheme.location];
+                NSString *chromeURLString = [chromeScheme stringByAppendingString:urlNoScheme];
+                NSURL *chromeURL = [NSURL URLWithString:chromeURLString];
+                
+                // Open the URL with Chrome.
+                [[UIApplication sharedApplication] openURL:chromeURL];
+            }
+        }]];
+    }
+    [self presentViewController:actionSheet animated:YES completion:^{}];
+}
+
+#pragma mark - Request Handlers
 - (void)sendPostRequestForCommentWithData:(NSData *)postData
 {
     NSURL *contentURL = [NSURL URLWithString:@"https://news.ycombinator.com/comment"];
@@ -544,4 +660,27 @@ enum actionSheetButtonIndex {
     NSString *html = [NSString stringWithFormat:@"<html><head> <meta charset=\"utf-8\">  <style type=\"text/css\">  body {font-family: \"Helvetica Neue\", sans-serif  !Important;-webkit-text-size-adjust: %d;  font-size: 16px !Important;background-color:none;  color: #454545;  width:90%% !Important;  padding-top:15px !Important;  padding-bottom:20px !Important;  margin: 0 auto !Important;  word-wrap: break-word !Important;  line-height:170%% !Important;  overflow: hidden;  }  textarea {  display: none !important;  }  input {  display: none !important;  }   form {  display: none !important;  }  .title {  font-weight:bold !Important;  font-size: 1.4em !Important;  line-height:1.1em !Important;  margin-bottom: 10px;  }  .title a {  text-decoration: none !Important;  color:#333 !Important;  }table,thead,tbody{ table-layout: fixed; max-width:100%% !important; }  table, tr, td {  background-color: transparent !important;  }  h1,h2,h3 {  font-size:1.0em !important;  }  .info {  font-size: 0.9em;  color: #999;  }.info a{ text-decoration: none; color: #999;}  .article a {  text-decoration: none !Important;  color: #333;  border-bottom:1px dashed;  }table {width: 100%% !important;max-width 100%% !important;}  img {  max-width: 100%% !important;  width: auto !important;  height: auto !important;  margin: 0 auto !important;border: 1px solid #DDD;  display: block !important;  }  .article video,  .article embed,  .article object {  display: none;  }  .article pre,  .article code {  white-space: pre-line;  font-size: 0.9em;  }  .article .img-1,  .article .wp-smiley,  .article .feedflare img,  .article img[src*='/smilies/'],  .article img[src*='.feedburner.com/~ff/'],  .article img[data-src*='/smilies/'],  .article img[data-src*='.feedburner.com/~ff/'] {  border: 0 !important;  outline: 0 !important;  margin: 0 !important;  background-color: transparent !important;  }  .article img[src*='.feedburner.com/~r/'],  .article img[data-src*='.feedburner.com/~r/'] {  display: none;  }  </style>  </head><body><div class=\"info\"><a href=\"http://%@\">%@</a></div><div class=\"title\"><a href=\"%@\">%@</a></div><div class=\"info\" style=\"margin-top: -15px;\"> %@ by %@ <a href=\"https://%@\">#%@</a></div><div class=\"article\">%@</div></body></html>", _currentFontSize, domain, domain, url, title, dateInterval, author, itemURL, itemID, mainContent ];
     return html;
 }
+
+- (BOOL)isUserLoggedIn
+{
+    if(self.cookieToken == nil)
+    {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@""
+                                              message:@"Please Login"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancelAction = [UIAlertAction
+                                       actionWithTitle:NSLocalizedString(@"Ok", @"Ok")
+                                       style:UIAlertActionStyleCancel
+                                       handler:^(UIAlertAction *action){
+                                           LoginViewController *loginVC = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewcontroller"];
+                                           [self.navigationController pushViewController:loginVC animated:YES];
+                                       }];
+        [alertController addAction:cancelAction];
+        [self presentViewController:alertController animated:YES completion:^{}];
+        return NO;
+    }
+    return YES;
+}
+
 @end
