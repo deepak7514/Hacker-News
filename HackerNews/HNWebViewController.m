@@ -65,13 +65,8 @@
 
 - (void)timerCallback {
     if (pageDidFinishedLoading) {
-        if (self.progressView.progress >= 1) {
-            self.progressView.hidden = true;
-            [progressTimer invalidate];
-        }
-        else {
-            self.progressView.progress += 0.1;
-        }
+        self.progressView.hidden = true;
+        [progressTimer invalidate];
     }
     else {
         self.progressView.progress += 0.05;

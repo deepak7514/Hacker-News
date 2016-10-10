@@ -109,13 +109,8 @@ enum actionSheetButtonIndex {
 
 -(void)timerCallback:(NSTimer *)timer {
     if (pageDidFinishedLoading) {
-        if (self.progressView.progress >= 1) {
-            self.progressView.hidden = true;
-            [progressTimer invalidate];
-        }
-        else {
-            self.progressView.progress += 0.1;
-        }
+        self.progressView.hidden = true;
+        [progressTimer invalidate];
     }
     else {
         self.progressView.progress += 0.05;
@@ -263,12 +258,12 @@ enum actionSheetButtonIndex {
                        if (!error) {
                            NSString *hmac = nil;
                            NSString *auth = nil;
-                           TFHpple *tutorialsParser = [TFHpple hppleWithHTMLData:[NSData dataWithContentsOfURL:localfile]];
+                           TFHpple *parser = [TFHpple hppleWithHTMLData:[NSData dataWithContentsOfURL:localfile]];
                            
                            // Extracting Auth Token from ItemUrl
-                           NSString *tutorialsXpathQueryString = [NSString stringWithFormat:@"//a[@id='up_%@']", self.newsItem.unique];
-                           NSArray *tutorialsNodes = [tutorialsParser searchWithXPathQuery:tutorialsXpathQueryString];
-                           for (TFHppleElement *element in tutorialsNodes) {
+                           NSString *xpathQueryString = [NSString stringWithFormat:@"//a[@id='up_%@']", self.newsItem.unique];
+                           NSArray *nodes = [parser searchWithXPathQuery:xpathQueryString];
+                           for (TFHppleElement *element in nodes) {
                                if ([[element objectForKey:@"class"] isEqualToString:@"nosee"]) {
                                    itemVoted = YES;
                                }
@@ -279,9 +274,9 @@ enum actionSheetButtonIndex {
                            }
                            
                            // Extracting Comment HMAC token from ItemUrl
-                           tutorialsXpathQueryString = @"//form";
-                           tutorialsNodes = [tutorialsParser searchWithXPathQuery:tutorialsXpathQueryString];
-                           for (TFHppleElement *element in tutorialsNodes) {
+                           xpathQueryString = @"//form";
+                           nodes = [parser searchWithXPathQuery:xpathQueryString];
+                           for (TFHppleElement *element in nodes) {
                                //NSLog(@"%@", element);
                                for (TFHppleElement *child in element.children) {
                                    if ([child.tagName isEqualToString:@"input"] && [[child objectForKey:@"name"] isEqual:@"hmac"]) {
@@ -292,9 +287,9 @@ enum actionSheetButtonIndex {
                             }
                            
                            // Extracting Item Info from ItemUrl
-                           tutorialsXpathQueryString = @"//td[@class='subtext']";
-                           tutorialsNodes = [tutorialsParser searchWithXPathQuery:tutorialsXpathQueryString];
-                           for (TFHppleElement *element in tutorialsNodes) {
+                           xpathQueryString = @"//td[@class='subtext']";
+                           nodes = [parser searchWithXPathQuery:xpathQueryString];
+                           for (TFHppleElement *element in nodes) {
                                NSLog(@"%@", [element content]);
                                for (TFHppleElement *child in element.children) {
                                     if([[child content] isEqualToString:@"unvote"]) {
