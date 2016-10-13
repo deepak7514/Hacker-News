@@ -16,6 +16,4 @@
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 
-@property (nonatomic, strong) NSString *cookieToken;
-
 @end

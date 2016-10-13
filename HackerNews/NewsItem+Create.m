@@ -103,94 +103,70 @@
                 inManagedObjectContext:(NSManagedObjectContext *)context
 {
     [context performBlock:^{
-    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
-    request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]];
-    
-    NSError *error = nil;
-    NSArray *matches = [context executeFetchRequest:request error:&error];
-    if (!matches) {
-        NSLog(@"Match is nil for NewsItem - %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]);
-    } else if (error) {
-        // handle error
-        NSLog(@"Error in fetching NewsItem -%@ from Core data - %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID], error);
-    } else if ([matches count]) {
-        if ([matches count] > 1) {
-            // Multiple Items already present
-            NSLog(@"Multiple NewsItems - %@ present", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]);
-        }
-        NewsItem *newsItem = [matches firstObject];
-        newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-        newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-        newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
-        newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
-        newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"NewsItem"];
+        request.predicate = [NSPredicate predicateWithFormat:@"unique = %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]];
         
-        NSMutableArray *storyItems = [[NSMutableArray alloc] initWithCapacity:0];
-        for (StoryType *storyItem in newsItem.storyType) {
-            if([storyItem.type isEqualToString:type]) {
-                [storyItems addObject:storyItem];
+        NSError *error = nil;
+        NSArray *matches = [context executeFetchRequest:request error:&error];
+        if (!matches) {
+            NSLog(@"Match is nil for NewsItem - %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]);
+        } else if (error) {
+            // handle error
+            NSLog(@"Error in fetching NewsItem -%@ from Core data - %@", [newsItemDictionary objectForKey:HN_NEWSITEM_ID], error);
+        } else if ([matches count]) {
+            if ([matches count] > 1) {
+                // Multiple Items already present
+                NSLog(@"Multiple NewsItems - %@ present", [newsItemDictionary objectForKey:HN_NEWSITEM_ID]);
             }
+            NewsItem *newsItem = [matches firstObject];
+            newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+            newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+            newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
+            newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
+            newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
+            
+//            NSMutableArray *storyItems = [[NSMutableArray alloc] initWithCapacity:0];
+//            for (StoryType *storyItem in newsItem.storyType) {
+//                if([storyItem.type isEqualToString:type]) {
+//                    [storyItems addObject:storyItem];
+//                }
+//            }
+//            for (StoryType *item in storyItems) {
+//                [newsItem removeStoryTypeObject:item];
+//            }
+            
+            [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] newsItem:newsItem inManagedObjectContext:context];
+            
+        } else {
+        
+            NewsItem *newsItem = [NSEntityDescription insertNewObjectForEntityForName:@"NewsItem"
+                                                               inManagedObjectContext:context];
+            
+            newsItem.unique = [newsItemDictionary valueForKey:HN_NEWSITEM_ID];
+            newsItem.title = [newsItemDictionary valueForKey:HN_NEWSITEM_TITLE];
+            newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+            newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
+            newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
+            newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
+            newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
+            newsItem.time = [newsItemDictionary valueForKey:HN_NEWSITEM_TIME];
+            newsItem.type = [newsItemDictionary valueForKey:HN_NEWSITEM_TYPE];
+            newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
+            newsItem.author = [newsItemDictionary valueForKey:HN_NEWSITEM_BY];
+            
+            [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] newsItem:newsItem inManagedObjectContext:context];
+            
+            //newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
+            //    NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
+            //    for (NSString *kid in kidsForNewsItem) {
+            //        [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
+            //    }
+            
         }
-        for (StoryType *item in storyItems) {
-            [newsItem removeStoryTypeObject:item];
-        }
-        
-        StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
-        if(storyType)
-        {
-            [newsItem addStoryTypeObject:storyType] ;
-        }
-        
-    } else {
-    
-        NewsItem *newsItem = [NSEntityDescription insertNewObjectForEntityForName:@"NewsItem"
-                                                           inManagedObjectContext:context];
-        
-        newsItem.unique = [newsItemDictionary valueForKey:HN_NEWSITEM_ID];
-        newsItem.title = [newsItemDictionary valueForKey:HN_NEWSITEM_TITLE];
-        newsItem.dead = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DEAD] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-        newsItem.deleted = ([[newsItemDictionary valueForKey:HN_NEWSITEM_DELETED] isEqual: @"true"]) ? [NSNumber numberWithBool:YES] : [NSNumber numberWithBool:NO];
-        newsItem.descendants = [newsItemDictionary valueForKey:HN_NEWSITEM_DESCENDANTS];
-        newsItem.score = [newsItemDictionary valueForKey:HN_NEWSITEM_SCORE];
-        newsItem.text = [newsItemDictionary valueForKey:HN_NEWSITEM_TEXT];
-        newsItem.time = [newsItemDictionary valueForKey:HN_NEWSITEM_TIME];
-        newsItem.type = [newsItemDictionary valueForKey:HN_NEWSITEM_TYPE];
-        newsItem.url = [newsItemDictionary valueForKey:HN_NEWSITEM_URL];
-        newsItem.author = [newsItemDictionary valueForKey:HN_NEWSITEM_BY];
-        
-        StoryType *storyType = [StoryType storyTypeWithIndex:[NSNumber numberWithInteger:index] storyType:type unique:[newsItemDictionary objectForKey:HN_NEWSITEM_ID] inManagedObjectContext:context];
-        if(storyType)
-        {
-            [newsItem addStoryTypeObject:storyType];
-        }
-        
-        //newsItem.by = [User userWithUserId:[newsItemDictionary valueForKey:HN_NEWSITEM_BY] inManagedObjectContext:context];
-        //    NSArray *kidsForNewsItem = [newsItemDictionary valueForKey:HN_NEWSITEM_KIDS];
-        //    for (NSString *kid in kidsForNewsItem) {
-        //        [newsItem addKidsObject:[self newsItemWithNewsItemId:kid inManagedObjectContext:context]];
-        //    }
-        
-    }
 
-    if ([context hasChanges] && ![context save:&error]) {
-        
-        NSLog(@"NewsItem Unresolved error %@", error);
-        
-        NSArray * conflictListArray = (NSArray*)[[error userInfo] objectForKey:@"conflictList"];
-        //NSLog(@"conflict array: %@",conflictListArray);
-        NSError * conflictFixError = nil;
-        
-        if ([conflictListArray count] > 0) {
-            
-            NSMergePolicy *mergePolicy = [[NSMergePolicy alloc] initWithMergeType:NSOverwriteMergePolicyType];
-            
-            if (![mergePolicy resolveConflicts:conflictListArray error:&conflictFixError]) {
-                NSLog(@"Unresolved conflict error %@, %@", conflictFixError, [conflictFixError userInfo]);
-                NSLog(@"abort");
-                abort();
-            }
+        if ([context hasChanges] && ![context save:&error]) {
+            NSLog(@"NewsItem Unresolved error %@", error);
         }
-    }
     }];
 }
 

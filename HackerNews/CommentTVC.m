@@ -14,6 +14,7 @@
 #import "RATreeView.h"
 #import "RADataObject.h"
 #import "RATableViewCell.h"
+#import "NetworkManager.h"
 
 @interface CommentTVC () <RATreeViewDelegate, RATreeViewDataSource>
 
@@ -130,32 +131,6 @@
     }
 }
 
-- (void)treeView:(RATreeView *)treeView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowForItem:(id)item
-{
-    if (editingStyle != UITableViewCellEditingStyleDelete) {
-        return;
-    }
-    
-    RADataObject *parent = [self.treeView parentForItem:item];
-    NSInteger index = 0;
-    
-    if (parent == nil) {
-        index = [self.data indexOfObject:item];
-        NSMutableArray *children = [self.data mutableCopy];
-        [children removeObject:item];
-        self.data = [children copy];
-        
-    } else {
-        index = [parent.children indexOfObject:item];
-        [parent removeChild:item];
-    }
-    
-    [self.treeView deleteItemsAtIndexes:[NSIndexSet indexSetWithIndex:index] inParent:parent withAnimation:RATreeViewRowAnimationRight];
-    if (parent) {
-        [self.treeView reloadRowsForItems:@[parent] withRowAnimation:RATreeViewRowAnimationNone];
-    }
-}
-
 #pragma mark TreeView Data Source
 
 - (UITableViewCell *)treeView:(RATreeView *)treeView cellForItem:(id)item
@@ -208,49 +183,33 @@
     {
         NSURL *contentURL = [HNFetcher URLforComments:self.itemId];
         
-        NSURLRequest *request = [NSURLRequest requestWithURL:contentURL];
-        
-        // another configuration option is backgroundSessionConfiguration (multitasking API required though)
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-        
-        // create the session without specifying a queue to run completion handler on (thus, not main queue)
-        // we also don't specify a delegate (since completion handler is all we need)
-        NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-        
-        NSURLSessionDownloadTask *task =
-        [session downloadTaskWithRequest:request
-                       completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
-                           // this handler is not executing on the main queue, so we can't do UI directly here
-                           if (!error) {
-                               NSError *err = nil;
-                               NSDictionary *propertyLists = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:localfile] options:0 error:&err];
-                               if(err){
-                                   NSLog(@"Error Parsing JSON Data from url-%@ error-%@",contentURL, err);
-                               }
-                               //we must dispatch this back to the main queue
-                               dispatch_async(dispatch_get_main_queue(), ^{
-                                   [self.spinner stopAnimating];
-                                   if([[propertyLists objectForKey:@"children"] count])
-                                   {
-                                       self.data = [self loadComments:[propertyLists objectForKey:@"children"]];
-                                       [self.treeView reloadData];
-                                   } else {
-                                       [self.textView setHidden:NO];
-                                       [self loadInternetConnectivityErrorPage];
-                                   }
-                               });
-                           } else {
-                               NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
-                               dispatch_async(dispatch_get_main_queue(), ^{
-                                   [self.spinner stopAnimating];
-                                   [self.textView setHidden:NO];
-                                   self.internetConnectivityError = [NSNumber numberWithBool:YES];
-                                   [self loadInternetConnectivityErrorPage];
-                               });
-                           }
-                       }
-         ];
-        [task resume]; // don't forget that all NSURLSession tasks start out suspended!
+        [NetworkManager makeDataRequestWithMethod:@"GET"
+                                        URLString:[contentURL absoluteString]
+                                           params:nil
+                                           cookie:nil
+                         andExecuteBlockOnSuccess:^(id responseObject, NSURLResponse *response) {
+                             dispatch_async(dispatch_get_main_queue(), ^{
+                                 NSLog(@"%@", [responseObject class]);
+                                 NSDictionary *propertyLists = (NSDictionary *)responseObject;
+                                 [self.spinner stopAnimating];
+                                 if([[propertyLists objectForKey:@"children"] count])
+                                 {
+                                     self.data = [self loadComments:[propertyLists objectForKey:@"children"]];
+                                     [self.treeView reloadData];
+                                 } else {
+                                     [self.textView setHidden:NO];
+                                     [self loadInternetConnectivityErrorPage];
+                                 }
+                             });
+                         }
+                                        onFailure:^(NSError *error) {
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                [self.spinner stopAnimating];
+                                                [self.textView setHidden:NO];
+                                                self.internetConnectivityError = [NSNumber numberWithBool:YES];
+                                                [self loadInternetConnectivityErrorPage];
+                                            });
+                                        }];
     }
 }
 

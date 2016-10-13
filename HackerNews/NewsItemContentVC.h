@@ -11,5 +11,4 @@
 
 @interface NewsItemContentVC : UIViewController
 @property (strong, nonatomic) NewsItem *newsItem;
-@property (nonatomic, strong) NSString *cookieToken;
 @end

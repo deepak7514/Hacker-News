@@ -10,8 +10,11 @@
 
 @implementation StoryType (Create)
 
-+ (StoryType *)storyTypeWithIndex:(NSNumber *)index storyType:(NSString *)type  unique:(NSNumber *)unique
-  inManagedObjectContext:(NSManagedObjectContext *)context
++ (void)storyTypeWithIndex:(NSNumber *)index
+                        storyType:(NSString *)type
+                           unique:(NSNumber *)unique
+                         newsItem:(NewsItem *)newsitem
+           inManagedObjectContext:(NSManagedObjectContext *)context
 {
     StoryType *storyType = nil;
     
@@ -35,16 +38,36 @@
         //NSLog(@"StoryType - %@ already present", index);
         storyType = [matches firstObject];
         storyType.unique = unique;
+        storyType.newsItem = newsitem;
     } else {
         //NSLog(@"Creating StoryType - %@", index);
         storyType = [NSEntityDescription insertNewObjectForEntityForName:@"StoryType"
                                                  inManagedObjectContext:context];
-            
+        storyType.newsItem = newsitem;
         storyType.index = index;
         storyType.type = type;
         storyType.unique = unique;
     }
-    return storyType;
+    
+    if ([context hasChanges] && ![context save:&error]) {
+        
+        NSLog(@"StoryItem Unresolved error %@", error);
+        
+        NSArray * conflictListArray = (NSArray*)[[error userInfo] objectForKey:@"conflictList"];
+        //NSLog(@"conflict array: %@",conflictListArray);
+        NSError * conflictFixError = nil;
+        
+        if ([conflictListArray count] > 0) {
+            
+            NSMergePolicy *mergePolicy = [[NSMergePolicy alloc] initWithMergeType:NSOverwriteMergePolicyType];
+            
+            if (![mergePolicy resolveConflicts:conflictListArray error:&conflictFixError]) {
+                NSLog(@"Unresolved conflict error %@, %@", conflictFixError, [conflictFixError userInfo]);
+                NSLog(@"abort");
+                abort();
+            }
+        }
+    }
 }
 
 + (NSArray *)newsItemsForStoryType:(NSString *)type inManagedObjectContext:(NSManagedObjectContext *)context

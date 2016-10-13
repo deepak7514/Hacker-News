@@ -11,37 +11,52 @@
 #import "HN Fetcher/HNFetcher.h"
 #import "SWRevealViewController.h"
 #import "AppDelegate.h"
+#import "LoginManager.h"
+#import "HackerNews-Swift.h"
 
 @interface NewsTVC ()
+
 @property (strong, nonatomic) NSNumber *logged_in;
 @property (strong, nonatomic) NSString *cookie;
 @property (strong, nonatomic) NSString *userName;
+
+@property (nonatomic) LoginManager *loginManager;
+
 @end
 
 @implementation NewsTVC
-{
-    NSArray *itemForTitle;
-    NSArray *itemsForNewUsers;
-    NSArray *itemsForLoggedInUsers;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    
-    itemForTitle = @[@"Login", @"Welcome"];
-    itemsForNewUsers = @[@"Top Stories", @"Best Stories", @"New Stories", @"Show Stories", @"Ask Stories", @"Job Stories"];
-    itemsForLoggedInUsers = @[@"Favourite Stories", @"Hidden Stories", @"Logout"];
+    self.loginManager = [LoginManager sharedInstance];
+    [self.loginManager addObserver:self forKeyPath:@"loggedIn" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
 }
 
-- (NSNumber *)logged_in
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
-    if(_logged_in == nil)
-    {
-        _logged_in = @0;
+    if([keyPath isEqualToString:@"loggedIn"]) {
+        [self.tableView reloadData];
     }
-    return _logged_in;
+}
+
+- (NSArray *)menuItems
+{
+    if (![self.loginManager loggedIn]) {
+        return @[@"Login/SignUp", @"Top Stories", @"Best Stories", @"New Stories", @"Show Stories", @"Ask Stories", @"Job Stories"];
+    } else {
+        return @[[NSString stringWithFormat:@"Welcome %@", self.loginManager.userName], @"Top Stories", @"Best Stories", @"New Stories", @"Show Stories", @"Ask Stories", @"Job Stories", @"Favourite Stories", @"Hidden Stories", @"Logout"];
+    }
+}
+
+- (NSString *)cellIdentifierForMenuItem: (NSString *)menuItem
+{
+    if ([menuItem hasSuffix:@"Stories"]) {
+        return @"StoryItem Cell";
+    } else {
+        return @"LoginItem Cell";
+    }
 }
 
 #pragma mark - UITableViewDataSource
@@ -52,54 +67,37 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger numberOfRows = 0;
-    numberOfRows += [itemsForNewUsers count];
-    numberOfRows += [self.logged_in boolValue]?[itemsForLoggedInUsers count]:0;
-    
-    return 1 + numberOfRows; // 1 for title
+    return [self.menuItems count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *CellIdentifier = nil;
-    if(indexPath.row == 0) {
-        CellIdentifier = [itemForTitle objectAtIndex:[self.logged_in intValue]];
-    } else if(indexPath.row <= [itemsForNewUsers count]) {
-        CellIdentifier = [itemsForNewUsers objectAtIndex:(indexPath.row - 1)];
-    } else {
-        CellIdentifier = [itemsForLoggedInUsers objectAtIndex:(indexPath.row - [itemsForNewUsers count] - 1)];
-    }
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[NSString stringWithFormat:@"%@ Cell",CellIdentifier] forIndexPath:indexPath];
+    NSString *menuItem = [self.menuItems objectAtIndex:indexPath.row];
+    NSString *cellIdentifier = [self cellIdentifierForMenuItem:menuItem];
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    if([self.logged_in isEqual: @1] && indexPath.row == 0){
-       cell.textLabel.text = [NSString stringWithFormat:@"Hi, %@", self.userName ];
-    }
+    cell.textLabel.text = menuItem;
 
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *CellIdentifier = nil;
-    if(indexPath.row == 0) {
-        [self performSegueWithIdentifier:@"Login" sender:indexPath];
-    } else if(indexPath.row >=1 && indexPath.row <= [itemsForNewUsers count]) {
-        [self performSegueWithIdentifier:@"Menu" sender:indexPath];
-    } else {
-        CellIdentifier = [itemsForLoggedInUsers objectAtIndex:(indexPath.row - [itemsForNewUsers count] - 1)];
-        if([CellIdentifier isEqualToString:@"Logout"]) {
-            self.logged_in = @0;
-            self.userName = nil;
-            self.cookie = nil;
-            [self.tableView reloadData];
-            NSLog(@"User Logged Out");
-        } else {
-            [self performSegueWithIdentifier:@"Menu" sender:indexPath];
-        }
+    NSString *menuItem = [self.menuItems objectAtIndex:indexPath.row];
+    if ([menuItem isEqualToString:@"Login/SignUp"]) {
+        [self performSegueWithIdentifier:@"LoginScreen" sender:indexPath];
+    } else if ([menuItem hasPrefix:@"Welcome"]) {
+        [self performSegueWithIdentifier:@"WelcomeScreen" sender:indexPath];
+    } else if ([menuItem hasSuffix:@"Stories"]) {
+        [self performSegueWithIdentifier:@"StoryItem" sender:indexPath];
+    } else if ([menuItem isEqualToString:@"Logout"]) {
+        [self.loginManager signOut];
+        [self.tableView reloadData];
     }
 }
 
@@ -111,48 +109,21 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     
-    if([segue.identifier isEqualToString:@"Login"])
-    {
-        UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
-        LoginViewController *dest = (LoginViewController *)[navController childViewControllers].firstObject;
-        dest.delegate = self;
-        if(self.userName != nil) {
-            dest.username = self.userName;
-        }
-    } else if([segue.identifier isEqualToString:@"Menu"]) {
+    UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
     
-        UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
+    if([segue.identifier isEqualToString:@"LoginScreen"])
+    {
+        HNLoginViewController *dest = (HNLoginViewController *)[navController childViewControllers].firstObject;
+    } else if([segue.identifier isEqualToString:@"WelcomeScreen"])
+    {
+        HNWelcomeViewController *dest = (HNWelcomeViewController *)[navController childViewControllers].firstObject;
+    } else if([segue.identifier isEqualToString:@"StoryItem"]) {
         NewsItemTVC *dest = (NewsItemTVC *)[navController childViewControllers].firstObject;
-        
-        NSString *CellIdentifier = nil;
         NSIndexPath *indexPath = (NSIndexPath *)sender;
-        if(indexPath.row == 0) {
-            CellIdentifier = [itemForTitle objectAtIndex:[self.logged_in intValue]];
-        } else if(indexPath.row <= [itemsForNewUsers count]) {
-            CellIdentifier = [itemsForNewUsers objectAtIndex:(indexPath.row - 1)];
-        } else {
-            CellIdentifier = [itemsForLoggedInUsers objectAtIndex:(indexPath.row - [itemsForNewUsers count] - 1)];
-        }
-        if([CellIdentifier hasSuffix:@"Stories"]) {
-            CellIdentifier = [[CellIdentifier componentsSeparatedByString:@" "] objectAtIndex:0];
-            dest.storyType = [CellIdentifier lowercaseString];
-        } else {
-            dest.storyType  = @"top";
-        }
-        dest.title = [NSString stringWithFormat:@"%@ Stories", [NSString stringWithFormat:@"%@",CellIdentifier]];
-        if (self.cookie != nil) {
-            dest.cookieToken = self.cookie;
-        }
+        NSString *menuItem = [self.menuItems objectAtIndex:indexPath.row];
+        dest.storyType = [[[menuItem componentsSeparatedByString:@" "] objectAtIndex:0] lowercaseString];
+        dest.title = menuItem;
     }
-}
-
-#pragma mark - Login View Controller Delegate
-- (void)addItemViewController:(LoginViewController *)controller didFinishEnteringCookie:(NSString *)cookie UserName:(NSString *)userName
-{
-    self.logged_in = @1;
-    self.cookie = cookie;
-    self.userName = userName;
-    [self.tableView reloadData];
 }
 
 @end

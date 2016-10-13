@@ -12,47 +12,29 @@
 #import "HNWebViewController.h"
 #import <FormatterKit/FormatterKit.h>
 #import "TFHpple.h"
-#import "LoginViewController.h"
+#import "NetworkManager.h"
+#import "HNContentToolbar.h"
+#import "LoginManager.h"
 
 @interface NewsItemContentVC ()<UISplitViewControllerDelegate, UIWebViewDelegate, UIActionSheetDelegate>
 @property (strong, nonatomic) NSString *html;
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
-
+@property (strong, nonatomic) HNContentToolbar *toolBar;
+@property (nonatomic) NSString *cookieToken;
 @end
 
 @implementation NewsItemContentVC {
     NSInteger _currentFontSize;
     BOOL pageDidFinishedLoading;
     NSTimer *progressTimer;
-    UIToolbar *toolBar;
-    NSString *authToken; // token for making post requests
-    NSString *hmacToken; // token for comment
-    
-    BOOL itemVoted;
-    BOOL itemHidden;
-    BOOL itemLiked;
 }
-
-enum actionSheetButtonIndex {
-    kSafariButtonIndex,
-    kChromeButtonIndex,
-};
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // getting current Font Size from User Defaults
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"ftsz"] == nil)
-    {
-        _currentFontSize = 100;
-    }
-    else
-    {
-        _currentFontSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"ftsz"];
-    }
+    _currentFontSize = 100;
     
     [super setAutomaticallyAdjustsScrollViewInsets:NO];
     [self.spinner startAnimating];
@@ -63,10 +45,8 @@ enum actionSheetButtonIndex {
         [self.spinner stopAnimating];
     }
     
-    // Comment this line while in production
-    //self.cookieToken = @"user=deepak7514&WxoOivljHHD3FKZKCyfJ9bA4HwiFxHfc;__cfduid=d7b349affce61d9674dadf09324a23dac1475559037";
-    
-    [self initToolBar];
+    self.cookieToken = [[LoginManager sharedInstance] cookieToken];
+    [self fetchAuthTokenFromNewsItemId:self.newsItem.unique];
 }
 
 #pragma mark - Properties
@@ -83,13 +63,6 @@ enum actionSheetButtonIndex {
 {
     _webView = webView;
     _webView.delegate = self;
-    //_webView.backgroundColor = [UIColor clearColor];
-}
-
-- (void)setCookieToken:(NSString *)cookieToken
-{
-    _cookieToken = cookieToken;
-    [self fetchAuthTokenFromNewsItemId:self.newsItem.unique];
 }
 
 #pragma mark  - Prepare WebView
@@ -165,6 +138,11 @@ enum actionSheetButtonIndex {
 {
     _newsItem = newsItem;
     [self startDownloadingContent];
+    self.toolBar = [[HNContentToolbar alloc] initWithNewsItemId:self.newsItem.unique itemURL:self.newsItem.url];
+    CGSize viewSize = self.view.frame.size;
+    self.toolBar.frame = CGRectMake(0, viewSize.height-44, viewSize.width, 44);
+    
+    [self.view addSubview:self.toolBar];
 }
 
 - (void)startDownloadingContent
@@ -179,54 +157,36 @@ enum actionSheetButtonIndex {
         
         if(self.newsItem.url)
         {
-            NSString *encodedURL = [self.newsItem.url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
-            NSURL *contentURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://readability.com/api/content/v1/parser?url=%@&token=b3e1c93a93f080bc01eb0480fffd6bdd3cb8a7fa",encodedURL]];
-            
-            NSURLRequest *request = [NSURLRequest requestWithURL:contentURL];
-            
-            // another configuration option is backgroundSessionConfiguration (multitasking API required though)
-            NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-            
-            // create the session without specifying a queue to run completion handler on (thus, not main queue)
-            // we also don't specify a delegate (since completion handler is all we need)
-            NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-            
-            NSURLSessionDownloadTask *task =
-                [session downloadTaskWithRequest:request
-                    completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
-                        // this handler is not executing on the main queue, so we can't do UI directly here
-                        if (!error) {
-                            NSError *err = nil;
-                            NSDictionary *propertyLists = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:localfile] options:0 error:&err];
-                            if(err){
-                                NSLog(@"Error Parsing JSON Data from url-%@ error-%@",contentURL, err);
-                            }
-                            NSString *htmlBody = [propertyLists valueForKey:@"content"];
-                            //we must dispatch this back to the main queue
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                if(htmlBody){
-                                    NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
-                                    self.html = html;
-                                }
-                                else {
-                                    [self.spinner stopAnimating];
-                                    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.newsItem.url]];
-                                    [self.webView loadRequest:request];
-                                }
-                            });
-                        } else {
-                            NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                [self.spinner stopAnimating];
-                                NSString *htmlBody =
-                                [NSString stringWithFormat:@"<div style=\"position:absolute; width:200px; height:200px; left:50%%; top:50%%; margin-left:-100px; margin-top:-100px;\"><p>Cannot connect to URL. Try after some time.</p></div>"];
-                                NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
-                                self.html = html;
-                            });
-                        }
-                    }
-                 ];
-            [task resume]; // don't forget that all NSURLSession tasks start out suspended!
+            [NetworkManager makeDataRequestWithMethod:@"GET"
+                                            URLString:@"http://readability.com/api/content/v1/parser"
+                                               params:@{@"url":self.newsItem.url,
+                                                        @"token":@"b3e1c93a93f080bc01eb0480fffd6bdd3cb8a7fa"
+                                                        }
+                                               cookie:self.cookieToken
+                             andExecuteBlockOnSuccess:^(id responseObject, NSURLResponse *response) {
+                                 NSDictionary *propertyLists = (NSDictionary *)responseObject;
+                                 NSString *htmlBody = [propertyLists valueForKey:@"content"];
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     if(htmlBody){
+                                         NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
+                                         self.html = html;
+                                     }
+                                     else {
+                                         [self.spinner stopAnimating];
+                                         NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.newsItem.url]];
+                                         [self.webView loadRequest:request];
+                                     }
+                                 });
+                             }
+                                            onFailure:^(NSError *error) {
+                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                    [self.spinner stopAnimating];
+                                                    NSString *htmlBody =
+                                                    [NSString stringWithFormat:@"<div style=\"position:absolute; width:200px; height:200px; left:50%%; top:50%%; margin-left:-100px; margin-top:-100px;\"><p>Cannot connect to URL. Try after some time.</p></div>"];
+                                                    NSString *html = [self getHTMLStringWithContent:htmlBody URL:self.newsItem.url title:self.newsItem.title domain:[[NSURL URLWithString:self.newsItem.url] host] itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
+                                                    self.html = html;
+                                                });
+                                            }];
         } else {
             NSString *html = [self getHTMLStringWithContent:self.newsItem.text URL:@"#" title:self.newsItem.title domain:@"" itemID:self.newsItem.unique itemURL:itemURL author:self.newsItem.author dateInterval:dateInterval];
             self.html = html;
@@ -237,7 +197,6 @@ enum actionSheetButtonIndex {
 
 - (void)fetchAuthTokenFromNewsItemId:(NSNumber *)newsItemId
 {
-    
     NSString *itemURL = [NSString stringWithFormat:@"http://news.ycombinator.com/item?id=%@",newsItemId];
     NSURL *contentURL = [NSURL URLWithString:itemURL];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -256,8 +215,11 @@ enum actionSheetButtonIndex {
                    completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
                        // this handler is not executing on the main queue, so we can't do UI directly here
                        if (!error) {
-                           NSString *hmac = nil;
-                           NSString *auth = nil;
+                           BOOL itemVoted = NO;
+                           BOOL itemHidden = NO;
+                           BOOL itemLiked = NO;
+                           NSString *hmacToken = nil;
+                           NSString *authToken = nil;
                            TFHpple *parser = [TFHpple hppleWithHTMLData:[NSData dataWithContentsOfURL:localfile]];
                            
                            // Extracting Auth Token from ItemUrl
@@ -270,7 +232,7 @@ enum actionSheetButtonIndex {
                                NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:[NSURL URLWithString:[element objectForKey:@"href"]]
                                                                            resolvingAgainstBaseURL:NO];
                                NSArray *queryItems = urlComponents.queryItems;
-                               auth = [self valueForKey:@"auth" fromQueryItems:queryItems];
+                               authToken = [self valueForKey:@"auth" fromQueryItems:queryItems];
                            }
                            
                            // Extracting Comment HMAC token from ItemUrl
@@ -280,7 +242,7 @@ enum actionSheetButtonIndex {
                                //NSLog(@"%@", element);
                                for (TFHppleElement *child in element.children) {
                                    if ([child.tagName isEqualToString:@"input"] && [[child objectForKey:@"name"] isEqual:@"hmac"]) {
-                                       hmac = [child  objectForKey:@"value"];
+                                       hmacToken = [child  objectForKey:@"value"];
                                        break;
                                    }
                                }
@@ -304,19 +266,7 @@ enum actionSheetButtonIndex {
                            
                            //we must dispatch this back to the main queue
                            dispatch_async(dispatch_get_main_queue(), ^{
-                               authToken = auth;
-                               hmacToken = hmac;
-                               
-                               if (itemVoted) {
-                                   [self toggleUpVoteAndDownVoteButton];
-                               }
-                               if (itemHidden) {
-                                   [self toggleHideAndUnhideButton];
-                               }
-                               if (itemLiked) {
-                                   [self toggleLikeAndUnlikeButton];
-                               }
-                               
+                               [self.toolBar updateToolBarWithAuthToken:authToken hmacToken:hmacToken andNewsItemMarkedHidden:itemHidden favourite:itemLiked voted:itemVoted];
                            });
                        } else {
                            NSLog(@"Error Fetching JSON Data from url-%@ error-%@",contentURL, error);
@@ -336,346 +286,11 @@ enum actionSheetButtonIndex {
     return queryItem.value;
 }
 
-#pragma mark - ToolBar
-
--(void) initToolBar {
-    
-    CGSize viewSize = self.view.frame.size;
-    toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, viewSize.height-44, viewSize.width, 44)];
-    
-    toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-    toolBar.barStyle = UIBarStyleDefault;
-    [self.view addSubview:toolBar];
-    
-    UIBarButtonItem *buttonUpVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"upvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(upvoteButtonTouchUp:)];
-    
-    UIBarButtonItem *buttonDownVote = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"downvote.png"] style:UIBarButtonItemStylePlain target:self action:@selector(downvoteButtonTouchUp:)];
-    [buttonDownVote setEnabled:NO];
-    
-    UIBarButtonItem *buttonFavStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"like.png"] style:UIBarButtonItemStylePlain target:self action:@selector(likeStoryButtonTouchUp:)];
-    
-    UIBarButtonItem *buttonHideStory = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"hide.png"] style:UIBarButtonItemStylePlain target:self action:@selector(hideStoryButtonTouchUp:)];
-    
-    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    
-    UIBarButtonItem *buttonComment = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"comment.png"] style:UIBarButtonItemStylePlain target:self action:@selector(commentButtonTouchUp:)];
-    
-    UIBarButtonItem *buttonAction = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(buttonActionTouchUp:)];
-    
-    // Add butons to an array
-    NSMutableArray *toolBarButtons = [[NSMutableArray alloc] init];
-    [toolBarButtons addObject:buttonUpVote];
-    [toolBarButtons addObject:flexibleSpace];
-    [toolBarButtons addObject:buttonDownVote];
-    [toolBarButtons addObject:flexibleSpace];
-    [toolBarButtons addObject:buttonFavStory];
-    [toolBarButtons addObject:flexibleSpace];
-    [toolBarButtons addObject:buttonHideStory];
-    [toolBarButtons addObject:flexibleSpace];
-    [toolBarButtons addObject:buttonComment];
-    [toolBarButtons addObject:flexibleSpace];
-    [toolBarButtons addObject:buttonAction];
-    
-    // Set buttons to tool bar
-    [toolBar setItems:toolBarButtons animated:NO];
-    [toolBar setTranslucent:NO];
-    
-    if (itemVoted) {
-        [self toggleUpVoteAndDownVoteButton];
-    }
-    if (itemHidden) {
-        [self toggleHideAndUnhideButton];
-    }
-    if (itemLiked) {
-        [self toggleLikeAndUnlikeButton];
-    }
-}
-
-- (void)toggleUpVoteAndDownVoteButton
-{
-    UIBarButtonItem *upVoteItem = [[toolBar items] objectAtIndex:0];
-    upVoteItem.enabled = !upVoteItem.isEnabled;
-    UIBarButtonItem *downVoteItem = [[toolBar items] objectAtIndex:2];
-    downVoteItem.enabled = !downVoteItem.isEnabled;
-}
-
-- (void)toggleHideAndUnhideButton
-{
-    UIBarButtonItem *hideItem = [[toolBar items] objectAtIndex:6];
-    if (itemHidden) {
-        [hideItem setAction:@selector(unHideStoryButtonTouchUp:)];
-        [hideItem setImage:[UIImage imageNamed:@"unhide.png"]];
-    } else {
-        [hideItem setAction:@selector(hideStoryButtonTouchUp:)];
-        [hideItem setImage:[UIImage imageNamed:@"hide.png"]];
-    }
-}
-
-- (void)toggleLikeAndUnlikeButton
-{
-    UIBarButtonItem *likeItem = [[toolBar items] objectAtIndex:4];
-    if (itemLiked) {
-        [likeItem setAction:@selector(unLikeStoryButtonTouchUp:)];
-        [likeItem setImage:[UIImage imageNamed:@"unlike.png"]];
-    } else {
-        [likeItem setAction:@selector(likeStoryButtonTouchUp:)];
-        [likeItem setImage:[UIImage imageNamed:@"like.png"]];
-    }
-}
-
-#pragma mark - Button Actions
-- (void)upvoteButtonTouchUp:(id)sender {
-    if ([self isUserLoggedIn]) {
-        NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=up&auth=%@", self.newsItem.unique, authToken];
-        [self sendGetRequest:url];
-        itemVoted = YES;
-        [self toggleUpVoteAndDownVoteButton];
-    }
-}
-
-- (void)downvoteButtonTouchUp:(id)sender {
-    if ([self isUserLoggedIn]) {
-        NSString *url = [NSString stringWithFormat:@"vote?id=%@&how=un&auth=%@", self.newsItem.unique, authToken];
-        [self sendGetRequest:url];
-        itemVoted = NO;
-        [self toggleUpVoteAndDownVoteButton];
-    }
-}
-
-- (void)hideStoryButtonTouchUp:(id)sender {
-    if ([self isUserLoggedIn]) {
-        NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@", self.newsItem.unique, authToken];
-        [self sendGetRequest:url];
-        itemHidden = YES;
-        [self toggleHideAndUnhideButton];
-    }
-}
-
-- (void)unHideStoryButtonTouchUp:(id)sender {
-    if ([self isUserLoggedIn]) {
-        NSString *url = [NSString stringWithFormat:@"hide?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
-        [self sendGetRequest:url];
-        itemHidden = NO;
-        [self toggleHideAndUnhideButton];
-    }
-}
-
-- (void)likeStoryButtonTouchUp:(id)sender {
-    if ([self isUserLoggedIn]) {
-        NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@", self.newsItem.unique, authToken];
-        [self sendGetRequest:url];
-        itemLiked = YES;
-        [self toggleLikeAndUnlikeButton];
-    }
-}
-
-- (void)unLikeStoryButtonTouchUp:(id)sender {
-    if ([self isUserLoggedIn]) {
-        NSString *url = [NSString stringWithFormat:@"fave?id=%@&auth=%@&un=t", self.newsItem.unique, authToken];
-        [self sendGetRequest:url];
-        itemLiked = NO;
-        [self toggleLikeAndUnlikeButton];
-    }
-}
-
-- (void)commentButtonTouchUp:(id)sender {
-    
-    if (![self isUserLoggedIn]) {
-        return;
-    }
-    
-    UIAlertController *alertController = [UIAlertController
-                                          alertControllerWithTitle:@"Add Comment"
-                                          message:nil
-                                          preferredStyle:UIAlertControllerStyleAlert];
-    
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField)
-     {
-         textField.placeholder = NSLocalizedString(@"Comment", @"Enter Comment");
-     }];
-    UIAlertAction *cancelAction = [UIAlertAction
-                                   actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel action")
-                                   style:UIAlertActionStyleCancel
-                                   handler:^(UIAlertAction *action)
-                                   {
-                                       NSLog(@"Cancel action");
-                                   }];
-    UIAlertAction *okAction = [UIAlertAction
-                               actionWithTitle:NSLocalizedString(@"Submit", @"Submit Comment")
-                               style:UIAlertActionStyleDefault
-                               handler:^(UIAlertAction *action)
-                               {
-                                   UITextField *commentText = alertController.textFields.firstObject;
-                                   NSString *postData = [NSString stringWithFormat:@"parent=%@&goto=item%%3Fid%%3D%@&hmac=%@&text=%@", self.newsItem.unique, self.newsItem.unique, hmacToken, [commentText.text stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet alphanumericCharacterSet]]];
-                                   NSLog(@"Comment - %@, %@", commentText.text, postData);
-                                   [self sendPostRequestForCommentWithData:[postData dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
-                               }];
-    [alertController addAction:cancelAction];
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:^{}];
-}
-
-- (void)buttonActionTouchUp:(id)sender {
-    [self showActionSheet];
-}
-
-#pragma mark - Action Sheet
-
-- (void)showActionSheet {
-    
-    NSURL *theURL = [NSURL URLWithString:self.newsItem.url];
-    
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:self.newsItem.url message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        
-        // Cancel button tappped do nothing.
-        
-    }]];
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        // safari button tapped.
-        [[UIApplication sharedApplication] openURL:theURL];
-    }]];
-    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"googlechrome://"]]) {
-        // Chrome is installed, add the option to open in chrome.
-        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Chrome" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            NSString *scheme = theURL.scheme;
-            
-            // Replace the URL Scheme with the Chrome equivalent.
-            NSString *chromeScheme = nil;
-            if ([scheme isEqualToString:@"http"]) {
-                chromeScheme = @"googlechrome";
-            } else if ([scheme isEqualToString:@"https"]) {
-                chromeScheme = @"googlechromes";
-            }
-            
-            // Proceed only if a valid Google Chrome URI Scheme is available.
-            if (chromeScheme) {
-                NSString *absoluteString = [theURL absoluteString];
-                NSRange rangeForScheme = [absoluteString rangeOfString:@":"];
-                NSString *urlNoScheme = [absoluteString substringFromIndex:rangeForScheme.location];
-                NSString *chromeURLString = [chromeScheme stringByAppendingString:urlNoScheme];
-                NSURL *chromeURL = [NSURL URLWithString:chromeURLString];
-                
-                // Open the URL with Chrome.
-                [[UIApplication sharedApplication] openURL:chromeURL];
-            }
-        }]];
-    }
-    [self presentViewController:actionSheet animated:YES completion:^{}];
-}
-
-#pragma mark - Request Handlers
-- (void)sendPostRequestForCommentWithData:(NSData *)postData
-{
-    NSURL *contentURL = [NSURL URLWithString:@"https://news.ycombinator.com/comment"];
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:contentURL];
-    //[request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI" forHTTPHeaderField:@"cookie"];
-    [request setValue:self.cookieToken forHTTPHeaderField:@"cookie"];
-    [request setHTTPMethod:@"POST"];
-    [request setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" forHTTPHeaderField:@"Accept"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", postData.length] forHTTPHeaderField:@"Content-Length"];
-    [request setHTTPBody:postData];
-    NSLog(@"request - %@", postData);
-
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-    
-    NSURLSessionDownloadTask *task =
-    [session downloadTaskWithRequest:request
-                   completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
-                       if (!error) {
-                           
-                           dispatch_async(dispatch_get_main_queue(), ^{
-                               
-                           });
-                       } else {
-                           NSLog(@"Error making POST request-%@ error-%@",request, error);
-                       }
-                   }
-     ];
-    [task resume];
-}
-
-- (void)sendGetRequest:(NSString *)action
-{
-    NSString *itemURL = [NSString stringWithFormat:@"https://news.ycombinator.com/%@", action];
-    NSURL *contentURL = [NSURL URLWithString:itemURL];
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:contentURL];
-    //[request setValue:@"__cfduid=d056cbe7d5e82a9405b7e106b5431a0db1474726993; user=deepak7514&kPg1JqDQNn57Me1CH6Bl5x4fPXlMRLqI" forHTTPHeaderField:@"cookie"];
-    [request setValue:self.cookieToken forHTTPHeaderField:@"cookie"];
-    [request setHTTPMethod:@"GET"];
-    
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
-    
-    NSURLSessionDownloadTask *task =
-    [session downloadTaskWithRequest:request
-                   completionHandler:^(NSURL *localfile, NSURLResponse *response, NSError *error) {
-                       if (!error) {
-                           
-                           dispatch_async(dispatch_get_main_queue(), ^{
-                               
-                           });
-                       } else {
-                           NSLog(@"Error making GET request-%@ error-%@",request, error);
-                       }
-                   }
-     ];
-    [task resume];
-}
-
-#pragma mark - UISplitViewControllerDelegate
-- (void)awakeFromNib
-{
-    self.splitViewController.delegate = self;
-}
-
-- (BOOL)splitViewController:(UISplitViewController *)svc
-   shouldHideViewController:(UIViewController *)vc
-              inOrientation:(UIInterfaceOrientation)orientation
-{
-    return UIInterfaceOrientationIsPortrait(orientation);
-}
-
-- (void)splitViewController:(UISplitViewController *)svc
-     willShowViewController:(UIViewController *)aViewController
-  invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
-{
-    self.navigationItem.leftBarButtonItem = nil;
-}
-
 #pragma mark - Helper Methods
 - (NSString *)getHTMLStringWithContent:(NSString *)mainContent URL:(NSString *)url title:(NSString *)title domain:(NSString *)domain itemID:(NSNumber *)itemID itemURL:(NSString *)itemURL author:(NSString *)author dateInterval:(NSString *)dateInterval
 {
     NSString *html = [NSString stringWithFormat:@"<html><head> <meta charset=\"utf-8\">  <style type=\"text/css\">  body {font-family: \"Helvetica Neue\", sans-serif  !Important;-webkit-text-size-adjust: %d;  font-size: 16px !Important;background-color:none;  color: #454545;  width:90%% !Important;  padding-top:15px !Important;  padding-bottom:20px !Important;  margin: 0 auto !Important;  word-wrap: break-word !Important;  line-height:170%% !Important;  overflow: hidden;  }  textarea {  display: none !important;  }  input {  display: none !important;  }   form {  display: none !important;  }  .title {  font-weight:bold !Important;  font-size: 1.4em !Important;  line-height:1.1em !Important;  margin-bottom: 10px;  }  .title a {  text-decoration: none !Important;  color:#333 !Important;  }table,thead,tbody{ table-layout: fixed; max-width:100%% !important; }  table, tr, td {  background-color: transparent !important;  }  h1,h2,h3 {  font-size:1.0em !important;  }  .info {  font-size: 0.9em;  color: #999;  }.info a{ text-decoration: none; color: #999;}  .article a {  text-decoration: none !Important;  color: #333;  border-bottom:1px dashed;  }table {width: 100%% !important;max-width 100%% !important;}  img {  max-width: 100%% !important;  width: auto !important;  height: auto !important;  margin: 0 auto !important;border: 1px solid #DDD;  display: block !important;  }  .article video,  .article embed,  .article object {  display: none;  }  .article pre,  .article code {  white-space: pre-line;  font-size: 0.9em;  }  .article .img-1,  .article .wp-smiley,  .article .feedflare img,  .article img[src*='/smilies/'],  .article img[src*='.feedburner.com/~ff/'],  .article img[data-src*='/smilies/'],  .article img[data-src*='.feedburner.com/~ff/'] {  border: 0 !important;  outline: 0 !important;  margin: 0 !important;  background-color: transparent !important;  }  .article img[src*='.feedburner.com/~r/'],  .article img[data-src*='.feedburner.com/~r/'] {  display: none;  }  </style>  </head><body><div class=\"info\"><a href=\"http://%@\">%@</a></div><div class=\"title\"><a href=\"%@\">%@</a></div><div class=\"info\" style=\"margin-top: -15px;\"> %@ by %@ <a href=\"https://%@\">#%@</a></div><div class=\"article\">%@</div></body></html>", _currentFontSize, domain, domain, url, title, dateInterval, author, itemURL, itemID, mainContent ];
     return html;
-}
-
-- (BOOL)isUserLoggedIn
-{
-    if(self.cookieToken == nil)
-    {
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@""
-                                              message:@"Please Login"
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *cancelAction = [UIAlertAction
-                                       actionWithTitle:NSLocalizedString(@"Ok", @"Ok")
-                                       style:UIAlertActionStyleCancel
-                                       handler:^(UIAlertAction *action){
-                                           LoginViewController *loginVC = [self.storyboard instantiateViewControllerWithIdentifier:@"LoginViewcontroller"];
-                                           [self.navigationController pushViewController:loginVC animated:YES];
-                                       }];
-        [alertController addAction:cancelAction];
-        [self presentViewController:alertController animated:YES completion:^{}];
-        return NO;
-    }
-    return YES;
 }
 
 @end

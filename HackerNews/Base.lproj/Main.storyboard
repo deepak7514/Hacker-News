@@ -17,14 +17,14 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="separatorColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Login Cell" textLabel="TQ5-Xc-5hR" style="IBUITableViewCellStyleDefault" id="QVG-ga-vxu">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="LoginItem Cell" textLabel="TQ5-Xc-5hR" style="IBUITableViewCellStyleDefault" id="QVG-ga-vxu">
                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QVG-ga-vxu" id="sZz-tH-edh">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="LogIn/SignUp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TQ5-Xc-5hR">
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TQ5-Xc-5hR">
                                             <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
@@ -34,31 +34,14 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Welcome Cell" textLabel="clq-1W-Llr" style="IBUITableViewCellStyleDefault" id="KUs-pj-fzT">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="StoryItem Cell" textLabel="Oeh-R2-EcV" imageView="QXl-72-Xnl" style="IBUITableViewCellStyleDefault" id="QRh-sq-xYe">
                                 <rect key="frame" x="0.0" y="72" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KUs-pj-fzT" id="LGP-hm-E6y">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Welcome User" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="clq-1W-Llr">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Top Stories Cell" textLabel="Oeh-R2-EcV" imageView="QXl-72-Xnl" style="IBUITableViewCellStyleDefault" id="QRh-sq-xYe">
-                                <rect key="frame" x="0.0" y="116" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QRh-sq-xYe" id="I6S-le-H0y">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Top Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Oeh-R2-EcV">
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Oeh-R2-EcV">
                                             <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
@@ -72,170 +55,6 @@
                                     </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Best Stories Cell" textLabel="sR6-XR-kHV" imageView="4TQ-6F-qLS" style="IBUITableViewCellStyleDefault" id="7K0-du-X7C">
-                                <rect key="frame" x="0.0" y="160" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7K0-du-X7C" id="bqw-Xd-YcI">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Best Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="sR6-XR-kHV">
-                                            <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="news" id="4TQ-6F-qLS">
-                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="New Stories Cell" textLabel="pnI-NU-XfR" imageView="vxc-n5-nY7" style="IBUITableViewCellStyleDefault" id="yWs-VO-xC0">
-                                <rect key="frame" x="0.0" y="204" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yWs-VO-xC0" id="VoE-dR-NJ8">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="New Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pnI-NU-XfR">
-                                            <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="news" id="vxc-n5-nY7">
-                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Show Stories Cell" textLabel="fmm-0b-xFG" imageView="3tZ-EG-e9i" style="IBUITableViewCellStyleDefault" id="XeH-S5-j2r">
-                                <rect key="frame" x="0.0" y="248" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XeH-S5-j2r" id="eBB-jQ-6Jm">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Show Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fmm-0b-xFG">
-                                            <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="news" id="3tZ-EG-e9i">
-                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Ask Stories Cell" textLabel="ECa-eI-nOP" imageView="xdb-LH-Be6" style="IBUITableViewCellStyleDefault" id="ZcQ-UV-ka3">
-                                <rect key="frame" x="0.0" y="292" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZcQ-UV-ka3" id="36C-lf-2OD">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Ask Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ECa-eI-nOP">
-                                            <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="news" id="xdb-LH-Be6">
-                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Job Stories Cell" textLabel="kzA-GS-UFv" imageView="hsl-ml-FCH" style="IBUITableViewCellStyleDefault" id="iAx-qb-3we">
-                                <rect key="frame" x="0.0" y="336" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iAx-qb-3we" id="Dqb-HJ-Nc1">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Job Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kzA-GS-UFv">
-                                            <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="news" id="hsl-ml-FCH">
-                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Favourite Stories Cell" textLabel="2SH-Ms-IB6" imageView="iqx-Kp-WUg" style="IBUITableViewCellStyleDefault" id="ajK-3f-bbK">
-                                <rect key="frame" x="0.0" y="380" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ajK-3f-bbK" id="Z0B-d5-4MM">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Favourite Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2SH-Ms-IB6">
-                                            <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="news" id="iqx-Kp-WUg">
-                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Hidden Stories Cell" textLabel="EJ1-88-hjA" imageView="srS-Uh-qps" style="IBUITableViewCellStyleDefault" id="VHg-Gn-xHz">
-                                <rect key="frame" x="0.0" y="424" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VHg-Gn-xHz" id="XqT-Zb-APB">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Hidden Stories" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="EJ1-88-hjA">
-                                            <rect key="frame" x="74" y="0.0" width="511" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="news" id="srS-Uh-qps">
-                                            <rect key="frame" x="15" y="0.0" width="44" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </imageView>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Logout Cell" textLabel="ixy-Ha-frJ" style="IBUITableViewCellStyleDefault" id="FsO-ii-7af">
-                                <rect key="frame" x="0.0" y="468" width="600" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="FsO-ii-7af" id="KeV-nT-ZoS">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="LogOut" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ixy-Ha-frJ">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="22"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
                         </prototypes>
                         <sections/>
                         <connections>
@@ -244,13 +63,14 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <segue destination="pwu-5q-LfK" kind="custom" identifier="Menu" customClass="SWRevealViewControllerSeguePushController" id="91B-Uq-7E6"/>
-                        <segue destination="3z2-EJ-SL5" kind="custom" identifier="Login" customClass="SWRevealViewControllerSeguePushController" id="DFA-AK-612"/>
+                        <segue destination="pwu-5q-LfK" kind="custom" identifier="StoryItem" customClass="SWRevealViewControllerSeguePushController" id="91B-Uq-7E6"/>
+                        <segue destination="3z2-EJ-SL5" kind="custom" identifier="LoginScreen" customClass="SWRevealViewControllerSeguePushController" id="DFA-AK-612"/>
+                        <segue destination="Jto-cn-Txt" kind="custom" identifier="WelcomeScreen" customClass="SWRevealViewControllerSeguePushController" id="Lza-xd-BBf"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="72T-o3-uKa" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2234" y="216"/>
+            <point key="canvasLocation" x="2222" y="754"/>
         </scene>
         <!--NewsItem-->
         <scene sceneID="LOm-O9-uvV">
@@ -527,7 +347,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vdq-P9-ujL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5202" y="956"/>
+            <point key="canvasLocation" x="5202" y="1066"/>
         </scene>
         <!--Reveal View Controller-->
         <scene sceneID="pjP-t0-8Y8">
@@ -549,12 +369,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eWh-2s-sqT" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2251" y="956"/>
+            <point key="canvasLocation" x="1380" y="216"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="KDO-7c-aZh">
             <objects>
-                <viewController storyboardIdentifier="LoginViewcontroller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="CeN-gD-F1n" customClass="LoginViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="HNLoginViewcontroller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="CeN-gD-F1n" customClass="HNLoginViewController" customModule="HackerNews" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Tep-R6-c77"/>
                         <viewControllerLayoutGuide type="bottom" id="2lv-6d-Hbe"/>
@@ -583,23 +403,15 @@
                                     <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="loginAction:" destination="CeN-gD-F1n" eventType="touchUpInside" id="byB-fZ-sbQ"/>
+                                    <action selector="login:" destination="CeN-gD-F1n" eventType="touchUpInside" id="4M7-Dh-Axo"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kzy-Zm-lwK">
-                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="MIo-jh-dTD" firstAttribute="top" secondItem="sGw-nT-xVO" secondAttribute="bottom" constant="40" id="2or-NN-tNw"/>
                             <constraint firstItem="z2l-Hp-Now" firstAttribute="width" secondItem="257-10-X43" secondAttribute="width" multiplier="0.5" id="3wb-2Y-8S5"/>
                             <constraint firstItem="MIo-jh-dTD" firstAttribute="width" secondItem="257-10-X43" secondAttribute="width" multiplier="0.25" id="43d-5r-HMf"/>
-                            <constraint firstItem="kzy-Zm-lwK" firstAttribute="bottom" secondItem="2lv-6d-Hbe" secondAttribute="top" id="50y-L7-hih"/>
-                            <constraint firstItem="kzy-Zm-lwK" firstAttribute="top" secondItem="Tep-R6-c77" secondAttribute="bottom" id="D82-SR-arm"/>
                             <constraint firstItem="NiQ-SZ-his" firstAttribute="top" secondItem="z2l-Hp-Now" secondAttribute="bottom" constant="20" id="VJC-UM-cwX"/>
                             <constraint firstItem="sGw-nT-xVO" firstAttribute="centerY" secondItem="NiQ-SZ-his" secondAttribute="centerY" id="ZIc-Ya-OA4"/>
                             <constraint firstItem="NiQ-SZ-his" firstAttribute="leading" secondItem="z2l-Hp-Now" secondAttribute="leading" id="dAK-Jb-phK"/>
@@ -607,25 +419,61 @@
                             <constraint firstItem="sGw-nT-xVO" firstAttribute="centerX" secondItem="MIo-jh-dTD" secondAttribute="centerX" id="nKC-H4-rtK"/>
                             <constraint firstItem="z2l-Hp-Now" firstAttribute="centerX" secondItem="257-10-X43" secondAttribute="centerX" id="pw5-KX-8ye"/>
                             <constraint firstItem="NiQ-SZ-his" firstAttribute="trailing" secondItem="z2l-Hp-Now" secondAttribute="trailing" id="tGz-T1-NtH"/>
-                            <constraint firstItem="kzy-Zm-lwK" firstAttribute="centerX" secondItem="MIo-jh-dTD" secondAttribute="centerX" id="ufL-fN-lsn"/>
                             <constraint firstItem="sGw-nT-xVO" firstAttribute="centerX" secondItem="NiQ-SZ-his" secondAttribute="centerX" id="vlJ-eb-S1N"/>
-                            <constraint firstItem="kzy-Zm-lwK" firstAttribute="leading" secondItem="257-10-X43" secondAttribute="leading" id="zSQ-fg-gJc"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="XY3-Ba-iYu">
                         <barButtonItem key="leftBarButtonItem" image="menu" id="UOV-n5-Kh6"/>
                     </navigationItem>
                     <connections>
-                        <outlet property="passwordField" destination="NiQ-SZ-his" id="Bu2-dB-iWg"/>
-                        <outlet property="sidebarButton" destination="UOV-n5-Kh6" id="G4M-08-etw"/>
-                        <outlet property="spinner" destination="sGw-nT-xVO" id="qK8-ph-ezl"/>
-                        <outlet property="textView" destination="kzy-Zm-lwK" id="rsc-hC-uWx"/>
-                        <outlet property="userNameField" destination="z2l-Hp-Now" id="yyO-yQ-3ud"/>
+                        <outlet property="passwordTextField" destination="NiQ-SZ-his" id="tix-pW-Wf3"/>
+                        <outlet property="sidebarButtonItem" destination="UOV-n5-Kh6" id="34v-Tt-MSn"/>
+                        <outlet property="spinner" destination="sGw-nT-xVO" id="8GP-VG-IOX"/>
+                        <outlet property="userNameTextField" destination="z2l-Hp-Now" id="aDM-GH-JBi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Dt-K9-tvN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3787" y="956"/>
+            <point key="canvasLocation" x="3787" y="1066"/>
+        </scene>
+        <!--Welcome View Controller-->
+        <scene sceneID="wOW-bY-ZWz">
+            <objects>
+                <viewController storyboardIdentifier="Welcome" useStoryboardIdentifierAsRestorationIdentifier="YES" id="pd6-eR-rSi" customClass="HNWelcomeViewController" customModule="HackerNews" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="px5-IQ-1Vl"/>
+                        <viewControllerLayoutGuide type="bottom" id="7ko-Cm-Rpd"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="MhE-WQ-6UW">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kzy-Zm-lwK">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="kzy-Zm-lwK" firstAttribute="top" secondItem="px5-IQ-1Vl" secondAttribute="bottom" id="2SY-ZV-HDL"/>
+                            <constraint firstItem="kzy-Zm-lwK" firstAttribute="bottom" secondItem="7ko-Cm-Rpd" secondAttribute="top" id="RMy-Mq-AS4"/>
+                            <constraint firstAttribute="trailing" secondItem="kzy-Zm-lwK" secondAttribute="trailing" id="duh-4T-Enb"/>
+                            <constraint firstItem="kzy-Zm-lwK" firstAttribute="leading" secondItem="MhE-WQ-6UW" secondAttribute="leading" id="dxK-4E-5GV"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Bfu-bu-I4m">
+                        <barButtonItem key="leftBarButtonItem" image="menu" id="amA-Nx-ef0"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="sidebarButtonItem" destination="amA-Nx-ef0" id="gkd-qR-pJY"/>
+                        <outlet property="welcomeTextView" destination="kzy-Zm-lwK" id="Vmj-9C-fed"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="s4B-ho-YuE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3787" y="1852"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="WPv-ZT-5sf">
@@ -666,7 +514,25 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Qf-Db-DWi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3087" y="956"/>
+            <point key="canvasLocation" x="3087" y="1066"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="YpS-Qy-OGK">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Jto-cn-Txt" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="GEM-qD-QGa">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="pd6-eR-rSi" kind="relationship" relationship="rootViewController" id="4HF-LU-xik"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="S7Y-Sb-HEw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3087" y="1852"/>
         </scene>
     </scenes>
     <resources>
@@ -678,6 +544,6 @@
         <image name="reload_button" width="21" height="18"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="js7-Lv-W3l"/>
+        <segue reference="91B-Uq-7E6"/>
     </inferredMetricsTieBreakers>
 </document>

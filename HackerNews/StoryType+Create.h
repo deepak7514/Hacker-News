@@ -10,7 +10,10 @@
 
 @interface StoryType (Create)
 
-+ (StoryType *)storyTypeWithIndex:(NSNumber *)index storyType:(NSString *)type unique:(NSNumber *)unique
++ (void)storyTypeWithIndex:(NSNumber *)index
+                        storyType:(NSString *)type
+                           unique:(NSNumber *)unique
+                         newsItem: (NewsItem *)newsitem
            inManagedObjectContext:(NSManagedObjectContext *)context;
 
 + (NSArray *)newsItemsForStoryType:(NSString *)type inManagedObjectContext:(NSManagedObjectContext *)context;
